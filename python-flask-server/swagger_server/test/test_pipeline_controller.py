@@ -61,7 +61,7 @@ class TestPipelineController(BaseTestCase):
     def test_list_pipelines(self):
         """Test case for list_pipelines
 
-        List all of User's pipelines
+        List all of the User's pipelines
         """
         body = User()
         response = self.client.open(

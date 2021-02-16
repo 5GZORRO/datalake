@@ -1,6 +1,7 @@
 import connexion
 import six
 
+from flask import Response
 from swagger_server.models.create_pipeline import CreatePipeline  # noqa: E501
 from swagger_server.models.get_pipeline import GetPipeline  # noqa: E501
 from swagger_server.models.pipeline_info import PipelineInfo  # noqa: E501
@@ -8,6 +9,7 @@ from swagger_server.models.pipeline_metadata import PipelineMetadata  # noqa: E5
 from swagger_server.models.user import User  # noqa: E501
 from swagger_server import util
 
+from swagger_server.controllers.user_info import Users, print_users
 
 def create_pipeline(body):  # noqa: E501
     """Register a new pipeline
@@ -19,12 +21,42 @@ def create_pipeline(body):  # noqa: E501
 
     :rtype: PipelineMetadata
     """
-    if connexion.request.is_json:
-        body = CreatePipeline.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+    print("entering create_pipeline")
+    print("Users = ", str(Users))
+    print("body = ", body)
+    print("connexion.request.data = ", connexion.request.data)
+    try:
+        if connexion.request.is_json:
+            body_json = connexion.request.get_json(force=True)
+            bodyPipeline = CreatePipeline.from_dict(body_json)
+        else:
+            return Response("{'error message':'data is not in json format'}", status=400, mimetype='application/json')
+        user_id = bodyPipeline.user_info.user_id
+        #TODO: check authToken
+        print ("user_id = ", user_id)
+        if not user_id in Users:
+            return Response("{'error message':'user not registered'}", status=400, mimetype='application/json')
+        user = Users[user_id]
+        pipeline_def = bodyPipeline.pipeline_definition
+
+        #TODO: create kafka topics for the pipeline
+        #TODO: try to register the pipe with argo
+        #TODO: generate a pipeId 
+        pipeline_id = 'aaa'
+        topic1 = 'bbb'
+        topic2 = 'ccc'
+        pipe_metadata = PipelineMetadata(pipeline_id, topic1, topic2)
+        pipe_info = PipelineInfo(pipe_metadata, pipeline_def)
+        user.pipelineInfoList.append(pipe_info)
+        print_users()
+        print("exiting create_pipeline")
+        return pipe_metadata, 201
+    except Exception as e:
+        print("Exception: ", str(e))
+        raise e
 
 
-def delete_pipeline(body):  # noqa: E501
+def delete_pipeline():  # noqa: E501
     """Delete a pipeline
 
      # noqa: E501
@@ -34,12 +66,38 @@ def delete_pipeline(body):  # noqa: E501
 
     :rtype: None
     """
-    if connexion.request.is_json:
-        body = GetPipeline.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+    print("entering delete_pipeline")
+    print("Users = ", str(Users))
+    print("connexion.request.data = ", connexion.request.data)
+    try:
+        if connexion.request.is_json:
+            body_json = connexion.request.get_json(force=True)
+            bodyPipeline = GetPipeline.from_dict(body_json)
+        else:
+            return Response("{'error message':'data is not in json format'}", status=400, mimetype='application/json')
+        user_id = bodyPipeline.user_info.user_id
+        pipeline_id = bodyPipeline.pipeline_id
+        #TODO: check authToken
+        print ("user_id = ", user_id)
+        if not user_id in Users:
+            return Response("{'error message':'user not registered'}", status=400, mimetype='application/json')
+        user = Users[user_id]
+        pipelines = user.pipelineInfoList
+
+        for p in pipelines:
+            if pipeline_id == p.pipeline_metadata.pipeline_id:
+                pipelines.remove(p)
+                print_users()
+                print("exiting delete_pipeline")
+                return
+        return Response("{'error message':'pipeline not found'}", status=404, mimetype='application/json')
+
+    except Exception as e:
+        print("Exception: ", str(e))
+        raise e
 
 
-def get_pipeline(body):  # noqa: E501
+def get_pipeline():  # noqa: E501
     """Return details of specified pipeline
 
      # noqa: E501
@@ -49,12 +107,35 @@ def get_pipeline(body):  # noqa: E501
 
     :rtype: PipelineInfo
     """
-    if connexion.request.is_json:
-        body = GetPipeline.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+    print("entering get_pipeline")
+    print("Users = ", str(Users))
+    print("connexion.request.data = ", connexion.request.data)
+    try:
+        if connexion.request.is_json:
+            body_json = connexion.request.get_json(force=True)
+            bodyPipeline = GetPipeline.from_dict(body_json)
+        else:
+            return Response("{'error message':'data is not in json format'}", status=400, mimetype='application/json')
+        user_id = bodyPipeline.user_info.user_id
+        pipeline_id = bodyPipeline.pipeline_id
+        #TODO: check authToken
+        print ("user_id = ", user_id)
+        if not user_id in Users:
+            return Response("{'error message':'user not registered'}", status=400, mimetype='application/json')
+        user = Users[user_id]
+        pipelines = user.pipelineInfoList
+
+        for p in pipelines:
+            if pipeline_id == p.pipeline_metadata.pipeline_id:
+                return p, 200
+        return Response("{'error message':'pipeline not found'}", status=404, mimetype='application/json')
+
+    except Exception as e:
+        print("Exception: ", str(e))
+        raise e
 
 
-def list_pipelines(body):  # noqa: E501
+def list_pipelines():  # noqa: E501
     """List all of User&#39;s pipelines
 
      # noqa: E501
@@ -64,6 +145,24 @@ def list_pipelines(body):  # noqa: E501
 
     :rtype: List[PipelineInfo]
     """
-    if connexion.request.is_json:
-        body = User.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+    print("entering list_pipelines")
+    print("Users = ", str(Users))
+    print("connexion.request.data = ", connexion.request.data)
+    try:
+        if connexion.request.is_json:
+            body_json = connexion.request.get_json(force=True)
+            user_info = User.from_dict(body_json)
+        else:
+            return Response("{'error message':'data is not in json format'}", status=400, mimetype='application/json')
+        user_id = user_info.user_id
+        #TODO: check authToken
+        print ("user_id = ", user_id)
+        if not user_id in Users:
+            return Response("{'error message':'user not registered'}", status=400, mimetype='application/json')
+        user = Users[user_id]
+        pipelines = user.pipelineInfoList
+        return pipelines
+
+    except Exception as e:
+        print("Exception: ", str(e))
+        raise e
