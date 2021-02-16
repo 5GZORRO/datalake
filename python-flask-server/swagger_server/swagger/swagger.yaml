@@ -28,9 +28,7 @@ paths:
       operationId: "register_user"
       consumes:
       - "application/json"
-      - "application/xml"
       produces:
-      - "application/xml"
       - "application/json"
       parameters:
       - in: "body"
@@ -58,7 +56,6 @@ paths:
       operationId: "unregister_user"
       consumes:
       - "application/json"
-      - "application/xml"
       parameters:
       - in: "body"
         name: "body"
@@ -84,7 +81,6 @@ paths:
       description: ""
       operationId: "list_users"
       produces:
-      - "application/xml"
       - "application/json"
       parameters: []
       responses:
@@ -106,9 +102,7 @@ paths:
       operationId: "get_pipeline"
       consumes:
       - "application/json"
-      - "application/xml"
       produces:
-      - "application/xml"
       - "application/json"
       parameters:
       - in: "body"
@@ -137,9 +131,7 @@ paths:
       operationId: "create_pipeline"
       consumes:
       - "application/json"
-      - "application/xml"
       produces:
-      - "application/xml"
       - "application/json"
       parameters:
       - in: "body"
@@ -166,7 +158,6 @@ paths:
       operationId: "delete_pipeline"
       consumes:
       - "application/json"
-      - "application/xml"
       parameters:
       - in: "body"
         name: "body"
@@ -188,14 +179,12 @@ paths:
     get:
       tags:
       - "pipeline"
-      summary: "List all of User's pipelines"
+      summary: "List all of the User's pipelines"
       description: ""
       operationId: "list_pipelines"
       consumes:
       - "application/json"
-      - "application/xml"
       produces:
-      - "application/xml"
       - "application/json"
       parameters:
       - in: "body"
@@ -300,14 +289,3 @@ definitions:
         inputTopic: "inputTopic"
         pipelineId: "pipelineId"
       pipelineDefinition: "{}"
-  PipelineDeleteInfo:
-    type: "object"
-    properties:
-      userId:
-        type: "string"
-      authToken:
-        type: "string"
-      pipelineId:
-        type: "string"
-    xml:
-      name: "PipelineDeleteInfo"
