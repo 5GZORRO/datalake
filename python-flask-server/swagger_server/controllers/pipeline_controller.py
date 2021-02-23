@@ -10,6 +10,7 @@ from swagger_server.models.user import User  # noqa: E501
 from swagger_server import util
 
 from swagger_server.controllers.user_info import Users, print_users
+from swagger_server.controllers.k8s_api import get_k8s_proxy
 
 def create_pipeline(body):  # noqa: E501
     """Register a new pipeline
@@ -38,11 +39,21 @@ def create_pipeline(body):  # noqa: E501
             return Response("{'error message':'user not registered'}", status=400, mimetype='application/json')
         user = Users[user_id]
         pipeline_def = bodyPipeline.pipeline_definition
+        print ("pipeline_def = ", str(pipeline_def))
+        k8s_proxy_server = get_k8s_proxy()
+        print("type = ", type(k8s_proxy_server))
+
+        # load the argo workflow (pipeline) to k8s
+        response = k8s_proxy_server.load_workflow_template(pipeline_def)
+        print("response =", response)
+        # TODO verify that the pipeline was properly created?
+        # TODO verify the fields in the response before using them
 
         #TODO: create kafka topics for the pipeline
         #TODO: try to register the pipe with argo
         #TODO: generate a pipeId 
-        pipeline_id = 'aaa'
+        pipeline_id = response['metadata']['name']
+        print("pipeline_id = ", pipeline_id)
         topic1 = 'bbb'
         topic2 = 'ccc'
         pipe_metadata = PipelineMetadata(pipeline_id, topic1, topic2)
@@ -86,6 +97,9 @@ def delete_pipeline():  # noqa: E501
 
         for p in pipelines:
             if pipeline_id == p.pipeline_metadata.pipeline_id:
+                k8s_proxy_server = get_k8s_proxy()
+                response = k8s_proxy_server.delete_workflow_template(pipeline_id)
+                print("response = ", response)
                 pipelines.remove(p)
                 print_users()
                 print("exiting delete_pipeline")
