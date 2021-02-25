@@ -10,6 +10,17 @@ The API itself is specified in datalake_swagger.yaml and datalake_api.html.
 This code is work-in-progess.
 
 ## Requirements
+The datalake server requires that there first be running: kubernetes, kafka, argo.
+
+Kubernetes should use Docker container management (rather than containerd) for argo to work properly.
+
+For kubernetes, it is possible to run a simulated minikube cluster.
+
+This is a POC implementation.
+Authentication is not yet implemented.
+
+TODO:
+Proper permissions have to be set up to use the argo-events (argo-events-resource-admin-role).
 
 ## Usage
-[TODO]
+In the python-flask-server directory, fill in the proper values in conf.yaml and follow the instructions in the README file.

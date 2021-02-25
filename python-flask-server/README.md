@@ -11,11 +11,11 @@ This example uses the [Connexion](https://github.com/zalando/connexion) library 
 Python 3.5.2+
 
 ## Usage
-To run the server, please execute the following from the root directory:
+To run the server, define the proper URLs in conf.yaml and execute the following from the root directory:
 
 ```
 pip3 install -r requirements.txt
-python3 -m swagger_server
+python3 -m swagger_server conf.yaml
 ```
 
 and open your browser to here:
