@@ -13,6 +13,11 @@ class UserInfo():
         self.pipelineInfoList = list()
 
 
+def print_user(user_info):
+    for u in Users:
+        user_info = Users[u]
+        print("user = ", str(user_info.user), "resources = ", user_info.userResources, "pipelineInfoList = ", user_info.pipelineInfoList)
+
 def print_users():
     for u in Users:
         user_info = Users[u]

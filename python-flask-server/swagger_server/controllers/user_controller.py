@@ -1,13 +1,13 @@
 import connexion
 import six
-import time 
 
 from flask import Response
 from swagger_server.models.user import User  # noqa: E501
 from swagger_server.models.user_resources import UserResources  # noqa: E501
 from swagger_server import util
 from swagger_server.controllers.user_info import UserInfo
-from swagger_server.controllers.user_info import Users, print_users
+from swagger_server.controllers.user_info import Users, print_users, print_user
+from swagger_server.controllers.k8s_api import get_k8s_proxy
 
 def list_users():  # noqa: E501
     """List all User IDs
@@ -30,7 +30,6 @@ def register_user(body):  # noqa: E501
 
     :rtype: UserResources
     """
-    print("entering register_user")
     try:
         if connexion.request.is_json:
             body_json = connexion.request.get_json(force=True)
@@ -39,22 +38,28 @@ def register_user(body):  # noqa: E501
             return Response("{'error message':'data is not in json format'}", status=400, mimetype='application/json')
         user_id = bodyUser.user_id
         #TODO: check authToken
-        print ("user_id = ", user_id)
+        print ("register_user, user_id = ", user_id)
         if user_id in Users:
             return Response("{'error message':'user already registered'}", status=409, mimetype='application/json')
+
         #TODO make data persistent
         #TODO: generate returned data
-        timeStamp = time.time()
-        print("timeStamp = ", timeStamp)
-        nameSpace = user_id + str(timeStamp)
+        nameSpace = user_id
+
         #TODO: define the available Resources
-        availableResources = {}
+        k8s_proxy_server = get_k8s_proxy()
+        pipelines = {}
+        topics = {}
+        urls = k8s_proxy_server.conf_info
+        availableResources = {
+                "pipelines": pipelines,
+                "topics": topics,
+                "urls": urls
+                }
         user_resources = UserResources(nameSpace, availableResources)
         user_info = UserInfo(bodyUser, user_resources)
         Users[user_id] = user_info
-        print("Users = ", str(Users))
         print_users()
-        print("exiting register_user")
         return user_resources, 201
     except Exception as e:
         print("Exception: ", str(e))
@@ -73,31 +78,39 @@ def unregister_user():  # noqa: E501
 
     :rtype: None
     """
-    print("entering unregister_user")
     try:
         if connexion.request.is_json:
-            print ("inside if")
             body_json = connexion.request.get_json(force=True)
-            print("body_json = ", str(body_json))
             bodyUser = User.from_dict(body_json)
-            print("bodyUser = ", str(bodyUser))
-            print ("exiting if")
         else:
             raise Exception('data payload is not json')
         # TODO check validity of parameters
         user_id = bodyUser.user_id
         #TODO: check authToken
-        print ("user_id = ", user_id)
-        #TODO verify the element exists
-        # TODO cleanup all kinds of stuff
+        print ("unregister_user, user_id = ", user_id)
+        # verify the element exists
         if user_id in Users:
-            print ("deleting user_id = ", user_id)
-            del Users[user_id]
+            user = Users[user_id]
         else:
             return Response("{'error message':'user not registered'}", status=404, mimetype='application/json')
-        print("Users = ", str(Users))
+        # TODO cleanup all kinds of stuff
+
+        # delete all pipelines:
+        k8s_proxy_server = get_k8s_proxy()
+        pipelines = user.pipelineInfoList
+        while len(pipelines) > 0:
+            p = pipelines[0]
+            print("deleting pipeline: ", p)
+            # TODO: delete kafka topics, etc
+            # TODO: ignore exceptions that occur here, and continue to clean up
+            response = k8s_proxy_server.delete_workflow_template(p.pipeline_metadata.pipeline_id)
+            print("response = ", response)
+            pipelines.remove(p)
+            print_users()
+
+        print ("deleting user_id = ", user_id)
+        del Users[user_id]
         print_users()
-        print("exiting unregister_user")
         return
     except Exception as e:
         print("Exception: ", str(e))

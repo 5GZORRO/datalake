@@ -9,16 +9,11 @@ k8s_proxy_server = None
 def set_k8s_proxy(p):
     print("entering set_k8s_proxy ")
     global k8s_proxy_server
-    print("type = ", type(k8s_proxy_server))
     k8s_proxy_server = p
-    print("type = ", type(k8s_proxy_server))
     print("exiting set_k8s_proxy ")
 
 def get_k8s_proxy():
-    print("entering get_k8s_proxy ")
     global k8s_proxy_server
-    print("type = ", type(k8s_proxy_server))
-    print("exiting get_k8s_proxy ")
     return k8s_proxy_server
 
 class K8s_Proxy:
@@ -47,7 +42,6 @@ class K8s_Proxy:
 
     def load_workflow_template(self, template):
         print("entering load_workflow_template")
-        print("template = ", template)
         response = self.api.create_namespaced_custom_object(
             group="argoproj.io",
             version="v1alpha1",
@@ -55,7 +49,6 @@ class K8s_Proxy:
             plural="workflows",
             body=template
         )
-        print("response = ", response)
         print("exiting load_workflow_template")
         return response
 
@@ -69,7 +62,125 @@ class K8s_Proxy:
             name=pipeline_id,
             body=kubernetes.client.V1DeleteOptions()
         )
-        print("response = ", response)
-        print("exiting delete_template")
+        print("exiting delete_workflow_template")
         return response
 
+    def create_eventsource(self, user_id, in_out, pipeline_number):
+        print("entering create_eventsource")
+
+        event_source_name = '%s-%s-%s' % (user_id, in_out, str(pipeline_number))
+        event_source_template = {
+            'apiVersion': 'argoproj.io/v1alpha1',
+            'kind': 'EventSource',
+            'metadata': {
+                'name': event_source_name
+            },
+            'spec': {
+                'kafka': {}
+            }
+        }
+
+        _spec_kafka_template = {
+            'url': self.conf_info['kafka_url'],
+            'topic': event_source_name,
+            'jsonBody': True,
+            'partition': "0",
+            'connectionBackoff': {
+                'duration': 10000000000,
+                'steps': 5,
+                'factor': 2,
+                'jitter': 0.2,
+            }
+        }
+
+        kafka_key = '%s-event' % event_source_name
+        event_source_template['spec']['kafka'][kafka_key] = _spec_kafka_template
+
+        response = self.api.create_namespaced_custom_object(
+            group="argoproj.io",
+            version="v1alpha1",
+            namespace="argo-events",
+            plural="eventsources",
+            body=event_source_template
+        )
+        print("exiting create_eventsource")
+        return event_source_name, kafka_key
+
+    def delete_eventsource(self, event_source_name):
+        print("Deleting eventsource...")
+        print("event_source_name = ", event_source_name)
+        self.api.delete_namespaced_custom_object(
+            group="argoproj.io",
+            version="v1alpha1",
+            namespace="argo-events",
+            plural="eventsources",
+            name=event_source_name,
+            body=kubernetes.client.V1DeleteOptions()
+        )
+        print("exiting delete_eventsource...")
+
+    def create_sensor(self, event_name, kafka_key, workflow):
+        print("entering create_sensor")
+        print("event_name = ", event_name)
+
+        sensor_name = '%s-sensor' % (event_name)
+        trigger_name = '%s-trigger' % (event_name)
+        sensor_template = {
+            'apiVersion': 'argoproj.io/v1alpha1',
+            'kind': 'Sensor',
+            'metadata': {
+                'name': sensor_name
+                },
+            'spec': {
+                'template': {
+                    'serviceAccountName': 'argo-events-sa'
+                    },
+                'dependencies': [ {
+                    'name': 'my_dep',
+                    'eventSourceName': event_name,
+                    'eventName': kafka_key,
+                    } ],
+                'triggers': [ {
+                    'template': { 
+                        'name': trigger_name,
+                        'k8s': { 
+                            'group': 'argoproj.io',
+                            'version': 'v1alpha1',
+                            'resource': 'workflows',
+                            'operation': 'create',
+                            'source': { },
+                            'parameters': [ {
+                                'src': { 
+                                    'dependencyName': 'my_dep',
+                                    'dataKey': 'body'
+                                    },
+                                'dest': 'spec.arguments.parameters.0.value',
+                                } ]
+                            }
+                        }
+                    } ]
+                }
+            }
+        sensor_template['spec']['triggers'][0]['template']['k8s']['source']['resource'] = workflow
+        response = self.api.create_namespaced_custom_object(
+            group="argoproj.io",
+            version="v1alpha1",
+            namespace="argo-events",
+            plural="sensors",
+            body=sensor_template
+        )
+        #TODO save the created sensor id somewhere
+        print("exiting create_sensor")
+        return response
+
+    def delete_sensor(self, pipeline_id):
+        print("entering delete_sensor")
+        response = self.api.delete_namespaced_custom_object(
+            group="argoproj.io",
+            version="v1alpha1",
+            namespace="argo-events",
+            plural="sensors",
+            name=pipeline_id,
+            body=kubernetes.client.V1DeleteOptions()
+        )
+        print("exiting delete_sensor")
