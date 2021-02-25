@@ -6,8 +6,9 @@ from swagger_server.models.user import User  # noqa: E501
 from swagger_server.models.user_resources import UserResources  # noqa: E501
 from swagger_server import util
 from swagger_server.controllers.user_info import UserInfo
-from swagger_server.controllers.user_info import Users, print_users, print_user
+from swagger_server.controllers.user_info import Users, print_users
 from swagger_server.controllers.k8s_api import get_k8s_proxy
+from swagger_server.controllers.pipeline_controller import delete_pipeline_resources
 
 def list_users():  # noqa: E501
     """List all User IDs
@@ -103,8 +104,7 @@ def unregister_user():  # noqa: E501
             print("deleting pipeline: ", p)
             # TODO: delete kafka topics, etc
             # TODO: ignore exceptions that occur here, and continue to clean up
-            response = k8s_proxy_server.delete_workflow_template(p.pipeline_metadata.pipeline_id)
-            print("response = ", response)
+            delete_pipeline_resources(p)
             pipelines.remove(p)
             print_users()
 
