@@ -7,10 +7,8 @@ import sys
 k8s_proxy_server = None
 
 def set_k8s_proxy(p):
-    print("entering set_k8s_proxy ")
     global k8s_proxy_server
     k8s_proxy_server = p
-    print("exiting set_k8s_proxy ")
 
 def get_k8s_proxy():
     global k8s_proxy_server
@@ -31,14 +29,13 @@ class K8s_Proxy:
             raise Exception('incorrect number of command-line parameters; need parameter conf file')
         conf_file = sys.argv[1]
         file1 = open(conf_file, 'r')
-        content = file1.read()
-        lines = content.splitlines()
-        conf_info = {}
-        for line in lines:
-            # extract the defined fields and their values
-            line2 = line.split(':', 1)
-            conf_info[line2[0].strip()] = line2[1].strip()
-        self.conf_info = conf_info
+        content = yaml.load(file1)
+        if 'urls' in content:
+            urls = content['urls']
+        else:
+            urls = {}
+        self.urls = urls
+        self.conf = content
 
     def load_workflow_template(self, template):
         print("entering load_workflow_template")
@@ -81,7 +78,7 @@ class K8s_Proxy:
         }
 
         _spec_kafka_template = {
-            'url': self.conf_info['kafka_url'],
+            'url': self.urls['kafka_url'],
             'topic': event_source_name,
             'jsonBody': True,
             'partition': "0",

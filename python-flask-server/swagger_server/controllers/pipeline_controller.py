@@ -11,6 +11,7 @@ from swagger_server import util
 
 from swagger_server.controllers.user_info import Users, print_users
 from swagger_server.controllers.k8s_api import get_k8s_proxy
+from swagger_server.controllers.kafka_api import get_kafka_proxy
 
 next_index = 1
 
@@ -80,6 +81,9 @@ def delete_pipeline_resources(p):
     print("event_source_name = ", event_source_name)
     k8s_proxy_server.delete_eventsource(input_topic)
     response = k8s_proxy_server.delete_sensor(p.pipeline_metadata.pipeline_id)
+    print("response = ", response)
+    kafka_proxy_server = get_kafka_proxy()
+    response = kafka_proxy_server.delete_topic(input_topic)
     print("response = ", response)
     print("exiting delete_pipeline_resources")
     return

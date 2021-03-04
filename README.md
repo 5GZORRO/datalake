@@ -10,7 +10,7 @@ The API itself is specified in datalake_swagger.yaml and datalake_api.html.
 This code is work-in-progess.
 
 ## Requirements
-The datalake server requires that there first be running: kubernetes, kafka, argo.
+The datalake server requires that there first be running: kubernetes, kafka, argo, s3 object store (can be minio).
 
 Kubernetes should use Docker container management (rather than containerd) for argo to work properly.
 
