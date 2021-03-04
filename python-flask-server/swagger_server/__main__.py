@@ -4,6 +4,7 @@ import connexion
 
 from swagger_server import encoder
 from swagger_server.controllers.k8s_api import K8s_Proxy, set_k8s_proxy
+from swagger_server.controllers.s3_api import S3_Proxy, set_s3_proxy
 
 
 def main():
@@ -13,6 +14,8 @@ def main():
     app.add_api('swagger.yaml', arguments={'title': 'Data Lake API'})
     k8s_proxy = K8s_Proxy()
     set_k8s_proxy(k8s_proxy)
+    s3_proxy = S3_Proxy()
+    set_s3_proxy(s3_proxy)
     app.run(port=8080)
 
 
