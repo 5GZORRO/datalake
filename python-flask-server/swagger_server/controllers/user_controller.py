@@ -9,6 +9,7 @@ from swagger_server.controllers.user_info import UserInfo
 from swagger_server.controllers.user_info import Users, print_users
 from swagger_server.controllers.k8s_api import get_k8s_proxy
 from swagger_server.controllers.s3_api import get_s3_proxy
+from swagger_server.controllers.kafka_api import get_kafka_proxy
 from swagger_server.controllers.pipeline_controller import delete_pipeline_resources
 
 def list_users():  # noqa: E501
@@ -51,14 +52,20 @@ def register_user(body):  # noqa: E501
         #TODO: define the available Resources
         k8s_proxy_server = get_k8s_proxy()
         s3_proxy_server = get_s3_proxy()
-        pipelines = {}
-        topics = {}
+        kafka_proxy_server = get_kafka_proxy()
         # TODO change this to a function call
         s3_bucket_name, s3_bucket_url = s3_proxy_server.create_bucket(user_id, "dl-bucket")
-        print("s3_bucket_name = ", s3_bucket_name)
-        print("s3_bucket_url = ", s3_bucket_url)
         urls = k8s_proxy_server.urls
         urls['s3_bucket_url'] = s3_bucket_url
+        topic_name_in = user_id + "-topic-in"
+        topic_name_out = user_id + "-topic-out"
+        kafka_proxy_server.create_topic(user_id, topic_name_in)
+        kafka_proxy_server.create_topic(user_id, topic_name_out)
+        pipelines = {}
+        topics = {
+                "userInTopic": topic_name_in,
+                "userOutTopic": topic_name_out,
+                }
         availableResources = {
                 "pipelines": pipelines,
                 "topics": topics,
@@ -103,6 +110,9 @@ def unregister_user():  # noqa: E501
         else:
             return Response("{'error message':'user not registered'}", status=404, mimetype='application/json')
         # TODO cleanup all kinds of stuff
+        kafka_proxy_server = get_kafka_proxy()
+        kafka_proxy_server.delete_topic(user.userResources.available_resources["topics"]["userInTopic"])
+        kafka_proxy_server.delete_topic(user.userResources.available_resources["topics"]["userOutTopic"])
 
         # TODO verify the bucket is empty - or empty it out
         s3_proxy_server = get_s3_proxy()
@@ -113,12 +123,10 @@ def unregister_user():  # noqa: E501
         pipelines = user.pipelineInfoList
         while len(pipelines) > 0:
             p = pipelines[0]
-            print("deleting pipeline: ", p)
             # TODO: delete kafka topics, etc
             # TODO: ignore exceptions that occur here, and continue to clean up
             delete_pipeline_resources(p)
             pipelines.remove(p)
-            print_users()
 
         print ("deleting user_id = ", user_id)
         del Users[user_id]
