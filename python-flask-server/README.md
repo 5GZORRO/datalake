@@ -38,12 +38,24 @@ tox
 
 ## Running with Docker
 
-To run the server on a Docker container, please log in to kubernetes master and execute the following from the root directory:
+Log in to kubernetes master
+
+### Build 
 
 ```bash
-# building the image
 docker build -t swagger_server .
+```
 
+### Run
+
+Update kubernetes configuration path accordingly
+
+```bash
 export KUBE_PATH_NAME=${HOME}/.kube
+```
+
+start the container
+
+```bash
 docker run -v ${KUBE_PATH_NAME}:/root/.kube -p 8080:8080 swagger_server
 ```
