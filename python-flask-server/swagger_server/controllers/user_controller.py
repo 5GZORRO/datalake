@@ -8,7 +8,7 @@ from swagger_server import util
 from swagger_server.controllers.user_info import UserInfo
 from swagger_server.controllers.user_info import Users, print_users
 from swagger_server.controllers.k8s_api import get_k8s_proxy
-from swagger_server.controllers.s3_api import get_s3_proxy
+#from swagger_server.controllers.s3_api import get_s3_proxy
 from swagger_server.controllers.kafka_api import get_kafka_proxy
 from swagger_server.controllers.pipeline_controller import delete_pipeline_resources
 
@@ -51,12 +51,12 @@ def register_user(body):  # noqa: E501
 
         #TODO: define the available Resources
         k8s_proxy_server = get_k8s_proxy()
-        s3_proxy_server = get_s3_proxy()
+        #s3_proxy_server = get_s3_proxy()
         kafka_proxy_server = get_kafka_proxy()
         # TODO change this to a function call
-        s3_bucket_name, s3_bucket_url = s3_proxy_server.create_bucket(user_id, "dl-bucket")
+        #s3_bucket_name, s3_bucket_url = s3_proxy_server.create_bucket(user_id, "dl-bucket")
         urls = k8s_proxy_server.urls
-        urls['s3_bucket_url'] = s3_bucket_url
+        #urls['s3_bucket_url'] = s3_bucket_url
         topic_name_in = user_id + "-topic-in"
         topic_name_out = user_id + "-topic-out"
         kafka_proxy_server.create_topic(user_id, topic_name_in)
@@ -70,7 +70,7 @@ def register_user(body):  # noqa: E501
                 "pipelines": pipelines,
                 "topics": topics,
                 "urls": urls,
-                "s3_bucket": s3_bucket_name,
+                #"s3_bucket": s3_bucket_name,
                 }
         user_resources = UserResources(nameSpace, availableResources)
         user_info = UserInfo(bodyUser, user_resources)
@@ -115,8 +115,8 @@ def unregister_user():  # noqa: E501
         kafka_proxy_server.delete_topic(user.userResources.available_resources["topics"]["userOutTopic"])
 
         # TODO verify the bucket is empty - or empty it out
-        s3_proxy_server = get_s3_proxy()
-        s3_proxy_server.delete_bucket(user.userResources.available_resources["s3_bucket"])
+        #s3_proxy_server = get_s3_proxy()
+        #s3_proxy_server.delete_bucket(user.userResources.available_resources["s3_bucket"])
 
         # delete all pipelines:
         k8s_proxy_server = get_k8s_proxy()
