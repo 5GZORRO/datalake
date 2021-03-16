@@ -1,0 +1,114 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: OVERRIDE
+  labels:
+    zorro_tenant: exists
+spec:
+  template:
+    serviceAccountName: argo-events-sa
+  dependencies:
+    - name: input-dep
+      eventSourceName: OVERRIDE
+      eventName: OVERRIDE
+
+  triggers:
+    - template:
+        name: pipeline-trigger
+        k8s:
+          group: argoproj.io
+          version: v1alpha1
+          resource: workflows
+          operation: create
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                generateName: OVERRIDE
+                labels:
+                  user_id: OVERRIDE
+              spec:
+                entrypoint: handlerequest
+                imagePullSecrets:
+                - name: myregistrykey
+                arguments:
+                  parameters:
+                  - name: kafka_ip
+                    value: OVERRIDE
+                  - name: kafka_port
+                    value: OVERRIDE
+
+                  - name: catalog_ip
+                    value: 1.2.3.4
+                  - name: catalog_port
+                    value: 80
+
+                  - name: objectstore_ip
+                    value: 1.2.3.4
+                  - name: objectstore_port
+                    value: 80
+
+                  - name: operation
+                    value: OVERRIDE
+
+                  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  # Payload parameters
+                  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  - name: metric_name
+                    value: OVERRIDE
+
+                  - name: metric_value
+                    value: OVERRIDE
+
+                  - name: resource_uuid
+                    value: OVERRIDE
+
+                templates:
+                - name: handlerequest
+                  steps:
+                  - - name: handle-metric
+                      template: ingest-metric-flow
+                      when: "{{workflow.parameters.operation}} == \"incoming_metric\""
+
+                - name: ingest-metric-flow
+                  dag:
+                    tasks:
+                    - name: print-message
+                      template: whalesay
+                      arguments:
+                        parameters:
+                        - name: message
+                          value: "Received metric from resource id [{{workflow.parameters.resource_uuid}}]: {{workflow.parameters.metric_name}}, {{workflow.parameters.metric_value}}"
+
+                - name: whalesay
+                  inputs:
+                    parameters:
+                    - name: message
+                  container:
+                    image: docker/whalesay
+                    command: [cowsay]
+                    args: ["{{inputs.parameters.message}}"]
+
+          parameters:
+            - src:
+                dependencyName: input-dep
+                dataKey: body.operation
+                value: DEFAULT
+              dest: spec.arguments.parameters.6.value
+            - src:
+                dependencyName: input-dep
+                dataKey: body.metric_name
+                value: DEFAULT
+              dest: spec.arguments.parameters.7.value
+            - src:
+                dependencyName: input-dep
+                dataKey: body.metric_value
+                value: DEFAULT
+              dest: spec.arguments.parameters.8.value
+            - src:
+                dependencyName: input-dep
+                dataKey: body.resource_uuid
+                value: DEFAULT
+              dest: spec.arguments.parameters.9.value
+              

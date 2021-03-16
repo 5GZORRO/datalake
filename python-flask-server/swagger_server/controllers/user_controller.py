@@ -1,5 +1,6 @@
 import connexion
 import six
+import yaml
 
 from flask import Response
 from swagger_server.models.user import User  # noqa: E501
@@ -57,14 +58,22 @@ def register_user(body):  # noqa: E501
         #s3_bucket_name, s3_bucket_url = s3_proxy_server.create_bucket(user_id, "dl-bucket")
         urls = k8s_proxy_server.urls
         #urls['s3_bucket_url'] = s3_bucket_url
-        topic_name_in = user_id + "-topic-in"
-        topic_name_out = user_id + "-topic-out"
-        kafka_proxy_server.create_topic(user_id, topic_name_in)
+
+        with open('pipelines/ingest-sensor.yaml') as f:
+            sensor_yaml = yaml.load(f, Loader=yaml.FullLoader)
+
+        event_source_name = k8s_proxy_server.create_eventsource(user_id, 'in', next_index=0)
+        k8s_proxy_server.create_sensor(sensor_yaml, user_id, event_source_name)
+
+        #topic_name_in = user_id + "-topic-in"
+        out_topic = user_id + "-out-0"
+        #kafka_proxy_server.create_topic(user_id, topic_name_in)
         kafka_proxy_server.create_topic(user_id, topic_name_out)
         pipelines = {}
         topics = {
-                "userInTopic": topic_name_in,
-                "userOutTopic": topic_name_out,
+                # <user_id>-<in_out>-<index>
+                "userInTopic": in_topic,
+                "userOutTopic": out_topic,
                 }
         availableResources = {
                 "pipelines": pipelines,
