@@ -1,6 +1,7 @@
+import os
+
 
 from kafka.admin import KafkaAdminClient, NewTopic
-from swagger_server.controllers.k8s_api import get_k8s_proxy
 
 
 kafka_proxy_server = None
@@ -16,9 +17,7 @@ def get_kafka_proxy():
 class Kafka_Proxy:
     def __init__(self):
         # obtain configuration information - URLs, secrets, etc
-        k8s_proxy_server = get_k8s_proxy()
-        # TODO check for all kinds of errors
-        self.kafka_url = k8s_proxy_server.urls['kafka_url']
+        self.kafka_url = os.getenv('KAFKA_URL', '127.0.0.1:8443')
         client = KafkaAdminClient(
             bootstrap_servers=self.kafka_url,
             #TODO need to define a DL (datalake) user in kafka

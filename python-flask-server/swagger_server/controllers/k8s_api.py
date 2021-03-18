@@ -1,8 +1,9 @@
-
 import os
 import kubernetes
 import yaml
 import sys
+
+from swagger_server.controllers import kafka_api
 
 k8s_proxy_server = None
 
@@ -24,18 +25,7 @@ class K8s_Proxy:
         self.api = kubernetes.client.CustomObjectsApi()
         self.core_api = kubernetes.client.CoreV1Api()
 
-        # obtain configuration information - URLs, etc
-        if len(sys.argv) != 2:
-            raise Exception('incorrect number of command-line parameters; need parameter conf file')
-        conf_file = sys.argv[1]
-        file1 = open(conf_file, 'r')
-        content = yaml.load(file1)
-        if 'urls' in content:
-            urls = content['urls']
-        else:
-            urls = {}
-        self.urls = urls
-        self.conf = content
+        self.k8s_url = os.getenv('KUBERNETES_URL', '127.0.0.1:8443')
 
     def load_workflow_template(self, template):
         print("entering load_workflow_template")
@@ -65,6 +55,8 @@ class K8s_Proxy:
     def create_eventsource(self, user_id, in_out, pipeline_number):
         print("entering create_eventsource")
 
+        kafka_proxy_server = kafka_api.get_kafka_proxy()
+
         event_source_name = '%s-%s-%s' % (user_id, in_out, str(pipeline_number))
         event_source_template = {
             'apiVersion': 'argoproj.io/v1alpha1',
@@ -78,7 +70,7 @@ class K8s_Proxy:
         }
 
         _spec_kafka_template = {
-            'url': self.urls['kafka_url'],
+            'url': kafka_proxy_server.kafka_url,
             'topic': event_source_name,
             'jsonBody': True,
             'partition': "0",
