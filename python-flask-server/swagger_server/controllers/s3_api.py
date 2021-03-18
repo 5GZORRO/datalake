@@ -2,7 +2,6 @@ import os
 
 from minio import Minio
 from minio.error import S3Error
-from swagger_server.controllers.k8s_api import get_k8s_proxy
 
 
 s3_proxy_server = None
