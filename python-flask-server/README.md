@@ -54,8 +54,14 @@ Update kubernetes configuration path accordingly
 export KUBE_PATH_NAME=${HOME}/.kube
 ```
 
-start the container
+Please override the needed environment variables and start the container
 
 ```bash
-docker run -v ${KUBE_PATH_NAME}:/root/.kube -p 8080:8080 swagger_server
+docker run -v ${KUBE_PATH_NAME}:/root/.kube -p 8080:8080 \
+  --env KUBERNETES_URL='192.168.122.176:8443' \
+  --env KAFKA_URL='192.168.122.176:8443' \
+  --env S3_URL='192.168.122.176:9000' \
+  --env S3_ACCESS_KEY='user' \
+  --env S3_SECRETE_KEY='password' \
+  swagger_server
 ```

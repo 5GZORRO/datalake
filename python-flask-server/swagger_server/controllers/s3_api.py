@@ -1,3 +1,4 @@
+import os
 
 from minio import Minio
 from minio.error import S3Error
@@ -17,12 +18,10 @@ def get_s3_proxy():
 class S3_Proxy:
     def __init__(self):
         # obtain configuration information - URLs, secrets, etc
-        k8s_proxy_server = get_k8s_proxy()
-        # TODO check for all kinds of errors
-        self.s3_url = k8s_proxy_server.urls['s3_url']
-        s3_secret = k8s_proxy_server.conf['secrets']['s3']
-        s3_access_key = s3_secret['access_key']
-        s3_secret_key = s3_secret['secret_key']
+        self.s3_url = self.kafka_url = os.getenv('S3_URL', '192.168.122.176:9000')
+
+        s3_access_key = os.getenv('S3_ACCESS_KEY', 'user')
+        s3_secret_key = os.getenv('S3_SECRETE_KEY', 'password')
         client = Minio(
             self.s3_url,
             access_key=s3_access_key,
