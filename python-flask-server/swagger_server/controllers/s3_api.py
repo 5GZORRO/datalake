@@ -17,7 +17,7 @@ def get_s3_proxy():
 class S3_Proxy:
     def __init__(self):
         # obtain configuration information - URLs, secrets, etc
-        self.s3_url = self.kafka_url = os.getenv('S3_URL', '192.168.122.176:9000')
+        self.s3_url = self.kafka_url = os.getenv('S3_URL', '127.0.0.1:9000')
 
         s3_access_key = os.getenv('S3_ACCESS_KEY', 'user')
         s3_secret_key = os.getenv('S3_SECRETE_KEY', 'password')

@@ -25,7 +25,7 @@ class K8s_Proxy:
         self.api = kubernetes.client.CustomObjectsApi()
         self.core_api = kubernetes.client.CoreV1Api()
 
-        self.k8s_url = os.getenv('KUBERNETES_URL', '192.168.122.176:8443')
+        self.k8s_url = os.getenv('KUBERNETES_URL', '127.0.0.1:8443')
 
     def load_workflow_template(self, template):
         print("entering load_workflow_template")

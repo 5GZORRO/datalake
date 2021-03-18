@@ -17,7 +17,7 @@ def get_kafka_proxy():
 class Kafka_Proxy:
     def __init__(self):
         # obtain configuration information - URLs, secrets, etc
-        self.kafka_url = os.getenv('KAFKA_URL', '192.168.122.176:8443')
+        self.kafka_url = os.getenv('KAFKA_URL', '127.0.0.1:8443')
         client = KafkaAdminClient(
             bootstrap_servers=self.kafka_url,
             #TODO need to define a DL (datalake) user in kafka
