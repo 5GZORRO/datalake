@@ -112,6 +112,16 @@ class K8s_Proxy:
         print("entering create_sensor")
         print("event_name = ", event_name)
 
+        workflow_parameters = workflow['spec'].get('arguments', {}).get('parameters', [])
+        sensor_parameters = []
+        # inject parameters to sensor object
+        for i in range(len(workflow_parameters)):
+            wfp = workflow_parameters[i]
+            # TODO: remove fixed dependencyName
+            src = dict(dependencyName='my_dep', dataKey='body.%s' % wfp['name'])
+            dest = 'spec.arguments.parameters.%s.value' % str(i)
+            sensor_parameters.append(dict(src=src, dest=dest))
+
         sensor_name = '%s-sensor' % (event_name)
         trigger_name = '%s-trigger' % (event_name)
         sensor_template = {
@@ -138,13 +148,7 @@ class K8s_Proxy:
                             'resource': 'workflows',
                             'operation': 'create',
                             'source': { },
-                            'parameters': [ {
-                                'src': { 
-                                    'dependencyName': 'my_dep',
-                                    'dataKey': 'body'
-                                    },
-                                'dest': 'spec.arguments.parameters.0.value',
-                                } ]
+                            'parameters': sensor_parameters
                             }
                         }
                     } ]

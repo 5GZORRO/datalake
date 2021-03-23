@@ -1,5 +1,6 @@
 import connexion
 import six
+import yaml
 
 from flask import Response
 from swagger_server.models.user import User  # noqa: E501
@@ -11,6 +12,9 @@ from swagger_server.controllers import k8s_api
 #from swagger_server.controllers.s3_api import get_s3_proxy
 from swagger_server.controllers import kafka_api
 from swagger_server.controllers.pipeline_controller import delete_pipeline_resources
+
+from swagger_server.models.pipeline_info import PipelineInfo
+from swagger_server.models.pipeline_metadata import PipelineMetadata
 
 def list_users():  # noqa: E501
     """List all User IDs
@@ -58,13 +62,26 @@ def register_user(body):  # noqa: E501
         urls = {}
         urls['k8s_url'] = k8s_proxy_server.k8s_url
         #urls['s3_bucket_url'] = s3_bucket_url
-        topic_name_in = user_id + "-topic-in"
-        topic_name_out = user_id + "-topic-out"
-        kafka_proxy_server.create_topic(user_id, topic_name_in)
+        # Have these to match create eventsource logic
+        topic_name_in = user_id + "-in-0"
+        topic_name_out = user_id + "-out-0"
+
+        # Commented out because argo-events (eventsource) creates this topic automatically
+        #kafka_proxy_server.create_topic(user_id, topic_name_in)
         kafka_proxy_server.create_topic(user_id, topic_name_out)
+
+        with open('pipelines/ingest-pipeline.yaml') as f:
+            ingest_def = yaml.load(f, Loader=yaml.FullLoader)
+
+        ingest_topic, kafka_key = k8s_proxy_server.create_eventsource(user_id, 'in', pipeline_number=0)
+        response = k8s_proxy_server.create_sensor(ingest_topic, kafka_key, ingest_def)
+        print("response = ", response)
+        pipeline_id = response['metadata']['name']
+        print("pipeline_id = ", pipeline_id)
+
         pipelines = {}
         topics = {
-                "userInTopic": topic_name_in,
+                "userInTopic": ingest_topic,
                 "userOutTopic": topic_name_out,
                 }
         availableResources = {
@@ -73,15 +90,19 @@ def register_user(body):  # noqa: E501
                 "urls": urls,
                 #"s3_bucket": s3_bucket_name,
                 }
+
+        pipe_metadata = PipelineMetadata(pipeline_id, ingest_topic, output_topic='')
+        pipe_info = PipelineInfo(pipe_metadata, ingest_def)
+
         user_resources = UserResources(nameSpace, availableResources)
         user_info = UserInfo(bodyUser, user_resources)
+        user_info.pipelineInfoList.append(pipe_info)
         Users[user_id] = user_info
         print_users()
         return user_resources, 201
     except Exception as e:
         print("Exception: ", str(e))
         raise e
-
 
 
 #def unregister_user(body):  # noqa: E501
@@ -112,7 +133,9 @@ def unregister_user():  # noqa: E501
             return Response("{'error message':'user not registered'}", status=404, mimetype='application/json')
         # TODO cleanup all kinds of stuff
         kafka_proxy_server = kafka_api.get_kafka_proxy()
-        kafka_proxy_server.delete_topic(user.userResources.available_resources["topics"]["userInTopic"])
+        # commented out because now it is bound to ingest pipeline which get removed below at delete_pipeline_resources
+        #kafka_proxy_server.delete_topic(user.userResources.available_resources["topics"]["userInTopic"])
+
         kafka_proxy_server.delete_topic(user.userResources.available_resources["topics"]["userOutTopic"])
 
         # TODO verify the bucket is empty - or empty it out

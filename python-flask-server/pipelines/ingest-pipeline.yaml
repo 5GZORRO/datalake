@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: ingest-
+spec:
+  entrypoint: handlerequest
+  imagePullSecrets:
+  - name: myregistrykey
+  arguments:
+    parameters:
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Payload parameters to be
+    # overriden by the event values
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - name: userID
+      value: OVERRIDE
+
+    - name: businessID
+      value: OVERRIDE
+
+    - name: networkID
+      value: OVERRIDE
+
+    - name: data
+      value: OVERRIDE
+
+  templates:
+  - name: handlerequest
+    dag:
+      tasks:
+      - name: print-message
+        template: whalesay
+        arguments:
+          parameters:
+          - name: message
+            value: "Received metric: {{workflow.parameters.userID}}, {{workflow.parameters.businessID}}, {{workflow.parameters.networkID}}"
+
+  - name: whalesay
+    inputs:
+      parameters:
+      - name: message
+    container:
+      image: docker/whalesay
+      command: [cowsay]
+      args: ["{{inputs.parameters.message}}"]
