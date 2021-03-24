@@ -6,11 +6,11 @@ from swagger_server.models.user import User  # noqa: E501
 from swagger_server.models.user_resources import UserResources  # noqa: E501
 from swagger_server import util
 from swagger_server.controllers.user_info import UserInfo
-from swagger_server.controllers.user_info import Users, print_users
+from swagger_server.controllers import user_info
 from swagger_server.controllers import k8s_api
-#from swagger_server.controllers.s3_api import get_s3_proxy
+from swagger_server.controllers import s3_api
 from swagger_server.controllers import kafka_api
-from swagger_server.controllers.pipeline_controller import delete_pipeline_resources
+from swagger_server.controllers import pipeline_controller
 
 def list_users():  # noqa: E501
     """List all User IDs
@@ -20,7 +20,7 @@ def list_users():  # noqa: E501
 
     :rtype: List[str]
     """
-    return list(Users)
+    return list(user_info.Users)
 
 
 def register_user(body):  # noqa: E501
@@ -42,7 +42,7 @@ def register_user(body):  # noqa: E501
         user_id = bodyUser.user_id
         #TODO: check authToken
         print ("register_user, user_id = ", user_id)
-        if user_id in Users:
+        if user_id in user_info.Users:
             return Response("{'error message':'user already registered'}", status=409, mimetype='application/json')
 
         #TODO make data persistent
@@ -51,15 +51,16 @@ def register_user(body):  # noqa: E501
 
         #TODO: define the available Resources
         k8s_proxy_server = k8s_api.get_k8s_proxy()
-        #s3_proxy_server = get_s3_proxy()
+        s3_proxy_server = s3_api.get_s3_proxy()
         kafka_proxy_server = kafka_api.get_kafka_proxy()
         # TODO change this to a function call
-        #s3_bucket_name, s3_bucket_url = s3_proxy_server.create_bucket(user_id, "dl-bucket")
+        s3_bucket_name = s3_proxy_server.create_bucket(user_id, "dl-bucket")
         urls = {}
         urls['k8s_url'] = k8s_proxy_server.k8s_url
-        #urls['s3_bucket_url'] = s3_bucket_url
-        topic_name_in = user_id + "-topic-in"
-        topic_name_out = user_id + "-topic-out"
+        urls['kafka_url'] = kafka_proxy_server.kafka_url
+        urls['s3_url'] = s3_proxy_server.s3_url
+        topic_name_in = user_id + "-in-0"
+        topic_name_out = user_id + "-out-0"
         kafka_proxy_server.create_topic(user_id, topic_name_in)
         kafka_proxy_server.create_topic(user_id, topic_name_out)
         pipelines = {}
@@ -71,12 +72,11 @@ def register_user(body):  # noqa: E501
                 "pipelines": pipelines,
                 "topics": topics,
                 "urls": urls,
-                #"s3_bucket": s3_bucket_name,
+                "s3_bucket": s3_bucket_name,
                 }
         user_resources = UserResources(nameSpace, availableResources)
-        user_info = UserInfo(bodyUser, user_resources)
-        Users[user_id] = user_info
-        print_users()
+        u_info = UserInfo(bodyUser, user_resources)
+        user_info.Users[user_id] = u_info
         return user_resources, 201
     except Exception as e:
         print("Exception: ", str(e))
@@ -106,8 +106,8 @@ def unregister_user():  # noqa: E501
         #TODO: check authToken
         print ("unregister_user, user_id = ", user_id)
         # verify the element exists
-        if user_id in Users:
-            user = Users[user_id]
+        if user_id in user_info.Users:
+            user = user_info.Users[user_id]
         else:
             return Response("{'error message':'user not registered'}", status=404, mimetype='application/json')
         # TODO cleanup all kinds of stuff
@@ -116,7 +116,7 @@ def unregister_user():  # noqa: E501
         kafka_proxy_server.delete_topic(user.userResources.available_resources["topics"]["userOutTopic"])
 
         # TODO verify the bucket is empty - or empty it out
-        #s3_proxy_server = get_s3_proxy()
+        #s3_proxy_server = s3_api.get_s3_proxy()
         #s3_proxy_server.delete_bucket(user.userResources.available_resources["s3_bucket"])
 
         # delete all pipelines:
@@ -126,12 +126,11 @@ def unregister_user():  # noqa: E501
             p = pipelines[0]
             # TODO: delete kafka topics, etc
             # TODO: ignore exceptions that occur here, and continue to clean up
-            delete_pipeline_resources(p)
+            pipeline_controller.delete_pipeline_resources(p)
             pipelines.remove(p)
 
         print ("deleting user_id = ", user_id)
-        del Users[user_id]
-        print_users()
+        del user_info.Users[user_id]
         return
     except Exception as e:
         print("Exception: ", str(e))

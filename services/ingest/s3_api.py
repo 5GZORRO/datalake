@@ -19,7 +19,6 @@ class S3_Proxy:
     def __init__(self):
         # obtain configuration information - URLs, secrets, etc
         self.s3_url = os.getenv('S3_URL', '127.0.0.1:9000')
-        print("s3_url ", self.s3_url)
 
         s3_access_key = os.getenv('S3_ACCESS_KEY', 'user')
         s3_secret_key = os.getenv('S3_SECRET_KEY', 'password')
@@ -31,23 +30,17 @@ class S3_Proxy:
         )
         self.client = client
 
-    def create_bucket(self, user_id, bucket_id):
-        #TODO use user_id to set permissions
-        long_bucket_name = user_id + '-' + bucket_id
-        found = self.client.bucket_exists(long_bucket_name)
-        if not found:
-            self.client.make_bucket(long_bucket_name)
-        else:
-            print("Bucket ", long_bucket_name, " already exists")
-        return long_bucket_name
-
-    def delete_bucket(self, long_bucket_name):
-        found = self.client.bucket_exists(long_bucket_name)
+    # data is expected to be a string
+    def put_object(self, user_id, bucket_name, data, data_hash, timestamp, object_name_prefix):
+        found = self.client.bucket_exists(bucket_name)
+        # convert data string into a bytes stream to be consumable by s3 client put_object.
+        b = data.encode('utf-8')
+        value_as_a_stream = io.BytesIO(b)
         if found:
-            self.client.remove_bucket(long_bucket_name)
+            object_name = object_name_prefix + '/' + timestamp
+            # TODO add hash as metadata to object
+            rc = self.client.put_object(bucket_name, object_name, value_as_a_stream, len(data))
             ret = 204
         else:
-            print("Bucket ", long_bucket_name, "not found ")
             ret = 404
         return ret
-
