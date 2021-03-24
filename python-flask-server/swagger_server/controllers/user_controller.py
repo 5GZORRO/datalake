@@ -79,7 +79,7 @@ def register_user(body):  # noqa: E501
         pipeline_id = response['metadata']['name']
         print("pipeline_id = ", pipeline_id)
 
-        pipelines = {}
+        pipelines = []
         topics = {
                 "userInTopic": ingest_topic,
                 "userOutTopic": topic_name_out,
@@ -93,6 +93,8 @@ def register_user(body):  # noqa: E501
 
         pipe_metadata = PipelineMetadata(pipeline_id, ingest_topic, output_topic='')
         pipe_info = PipelineInfo(pipe_metadata, ingest_def)
+
+        availableResources["pipelines"].append(pipe_metadata)
 
         user_resources = UserResources(nameSpace, availableResources)
         user_info = UserInfo(bodyUser, user_resources)
