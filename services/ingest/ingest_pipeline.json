@@ -1,0 +1,44 @@
+{
+    "apiVersion": "argoproj.io/v1alpha1",
+    "kind": "Workflow",
+    "metadata": {
+        "generateName": "ingest-"
+    },
+    "spec": {
+        "entrypoint": "ingest",
+        "arguments": {
+            "parameters": [ {
+                "name": "args",
+                "value": "my args"
+		    } ]
+		},
+        "templates": [ {
+            "name": "ingest",
+            "inputs": {
+                "parameters": [ {
+                    "name": "args"
+			} ]
+		    },
+            "container": {
+                "image": "ingest",
+		"env": [
+			{ "name": "S3_URL",
+			"value": "192.168.122.176:9000" },
+			{ "name": "S3_ACCESS_KEY",
+			"value": "user" },
+			{ "name": "S3_SECRET_KEY",
+			"value": "password" }
+		],
+		"imagePullPolicy": "Never",
+                "command": [ "python", "./__main__.py" ],
+                "args": ["{{inputs.parameters.args}}"],
+                "resources": {
+                    "limits": {
+                        "memory": "32Mi",
+                        "cpu": "100m"
+                    }
+                }
+            }
+        } ]
+    }
+}

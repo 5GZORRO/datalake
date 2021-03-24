@@ -11,10 +11,16 @@ This example uses the [Connexion](https://github.com/zalando/connexion) library 
 Python 3.5.2+
 
 ## Usage
-To run the server, define the proper URLs in conf.yaml and execute the following from the root directory:
+Before running the server, first install the pre-requisites:
 
 ```
 pip3 install -r requirements.txt
+```
+
+To run the server, define the proper URLs in the env file, and execute the following from the root directory:
+
+```
+. env
 python3 -m swagger_server conf.yaml
 ```
 
@@ -62,6 +68,6 @@ docker run -v ${KUBE_PATH_NAME}:/root/.kube -p 8080:8080 \
   --env KAFKA_URL='127.0.0.1:9092' \
   --env S3_URL='127.0.0.1:9000' \
   --env S3_ACCESS_KEY='user' \
-  --env S3_SECRETE_KEY='password' \
+  --env S3_SECRET_KEY='password' \
   swagger_server
 ```

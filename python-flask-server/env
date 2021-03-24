@@ -1,0 +1,5 @@
+export KUBERNETES_URL=127.0.0.1:8443
+export KAFKA_URL=127.0.0.1:9092
+export S3_URL=127.0.0.1:9000
+export S3_ACCESS_KEY=user
+export S3_SECRET_KEY=password

@@ -1,6 +1,5 @@
 import os
 import kubernetes
-import yaml
 import sys
 
 from swagger_server.controllers import kafka_api
@@ -26,6 +25,7 @@ class K8s_Proxy:
         self.core_api = kubernetes.client.CoreV1Api()
 
         self.k8s_url = os.getenv('KUBERNETES_URL', '127.0.0.1:8443')
+        print("k8_url = ", self.k8s_url)
 
     def load_workflow_template(self, template):
         print("entering load_workflow_template")
@@ -84,6 +84,7 @@ class K8s_Proxy:
 
         kafka_key = '%s-event' % event_source_name
         event_source_template['spec']['kafka'][kafka_key] = _spec_kafka_template
+        print("event_source_template = ", event_source_template)
 
         response = self.api.create_namespaced_custom_object(
             group="argoproj.io",
@@ -92,6 +93,7 @@ class K8s_Proxy:
             plural="eventsources",
             body=event_source_template
         )
+        print("response = ", response)
         print("exiting create_eventsource")
         return event_source_name, kafka_key
 
