@@ -2,6 +2,7 @@ import os
 
 
 from kafka.admin import KafkaAdminClient, NewTopic
+from kafka.errors import TopicAlreadyExistsError
 
 
 kafka_proxy_server = None
@@ -32,7 +33,14 @@ class Kafka_Proxy:
         #TODO check if topic already exists
         topic_list = []
         topic_list.append(NewTopic(name=topic, num_partitions=1, replication_factor=1))
-        response = self.client.create_topics(new_topics=topic_list, validate_only=False)
+        try:
+            response = self.client.create_topics(new_topics=topic_list, validate_only=False)
+        except Exception as e:
+            if isinstance(e, TopicAlreadyExistsError):
+                return topic
+            else:
+                raise e
+
         #TODO use user_id to set permissions
         return topic
 

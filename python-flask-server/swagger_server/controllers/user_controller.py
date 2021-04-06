@@ -4,6 +4,8 @@ import six
 from flask import Response
 from swagger_server.models.user import User  # noqa: E501
 from swagger_server.models.user_resources import UserResources  # noqa: E501
+from swagger_server.models.pipeline_metadata import PipelineMetadata
+from swagger_server.models.pipeline_info import PipelineInfo
 from swagger_server import util
 from swagger_server.controllers.user_info import UserInfo
 from swagger_server.controllers import user_info
@@ -22,6 +24,72 @@ def list_users():  # noqa: E501
     """
     return list(user_info.Users)
 
+def create_predefined_pipelines(user_id):
+    print("entering create_predefined_pipelines")
+    # create default ingest metrics pipeline
+    # TODO: Fix the URLs of the parameters
+    # TODO: Do not return the secrets to the user!!!
+    ingest_def = {
+        "apiVersion": "argoproj.io/v1alpha1",
+        "kind": "Workflow",
+        "metadata": {
+            "generateName": "ingest-"
+        },
+        "spec": {
+            "entrypoint": "ingest",
+            "arguments": {
+                "parameters": [ {
+                    "name": "args",
+                    "value": "my args"
+                } ]
+            },
+            "templates": [ {
+                "name": "ingest",
+                "inputs": {
+                    "parameters": [ {
+                        "name": "args"
+                } ]
+                },
+                "container": {
+                    "image": "ingest",
+            "env": [
+                { "name": "S3_URL",
+                "value": "192.168.122.176:9000" },
+                { "name": "S3_ACCESS_KEY",
+                "value": "user" },
+                { "name": "S3_SECRET_KEY",
+                "value": "password" }
+            ],
+            "imagePullPolicy": "Never",
+                    "command": [ "python", "./__main__.py" ],
+                    "args": ["{{inputs.parameters.args}}"],
+                    "resources": {
+                        "limits": {
+                            "memory": "32Mi",
+                            "cpu": "100m"
+                        }
+                    }
+                }
+            } ]
+        }
+    }
+    # TODO: fix parameters
+    k8s_proxy_server = k8s_api.get_k8s_proxy()
+    ingest_topic, kafka_key = k8s_proxy_server.create_eventsource(user_id, 'in', pipeline_number=0)
+    response = k8s_proxy_server.create_sensor(ingest_topic, kafka_key, ingest_def)
+    pipeline_id = response['metadata']['name']
+    output_topic = ''
+    pipe_metadata = PipelineMetadata(pipeline_id, ingest_topic, output_topic)
+    pipe_info = PipelineInfo(pipe_metadata, ingest_def)
+    pipeline_topics = { "resourceMetricsIngestPipeline" : ingest_topic }
+    predefined_pipes = list()
+    predefined_pipes.append(pipe_info)
+
+    # Add here additional pipelines, as needed
+
+    print(pipeline_topics)
+    print("exiting create_predefined_pipelines")
+    return pipeline_topics, predefined_pipes
 
 def register_user(body):  # noqa: E501
     """Register a new user
@@ -46,7 +114,8 @@ def register_user(body):  # noqa: E501
             return Response("{'error message':'user already registered'}", status=409, mimetype='application/json')
 
         #TODO make data persistent
-        #TODO: generate returned data
+
+        # generate returned data
         nameSpace = user_id
 
         #TODO: define the available Resources
@@ -59,24 +128,29 @@ def register_user(body):  # noqa: E501
         urls['k8s_url'] = k8s_proxy_server.k8s_url
         urls['kafka_url'] = kafka_proxy_server.kafka_url
         urls['s3_url'] = s3_proxy_server.s3_url
-        topic_name_in = user_id + "-in-0"
-        topic_name_out = user_id + "-out-0"
+        # create general kafka topics for the user to use
+        topic_name_in = user_id + "-topic-in"
+        topic_name_out = user_id + "-topic-out"
         kafka_proxy_server.create_topic(user_id, topic_name_in)
         kafka_proxy_server.create_topic(user_id, topic_name_out)
-        pipelines = {}
         topics = {
                 "userInTopic": topic_name_in,
                 "userOutTopic": topic_name_out,
                 }
+        pipeline_topics, predefined_pipes = create_predefined_pipelines(user_id)
+        print(pipeline_topics)
+        print(predefined_pipes)
+        # TODO: make variable names consistent
         availableResources = {
-                "pipelines": pipelines,
+                "pipelines": pipeline_topics,
                 "topics": topics,
                 "urls": urls,
                 "s3_bucket": s3_bucket_name,
                 }
         user_resources = UserResources(nameSpace, availableResources)
-        u_info = UserInfo(bodyUser, user_resources)
+        u_info = UserInfo(bodyUser, user_resources, predefined_pipes)
         user_info.Users[user_id] = u_info
+
         return user_resources, 201
     except Exception as e:
         print("Exception: ", str(e))
@@ -122,6 +196,16 @@ def unregister_user():  # noqa: E501
         # delete all pipelines:
         k8s_proxy_server = k8s_api.get_k8s_proxy()
         pipelines = user.pipelineInfoList
+        print(pipelines)
+        while len(pipelines) > 0:
+            p = pipelines[0]
+            # TODO: delete kafka topics, etc
+            # TODO: ignore exceptions that occur here, and continue to clean up
+            pipeline_controller.delete_pipeline_resources(p)
+            pipelines.remove(p)
+
+        pipelines = user.predefinedPipes
+        print(pipelines)
         while len(pipelines) > 0:
             p = pipelines[0]
             # TODO: delete kafka topics, etc

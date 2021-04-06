@@ -13,7 +13,7 @@ from swagger_server.controllers import user_info
 from swagger_server.controllers import k8s_api
 from swagger_server.controllers import kafka_api
 
-next_index = 1
+next_index = 101
 
 def create_pipeline(body):  # noqa: E501
     """Register a new pipeline
@@ -43,15 +43,6 @@ def create_pipeline(body):  # noqa: E501
         k8s_proxy_server = k8s_api.get_k8s_proxy()
 
         # load the argo workflow (pipeline) to k8s
-        # TODO verify that the pipeline was properly created?
-        # TODO verify the fields in the response before using them
-
-        #TODO: create kafka topics for the pipeline
-        #TODO: try to register the pipe with argo
-        #TODO: generate a pipeId 
-        #response = k8s_proxy_server.load_workflow_template(pipeline_def)
-        #print("response = ", response)
-        #pipeline_id = response['metadata']['name']
         # TODO choose a better way to get a unique number
         global next_index
         input_topic, kafka_key = k8s_proxy_server.create_eventsource(user_id, 'in', next_index)
@@ -59,11 +50,9 @@ def create_pipeline(body):  # noqa: E501
         print("kafka_key = ", kafka_key)
         next_index = next_index + 1
         response = k8s_proxy_server.create_sensor(input_topic, kafka_key, pipeline_def)
-        print("response = ", response)
         pipeline_id = response['metadata']['name']
-        print("pipeline_id = ", pipeline_id)
-        topic2 = ''
-        pipe_metadata = PipelineMetadata(pipeline_id, input_topic, topic2)
+        output_topic = ''
+        pipe_metadata = PipelineMetadata(pipeline_id, input_topic, output_topic)
         pipe_info = PipelineInfo(pipe_metadata, pipeline_def)
         user.pipelineInfoList.append(pipe_info)
         print("exiting create_pipeline")
