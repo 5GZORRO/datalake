@@ -51,8 +51,7 @@ def create_pipeline(body):  # noqa: E501
         next_index = next_index + 1
         response = k8s_proxy_server.create_sensor(input_topic, kafka_key, pipeline_def)
         pipeline_id = response['metadata']['name']
-        output_topic = ''
-        pipe_metadata = PipelineMetadata(pipeline_id, input_topic, output_topic)
+        pipe_metadata = PipelineMetadata(pipeline_id, input_topic)
         pipe_info = PipelineInfo(pipe_metadata, pipeline_def)
         user.pipelineInfoList.append(pipe_info)
         print("exiting create_pipeline")

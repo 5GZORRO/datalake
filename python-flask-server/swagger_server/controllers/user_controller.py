@@ -78,8 +78,7 @@ def create_predefined_pipelines(user_id):
     ingest_topic, kafka_key = k8s_proxy_server.create_eventsource(user_id, 'in', pipeline_number=0)
     response = k8s_proxy_server.create_sensor(ingest_topic, kafka_key, ingest_def)
     pipeline_id = response['metadata']['name']
-    output_topic = ''
-    pipe_metadata = PipelineMetadata(pipeline_id, ingest_topic, output_topic)
+    pipe_metadata = PipelineMetadata(pipeline_id, ingest_topic)
     pipe_info = PipelineInfo(pipe_metadata, ingest_def)
     pipeline_topics = { "resourceMetricsIngestPipeline" : ingest_topic }
     predefined_pipes = list()

@@ -114,7 +114,7 @@ class K8s_Proxy:
         print("entering create_sensor")
         print("event_name = ", event_name)
 
-        sensor_name = '%s-sensor' % (event_name)
+        sensor_name = '%s-job' % (event_name)
         trigger_name = '%s-trigger' % (event_name)
         sensor_template = {
             'apiVersion': 'argoproj.io/v1alpha1',
