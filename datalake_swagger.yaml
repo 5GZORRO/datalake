@@ -15,6 +15,8 @@ tags:
   description: "Register/unregister users"
 - name: "pipeline"
   description: "Operations on pipelines"
+- name: "service"
+  description: "Operations on services"
 schemes:
 - "https"
 - "http"
@@ -138,7 +140,7 @@ paths:
         "401":
           description: "Unauthorized"
         "404":
-          description: "Pipeline not found"
+          description: "User or Pipeline not found"
     get:
       tags:
       - "pipeline"
@@ -166,7 +168,7 @@ paths:
         "401":
           description: "Unauthorized"
         "404":
-          description: "Pipeline not found"
+          description: "User or Pipeline not found"
   /pipeline/all:
     get:
       tags:
@@ -192,6 +194,112 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/PipelineInfo"
+        "400":
+          description: "Bad Request"
+  /service:
+    post:
+      tags:
+      - "service"
+      summary: "Register a new service"
+      description: ""
+      operationId: "createService"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Parameters to register service"
+        required: true
+        schema:
+          $ref: "#/definitions/CreateService"
+      responses:
+        "201":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ServiceMetadata"
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Unauthorized"
+    delete:
+      tags:
+      - "service"
+      summary: "Delete a service"
+      description: ""
+      operationId: "deleteService"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Parameters to delete a service"
+        required: true
+        schema:
+          $ref: "#/definitions/GetService"
+      responses:
+        "204":
+          description: "Service deleted successfully"
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "User or Service not found"
+    get:
+      tags:
+      - "service"
+      summary: "Return details of specified service"
+      description: ""
+      operationId: "getService"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Parameters to get a service"
+        required: true
+        schema:
+          $ref: "#/definitions/GetService"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ServiceInfo"
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "User or Service not found"
+  /service/all:
+    get:
+      tags:
+      - "service"
+      summary: "List all of the User's services"
+      description: ""
+      operationId: "listServices"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: ""
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ServiceInfo"
         "400":
           description: "Bad Request"
 definitions:
@@ -238,8 +346,6 @@ definitions:
         type: "string"
       inputTopic:
         type: "string"
-      outputTopic:
-        type: "string"
     xml:
       name: "PipelineMetadata"
   PipelineInfo:  
@@ -251,4 +357,44 @@ definitions:
         type: "object"
     xml:
       name: "PipelineInfo"
+  CreateService:
+    type: "object"
+    properties:
+      userInfo:
+        $ref: "#/definitions/User"
+      deploymentDefinition:
+        type: "object"
+      serviceDefinition:
+        type: "object"
+    xml:
+      name: "CreateService"
+  GetService:
+    type: "object"
+    properties:
+      userInfo:
+        $ref: "#/definitions/User"
+      serviceId:
+        type: "string"
+    xml:
+      name: "GetService"
+  ServiceMetadata:
+    type: "object"
+    properties:
+      serviceId:
+        type: "string"
+      ipAddress:
+        type: "string"
+    xml:
+      name: "ServiceMetadata"
+  ServiceInfo:  
+    type: "object"
+    properties:
+      serviceMetadata:
+        $ref: "#/definitions/ServiceMetadata"
+      deploymentDefinition:
+        type: "object"
+      serviceDefinition:
+        type: "object"
+    xml:
+      name: "ServiceInfo"
  

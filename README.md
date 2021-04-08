@@ -16,6 +16,10 @@ Kubernetes should use Docker container management (rather than containerd) for a
 
 For kubernetes, it is possible to run a simulated minikube cluster.
 
+In Argo, it is necessary to define the argo-events namespace.
+
+The ingest pipeline must be compiled and dockerized with a name of "ingest" before bringing up the datalake python-flask-server.
+
 This is a POC implementation.
 Authentication is not yet implemented.
 

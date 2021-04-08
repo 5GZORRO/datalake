@@ -52,12 +52,12 @@ class K8s_Proxy:
         print("exiting delete_workflow_template")
         return response
 
-    def create_eventsource(self, user_id, in_out, pipeline_number):
+    def create_eventsource(self, user_id, qualifier, pipeline_number):
         print("entering create_eventsource")
 
         kafka_proxy_server = kafka_api.get_kafka_proxy()
 
-        event_source_name = '%s-%s-%s' % (user_id, in_out, str(pipeline_number))
+        event_source_name = '%s-%s-%s' % (user_id, qualifier, str(pipeline_number))
         event_source_template = {
             'apiVersion': 'argoproj.io/v1alpha1',
             'kind': 'EventSource',
@@ -175,3 +175,15 @@ class K8s_Proxy:
             body=kubernetes.client.V1DeleteOptions()
         )
         print("exiting delete_sensor")
+
+    def create_service(self, user_id, service_number, deployment_def, service_def):
+        print("entering create_service")
+        service_name = user_id + '-service-' + str(service_number)
+        print("exiting create_service")
+        return service_name
+
+    def delete_service(self, service_id):
+        print("entering delete_service")
+        print("service_id = ", service_id)
+        print("exiting delete_service")
+        return

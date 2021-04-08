@@ -12,6 +12,7 @@ class UserInfo():
         self.userResources = userResources
         self.predefinedPipes = predefindPipes
         self.pipelineInfoList = list()
+        self.serviceInfoList = list()
 
 
 def print_users():

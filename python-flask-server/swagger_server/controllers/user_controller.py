@@ -13,6 +13,7 @@ from swagger_server.controllers import k8s_api
 from swagger_server.controllers import s3_api
 from swagger_server.controllers import kafka_api
 from swagger_server.controllers import pipeline_controller
+from swagger_server.controllers import service_controller
 
 def list_users():  # noqa: E501
     """List all User IDs
@@ -211,6 +212,16 @@ def unregister_user():  # noqa: E501
             # TODO: ignore exceptions that occur here, and continue to clean up
             pipeline_controller.delete_pipeline_resources(p)
             pipelines.remove(p)
+
+        # delete all services:
+        services = user.serviceInfoList
+        print(services)
+        while len(services) > 0:
+            s = services[0]
+            # TODO: delete kafka topics, etc
+            # TODO: ignore exceptions that occur here, and continue to clean up
+            service_controller.delete_service_resources(s)
+            services.remove(s)
 
         print ("deleting user_id = ", user_id)
         del user_info.Users[user_id]

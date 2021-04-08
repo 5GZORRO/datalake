@@ -45,7 +45,7 @@ def create_pipeline(body):  # noqa: E501
         # load the argo workflow (pipeline) to k8s
         # TODO choose a better way to get a unique number
         global next_index
-        input_topic, kafka_key = k8s_proxy_server.create_eventsource(user_id, 'in', next_index)
+        input_topic, kafka_key = k8s_proxy_server.create_eventsource(user_id, 'pipeline-in', next_index)
         print("input_topic = ", input_topic)
         print("kafka_key = ", kafka_key)
         next_index = next_index + 1

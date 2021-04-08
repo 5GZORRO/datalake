@@ -21,7 +21,7 @@ To run the server, define the proper URLs in the env file, and execute the follo
 
 ```
 . env
-python3 -m swagger_server conf.yaml
+python3 -m swagger_server
 ```
 
 and open your browser to here:
