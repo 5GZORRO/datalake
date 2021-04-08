@@ -15,31 +15,26 @@ class PipelineMetadata(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, pipeline_id: str=None, input_topic: str=None, output_topic: str=None):  # noqa: E501
+    def __init__(self, pipeline_id: str=None, input_topic: str=None):  # noqa: E501
         """PipelineMetadata - a model defined in Swagger
 
         :param pipeline_id: The pipeline_id of this PipelineMetadata.  # noqa: E501
         :type pipeline_id: str
         :param input_topic: The input_topic of this PipelineMetadata.  # noqa: E501
         :type input_topic: str
-        :param output_topic: The output_topic of this PipelineMetadata.  # noqa: E501
-        :type output_topic: str
         """
         self.swagger_types = {
             'pipeline_id': str,
-            'input_topic': str,
-            'output_topic': str
+            'input_topic': str
         }
 
         self.attribute_map = {
             'pipeline_id': 'pipelineId',
-            'input_topic': 'inputTopic',
-            'output_topic': 'outputTopic'
+            'input_topic': 'inputTopic'
         }
 
         self._pipeline_id = pipeline_id
         self._input_topic = input_topic
-        self._output_topic = output_topic
 
     @classmethod
     def from_dict(cls, dikt) -> 'PipelineMetadata':
@@ -93,24 +88,3 @@ class PipelineMetadata(Model):
         """
 
         self._input_topic = input_topic
-
-    @property
-    def output_topic(self) -> str:
-        """Gets the output_topic of this PipelineMetadata.
-
-
-        :return: The output_topic of this PipelineMetadata.
-        :rtype: str
-        """
-        return self._output_topic
-
-    @output_topic.setter
-    def output_topic(self, output_topic: str):
-        """Sets the output_topic of this PipelineMetadata.
-
-
-        :param output_topic: The output_topic of this PipelineMetadata.
-        :type output_topic: str
-        """
-
-        self._output_topic = output_topic

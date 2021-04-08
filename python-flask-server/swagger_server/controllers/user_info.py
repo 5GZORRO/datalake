@@ -7,9 +7,10 @@ Users = dict()
 
 class UserInfo():
 
-    def __init__(self, user: User, userResources: UserResources):
+    def __init__(self, user: User, userResources: UserResources, predefindPipes):
         self.user = user
         self.userResources = userResources
+        self.predefinedPipes = predefindPipes
         self.pipelineInfoList = list()
 
 
