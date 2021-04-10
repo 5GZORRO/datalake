@@ -12,7 +12,7 @@ spec:
     # Payload parameters to be
     # overriden by the event values
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    - name: userID
+    - name: operatorID
       value: OVERRIDE
 
     - name: businessID
@@ -21,7 +21,7 @@ spec:
     - name: networkID
       value: OVERRIDE
 
-    - name: data
+    - name: monitoringData
       value: OVERRIDE
 
   templates:
@@ -33,7 +33,7 @@ spec:
         arguments:
           parameters:
           - name: message
-            value: "Received metric: {{workflow.parameters.userID}}, {{workflow.parameters.businessID}}, {{workflow.parameters.networkID}}"
+            value: "Received metric. operatorID: {{workflow.parameters.operatorID}}, businessID: {{workflow.parameters.businessID}}, networkID: {{workflow.parameters.networkID}}, monitoringData: {{workflow.parameters.monitoringData}}"
 
   - name: whalesay
     inputs:
