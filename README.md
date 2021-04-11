@@ -12,6 +12,16 @@ This code is work-in-progess.
 ## Requirements
 The datalake server requires that there first be running: [kubernetes](https://github.com/5GZORRO/infrastructure/blob/master/docs/kubernetes.md), [kafka](https://github.com/5GZORRO/infrastructure/blob/master/docs/kafka.md), [argo](https://github.com/5GZORRO/issm/blob/master/docs/argo.md), s3 object store (can be minio).
 
+To set up minio:
+```
+wget https://dl.min.io/server/minio/release/linux-amd64/minio
+chmod +x minio
+mkdir /minio/data
+export MINIO_VOLUMES="/var/lib/minio"
+export MINIO_ACCESS_KEY=user
+export MINIO_SECRET_KEY=password
+./minio server /minio/data
+```
 Kubernetes should use Docker container management (rather than containerd) for argo to work properly.
 
 For kubernetes, it is possible to run a simulated minikube cluster.
@@ -27,4 +37,4 @@ TODO:
 Proper permissions have to be set up to use the argo-events (argo-events-resource-admin-role).
 
 ## Usage
-In the python-flask-server directory, fill in the proper values in conf.yaml and follow the instructions in the README file.
+In the python-flask-server directory, fill in the proper values in env and follow the instructions in the README file.
