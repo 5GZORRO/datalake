@@ -1,9 +1,0 @@
-urls:
-  k8s_url: 192.168.122.176:8443
-  argo_url: 192.168.122.176:2746
-  kafka_url: 192.168.122.176:49153
-  s3_url: 192.168.122.176:9000
-secrets:
-  s3:
-    access_key: user
-    secret_key: password
