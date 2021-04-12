@@ -1,3 +1,4 @@
+---
 swagger: "2.0"
 info:
   description: "This is a simple server to support 5gzorro data lake operations."
@@ -8,7 +9,6 @@ info:
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-#host: "datalake.5gzorro.eu"
 basePath: "/datalake/v1"
 tags:
 - name: "user"
@@ -27,7 +27,7 @@ paths:
       - "user"
       summary: "Register a new user"
       description: ""
-      operationId: "registerUser"
+      operationId: "register_user"
       consumes:
       - "application/json"
       produces:
@@ -35,7 +35,8 @@ paths:
       parameters:
       - in: "body"
         name: "body"
-        description: "Parameters to register User that is connecting to the services of the Data Lake"
+        description: "Parameters to register User that is connecting to the services\
+          \ of the Data Lake"
         required: true
         schema:
           $ref: "#/definitions/User"
@@ -48,12 +49,13 @@ paths:
           description: "Bad Request"
         "401":
           description: "Unauthorized"
+      x-swagger-router-controller: "swagger_server.controllers.user_controller"
     delete:
       tags:
       - "user"
       summary: "Unregister a user"
       description: ""
-      operationId: "unregisterUser"
+      operationId: "unregister_user"
       consumes:
       - "application/json"
       parameters:
@@ -72,15 +74,17 @@ paths:
           description: "Unauthorized"
         "404":
           description: "User not found"
+      x-swagger-router-controller: "swagger_server.controllers.user_controller"
   /user/all:
     get:
       tags:
       - "user"
       summary: "List all User IDs"
       description: ""
-      operationId: "listUsers"
+      operationId: "list_users"
       produces:
       - "application/json"
+      parameters: []
       responses:
         "200":
           description: "successful operation"
@@ -90,63 +94,14 @@ paths:
               type: "string"
         "400":
           description: "Bad Request"
+      x-swagger-router-controller: "swagger_server.controllers.user_controller"
   /pipeline:
-    post:
-      tags:
-      - "pipeline"
-      summary: "Register a new pipeline"
-      description: ""
-      operationId: "createPipeline"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Parameters to register pipeline"
-        required: true
-        schema:
-          $ref: "#/definitions/CreatePipeline"
-      responses:
-        "201":
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/PipelineMetadata"
-        "400":
-          description: "Bad Request"
-        "401":
-          description: "Unauthorized"
-    delete:
-      tags:
-      - "pipeline"
-      summary: "Delete a pipeline"
-      description: ""
-      operationId: "deletePipeline"
-      consumes:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Parameters to delete a pipeline"
-        required: true
-        schema:
-          $ref: "#/definitions/GetPipeline"
-      responses:
-        "204":
-          description: "Pipeline deleted successfully"
-        "400":
-          description: "Bad Request"
-        "401":
-          description: "Unauthorized"
-        "404":
-          description: "User or Pipeline not found"
     get:
       tags:
       - "pipeline"
       summary: "Return details of specified pipeline"
       description: ""
-      operationId: "getPipeline"
+      operationId: "get_pipeline"
       consumes:
       - "application/json"
       produces:
@@ -169,13 +124,66 @@ paths:
           description: "Unauthorized"
         "404":
           description: "User or Pipeline not found"
+      x-swagger-router-controller: "swagger_server.controllers.pipeline_controller"
+    post:
+      tags:
+      - "pipeline"
+      summary: "Register a new pipeline"
+      description: ""
+      operationId: "create_pipeline"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Parameters to register pipeline"
+        required: true
+        schema:
+          $ref: "#/definitions/CreatePipeline"
+      responses:
+        "201":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/PipelineMetadata"
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Unauthorized"
+      x-swagger-router-controller: "swagger_server.controllers.pipeline_controller"
+    delete:
+      tags:
+      - "pipeline"
+      summary: "Delete a pipeline"
+      description: ""
+      operationId: "delete_pipeline"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Parameters to delete a pipeline"
+        required: true
+        schema:
+          $ref: "#/definitions/GetPipeline"
+      responses:
+        "204":
+          description: "Pipeline deleted successfully"
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "User or Pipeline not found"
+      x-swagger-router-controller: "swagger_server.controllers.pipeline_controller"
   /pipeline/all:
     get:
       tags:
       - "pipeline"
       summary: "List all of the User's pipelines"
       description: ""
-      operationId: "listPipelines"
+      operationId: "list_pipelines"
       consumes:
       - "application/json"
       produces:
@@ -196,63 +204,14 @@ paths:
               $ref: "#/definitions/PipelineInfo"
         "400":
           description: "Bad Request"
+      x-swagger-router-controller: "swagger_server.controllers.pipeline_controller"
   /service:
-    post:
-      tags:
-      - "service"
-      summary: "Register a new service"
-      description: ""
-      operationId: "createService"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Parameters to register service"
-        required: true
-        schema:
-          $ref: "#/definitions/CreateService"
-      responses:
-        "201":
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/ServiceMetadata"
-        "400":
-          description: "Bad Request"
-        "401":
-          description: "Unauthorized"
-    delete:
-      tags:
-      - "service"
-      summary: "Delete a service"
-      description: ""
-      operationId: "deleteService"
-      consumes:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Parameters to delete a service"
-        required: true
-        schema:
-          $ref: "#/definitions/GetService"
-      responses:
-        "204":
-          description: "Service deleted successfully"
-        "400":
-          description: "Bad Request"
-        "401":
-          description: "Unauthorized"
-        "404":
-          description: "User or Service not found"
     get:
       tags:
       - "service"
       summary: "Return details of specified service"
       description: ""
-      operationId: "getService"
+      operationId: "get_service"
       consumes:
       - "application/json"
       produces:
@@ -275,13 +234,66 @@ paths:
           description: "Unauthorized"
         "404":
           description: "User or Service not found"
+      x-swagger-router-controller: "swagger_server.controllers.service_controller"
+    post:
+      tags:
+      - "service"
+      summary: "Register a new service"
+      description: ""
+      operationId: "create_service"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Parameters to register service"
+        required: true
+        schema:
+          $ref: "#/definitions/CreateService"
+      responses:
+        "201":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ServiceMetadata"
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Unauthorized"
+      x-swagger-router-controller: "swagger_server.controllers.service_controller"
+    delete:
+      tags:
+      - "service"
+      summary: "Delete a service"
+      description: ""
+      operationId: "delete_service"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Parameters to delete a service"
+        required: true
+        schema:
+          $ref: "#/definitions/GetService"
+      responses:
+        "204":
+          description: "Service deleted successfully"
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "User or Service not found"
+      x-swagger-router-controller: "swagger_server.controllers.service_controller"
   /service/all:
     get:
       tags:
       - "service"
       summary: "List all of the User's services"
       description: ""
-      operationId: "listServices"
+      operationId: "list_services"
       consumes:
       - "application/json"
       produces:
@@ -302,6 +314,7 @@ paths:
               $ref: "#/definitions/ServiceInfo"
         "400":
           description: "Bad Request"
+      x-swagger-router-controller: "swagger_server.controllers.service_controller"
 definitions:
   User:
     type: "object"
@@ -312,6 +325,9 @@ definitions:
         type: "string"
     xml:
       name: "User"
+    example:
+      authToken: "authToken"
+      userId: "userId"
   UserResources:
     type: "object"
     properties:
@@ -319,8 +335,12 @@ definitions:
         type: "string"
       availableResources:
         type: "object"
+        properties: {}
     xml:
       name: "UserResources"
+    example:
+      nameSpace: "nameSpace"
+      availableResources: "{}"
   CreatePipeline:
     type: "object"
     properties:
@@ -328,8 +348,14 @@ definitions:
         $ref: "#/definitions/User"
       pipelineDefinition:
         type: "object"
+        properties: {}
     xml:
       name: "CreatePipeline"
+    example:
+      userInfo:
+        authToken: "authToken"
+        userId: "userId"
+      pipelineDefinition: "{}"
   GetPipeline:
     type: "object"
     properties:
@@ -339,6 +365,11 @@ definitions:
         type: "string"
     xml:
       name: "GetPipeline"
+    example:
+      userInfo:
+        authToken: "authToken"
+        userId: "userId"
+      pipelineId: "pipelineId"
   PipelineMetadata:
     type: "object"
     properties:
@@ -348,26 +379,39 @@ definitions:
         type: "string"
     xml:
       name: "PipelineMetadata"
-  PipelineInfo:  
+    example:
+      inputTopic: "inputTopic"
+      pipelineId: "pipelineId"
+  PipelineInfo:
     type: "object"
     properties:
       pipelineMetadata:
         $ref: "#/definitions/PipelineMetadata"
       pipelineDefinition:
         type: "object"
+        properties: {}
     xml:
       name: "PipelineInfo"
+    example:
+      pipelineMetadata:
+        inputTopic: "inputTopic"
+        pipelineId: "pipelineId"
+      pipelineDefinition: "{}"
   CreateService:
     type: "object"
     properties:
       userInfo:
         $ref: "#/definitions/User"
-      deploymentDefinition:
+      containerDefinition:
         type: "object"
-      serviceDefinition:
-        type: "object"
+        properties: {}
     xml:
       name: "CreateService"
+    example:
+      userInfo:
+        authToken: "authToken"
+        userId: "userId"
+      containerDefinition: "{}"
   GetService:
     type: "object"
     properties:
@@ -377,24 +421,42 @@ definitions:
         type: "string"
     xml:
       name: "GetService"
+    example:
+      userInfo:
+        authToken: "authToken"
+        userId: "userId"
+      serviceId: "serviceId"
   ServiceMetadata:
     type: "object"
     properties:
       serviceId:
         type: "string"
-      ipAddress:
-        type: "string"
+      ports:
+        type: "array"
+        items:
+          type: "object"
+          properties: {}
     xml:
       name: "ServiceMetadata"
-  ServiceInfo:  
+    example:
+      serviceId: "serviceId"
+      ports:
+      - "{}"
+      - "{}"
+  ServiceInfo:
     type: "object"
     properties:
       serviceMetadata:
         $ref: "#/definitions/ServiceMetadata"
-      deploymentDefinition:
+      containerDefinition:
         type: "object"
-      serviceDefinition:
-        type: "object"
+        properties: {}
     xml:
       name: "ServiceInfo"
- 
+    example:
+      serviceMetadata:
+        serviceId: "serviceId"
+        ports:
+        - "{}"
+        - "{}"
+      containerDefinition: "{}"

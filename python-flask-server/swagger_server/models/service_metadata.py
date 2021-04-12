@@ -15,26 +15,26 @@ class ServiceMetadata(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, service_id: str=None, ip_address: str=None):  # noqa: E501
+    def __init__(self, service_id: str=None, ports: List[object]=None):  # noqa: E501
         """ServiceMetadata - a model defined in Swagger
 
         :param service_id: The service_id of this ServiceMetadata.  # noqa: E501
         :type service_id: str
-        :param ip_address: The ip_address of this ServiceMetadata.  # noqa: E501
-        :type ip_address: str
+        :param ports: The ports of this ServiceMetadata.  # noqa: E501
+        :type ports: List[object]
         """
         self.swagger_types = {
             'service_id': str,
-            'ip_address': str
+            'ports': List[object]
         }
 
         self.attribute_map = {
             'service_id': 'serviceId',
-            'ip_address': 'ipAddress'
+            'ports': 'ports'
         }
 
         self._service_id = service_id
-        self._ip_address = ip_address
+        self._ports = ports
 
     @classmethod
     def from_dict(cls, dikt) -> 'ServiceMetadata':
@@ -69,22 +69,22 @@ class ServiceMetadata(Model):
         self._service_id = service_id
 
     @property
-    def ip_address(self) -> str:
-        """Gets the ip_address of this ServiceMetadata.
+    def ports(self) -> List[object]:
+        """Gets the ports of this ServiceMetadata.
 
 
-        :return: The ip_address of this ServiceMetadata.
-        :rtype: str
+        :return: The ports of this ServiceMetadata.
+        :rtype: List[object]
         """
-        return self._ip_address
+        return self._ports
 
-    @ip_address.setter
-    def ip_address(self, ip_address: str):
-        """Sets the ip_address of this ServiceMetadata.
+    @ports.setter
+    def ports(self, ports: List[object]):
+        """Sets the ports of this ServiceMetadata.
 
 
-        :param ip_address: The ip_address of this ServiceMetadata.
-        :type ip_address: str
+        :param ports: The ports of this ServiceMetadata.
+        :type ports: List[object]
         """
 
-        self._ip_address = ip_address
+        self._ports = ports

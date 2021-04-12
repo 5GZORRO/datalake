@@ -1,10 +1,13 @@
 import os
 import kubernetes
 import sys
+import json
 
 from swagger_server.controllers import kafka_api
 
 k8s_proxy_server = None
+
+DATALAKE_NAMESPACE = 'datalake'
 
 def set_k8s_proxy(p):
     global k8s_proxy_server
@@ -23,6 +26,7 @@ class K8s_Proxy:
         #kubernetes.config.load_incluster_config()
         self.api = kubernetes.client.CustomObjectsApi()
         self.core_api = kubernetes.client.CoreV1Api()
+        self.app_api = kubernetes.client.api.apps_v1_api.AppsV1Api()
 
         self.k8s_url = os.getenv('KUBERNETES_URL', '127.0.0.1:8443')
         print("k8_url = ", self.k8s_url)
@@ -176,14 +180,34 @@ class K8s_Proxy:
         )
         print("exiting delete_sensor")
 
-    def create_service(self, user_id, service_number, deployment_def, service_def):
-        print("entering create_service")
-        service_name = user_id + '-service-' + str(service_number)
-        print("exiting create_service")
-        return service_name
+    def create_deployment(self, deployment_def):
+        print("entering create_deployment")
+        response = self.app_api.create_namespaced_deployment(DATALAKE_NAMESPACE, deployment_def)
+        print("response = ", response)
+        name = response.metadata.name
+        print("name ", name)
+        print("exiting create_deployment")
+        return name
 
-    def delete_service(self, service_id):
-        print("entering delete_service")
-        print("service_id = ", service_id)
+    def create_service(self, service_def):
+        print("entering create_service")
+        response = self.core_api.create_namespaced_service(DATALAKE_NAMESPACE, service_def)
+        print("response ", response)
+        name = response.metadata.name
+        print("name ", name)
+        print("exiting create_service")
+        return response
+
+    def delete_deployment(self, name):
+        print("entering delete_deployment")
+        response = self.app_api.delete_namespaced_deployment(name, DATALAKE_NAMESPACE)
+        print("response = ", response)
+        print("exiting delete_service")
+        return
+
+    def delete_service(self, name):
+        print("entering k8s delete_service")
+        response = self.core_api.delete_namespaced_service(name, DATALAKE_NAMESPACE),
+        print("response = ", response)
         print("exiting delete_service")
         return

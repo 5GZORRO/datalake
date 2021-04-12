@@ -402,10 +402,7 @@ definitions:
     properties:
       userInfo:
         $ref: "#/definitions/User"
-      deploymentDefinition:
-        type: "object"
-        properties: {}
-      serviceDefinition:
+      containerDefinition:
         type: "object"
         properties: {}
     xml:
@@ -414,8 +411,7 @@ definitions:
       userInfo:
         authToken: "authToken"
         userId: "userId"
-      serviceDefinition: "{}"
-      deploymentDefinition: "{}"
+      containerDefinition: "{}"
   GetService:
     type: "object"
     properties:
@@ -435,29 +431,32 @@ definitions:
     properties:
       serviceId:
         type: "string"
-      ipAddress:
-        type: "string"
+      ports:
+        type: "array"
+        items:
+          type: "object"
+          properties: {}
     xml:
       name: "ServiceMetadata"
     example:
-      ipAddress: "ipAddress"
       serviceId: "serviceId"
+      ports:
+      - "{}"
+      - "{}"
   ServiceInfo:
     type: "object"
     properties:
       serviceMetadata:
         $ref: "#/definitions/ServiceMetadata"
-      deploymentDefinition:
-        type: "object"
-        properties: {}
-      serviceDefinition:
+      containerDefinition:
         type: "object"
         properties: {}
     xml:
       name: "ServiceInfo"
     example:
-      serviceDefinition: "{}"
-      deploymentDefinition: "{}"
       serviceMetadata:
-        ipAddress: "ipAddress"
         serviceId: "serviceId"
+        ports:
+        - "{}"
+        - "{}"
+      containerDefinition: "{}"
