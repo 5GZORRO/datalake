@@ -25,8 +25,12 @@ def list_users():  # noqa: E501
     """
     return list(user_info.Users)
 
-def create_predefined_pipelines(user_id):
+def create_predefined_pipelines(user_id, s3_available : bool):
     print("entering create_predefined_pipelines")
+    predefined_pipes = list()
+    pipeline_topics = { }
+    if not s3_available:
+        return pipeline_topics, predefined_pipes
     # create default ingest metrics pipeline
     # TODO: Fix the URLs of the parameters
     # TODO: Do not return the secrets to the user!!!
@@ -76,18 +80,19 @@ def create_predefined_pipelines(user_id):
     }
     # TODO: fix parameters
     k8s_proxy_server = k8s_api.get_k8s_proxy()
-    ingest_topic, kafka_key = k8s_proxy_server.create_eventsource(user_id, 'in', pipeline_number=0)
-    response = k8s_proxy_server.create_sensor(ingest_topic, kafka_key, ingest_def)
-    pipeline_id = response['metadata']['name']
-    pipe_metadata = PipelineMetadata(pipeline_id, ingest_topic)
-    pipe_info = PipelineInfo(pipe_metadata, ingest_def)
-    pipeline_topics = { "resourceMetricsIngestPipeline" : ingest_topic }
-    predefined_pipes = list()
-    predefined_pipes.append(pipe_info)
+    try:
+        ingest_topic, kafka_key = k8s_proxy_server.create_eventsource(user_id, 'in', pipeline_number=0)
+        response = k8s_proxy_server.create_sensor(ingest_topic, kafka_key, ingest_def)
+        pipeline_id = response['metadata']['name']
+        pipe_metadata = PipelineMetadata(pipeline_id, ingest_topic)
+        pipe_info = PipelineInfo(pipe_metadata, ingest_def)
+        pipeline_topics["resourceMetricsIngestPipeline"] = ingest_topic
+        predefined_pipes.append(pipe_info)
+    except Exception as e:
+        print("Exception: ", str(e))
 
     # Add here additional pipelines, as needed
 
-    print(pipeline_topics)
     print("exiting create_predefined_pipelines")
     return pipeline_topics, predefined_pipes
 
@@ -127,7 +132,8 @@ def register_user(body):  # noqa: E501
         urls = {}
         urls['k8s_url'] = k8s_proxy_server.k8s_url
         urls['kafka_url'] = kafka_proxy_server.kafka_url
-        urls['s3_url'] = s3_proxy_server.s3_url
+        if s3_bucket_name:
+            urls['s3_url'] = s3_proxy_server.s3_url
         # create general kafka topics for the user to use
         topic_name_in = user_id + "-topic-in"
         topic_name_out = user_id + "-topic-out"
@@ -137,16 +143,17 @@ def register_user(body):  # noqa: E501
                 "userInTopic": topic_name_in,
                 "userOutTopic": topic_name_out,
                 }
-        pipeline_topics, predefined_pipes = create_predefined_pipelines(user_id)
+        pipeline_topics, predefined_pipes = create_predefined_pipelines(user_id, s3_bucket_name != None)
         print(pipeline_topics)
         print(predefined_pipes)
         # TODO: make variable names consistent
         availableResources = {
                 "pipelines": pipeline_topics,
                 "topics": topics,
-                "urls": urls,
-                "s3_bucket": s3_bucket_name,
+                "urls": urls
                 }
+        if s3_bucket_name:
+            availableResources["s3_bucket"] = s3_bucket_name
         user_resources = UserResources(nameSpace, availableResources)
         u_info = UserInfo(bodyUser, user_resources, predefined_pipes)
         user_info.Users[user_id] = u_info
@@ -196,7 +203,6 @@ def unregister_user():  # noqa: E501
         # delete all pipelines:
         k8s_proxy_server = k8s_api.get_k8s_proxy()
         pipelines = user.pipelineInfoList
-        print(pipelines)
         while len(pipelines) > 0:
             p = pipelines[0]
             # TODO: delete kafka topics, etc
@@ -205,7 +211,6 @@ def unregister_user():  # noqa: E501
             pipelines.remove(p)
 
         pipelines = user.predefinedPipes
-        print(pipelines)
         while len(pipelines) > 0:
             p = pipelines[0]
             # TODO: delete kafka topics, etc
@@ -215,7 +220,6 @@ def unregister_user():  # noqa: E501
 
         # delete all services:
         services = user.serviceInfoList
-        print(services)
         while len(services) > 0:
             s = services[0]
             # TODO: delete kafka topics, etc

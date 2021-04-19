@@ -33,13 +33,19 @@ class S3_Proxy:
 
     def create_bucket(self, user_id, bucket_id):
         #TODO use user_id to set permissions
+        print("entering create_bucket")
         long_bucket_name = user_id + '-' + bucket_id
-        found = self.client.bucket_exists(long_bucket_name)
-        if not found:
-            self.client.make_bucket(long_bucket_name)
-        else:
-            print("Bucket ", long_bucket_name, " already exists")
-        return long_bucket_name
+        try:
+            found = self.client.bucket_exists(long_bucket_name)
+            if not found:
+                self.client.make_bucket(long_bucket_name)
+            else:
+                print("Bucket ", long_bucket_name, " already exists")
+            print("exiting create_bucket")
+            return long_bucket_name
+        except Exception as e:
+            print("Exception: ", str(e))
+            return None
 
     def delete_bucket(self, long_bucket_name):
         found = self.client.bucket_exists(long_bucket_name)
