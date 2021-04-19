@@ -136,10 +136,8 @@ def create_service(body):  # noqa: E501
 def delete_service_resources(s):
     print("entering delete_service_resources")
     k8s_proxy_server = k8s_api.get_k8s_proxy()
-    print("before k8s_proxy_server.delete_service")
     name = s.service_metadata.service_id + "-service"
     k8s_proxy_server.delete_service(name)
-    print("after k8s_proxy_server.delete_service")
     name = s.service_metadata.service_id + "-deployment"
     k8s_proxy_server.delete_deployment(name)
     print("exiting delete_service_resources")
