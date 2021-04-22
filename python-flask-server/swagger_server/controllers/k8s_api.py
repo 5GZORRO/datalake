@@ -32,7 +32,6 @@ class K8s_Proxy:
         print("k8_url = ", self.k8s_url)
 
     def load_workflow_template(self, template):
-        print("entering load_workflow_template")
         response = self.api.create_namespaced_custom_object(
             group="argoproj.io",
             version="v1alpha1",
@@ -40,11 +39,9 @@ class K8s_Proxy:
             plural="workflows",
             body=template
         )
-        print("exiting load_workflow_template")
         return response
 
     def delete_workflow_template(self, pipeline_id):
-        print("entering delete_workflow_template")
         response = self.api.delete_namespaced_custom_object(
             group="argoproj.io",
             version="v1alpha1",
@@ -53,12 +50,9 @@ class K8s_Proxy:
             name=pipeline_id,
             body=kubernetes.client.V1DeleteOptions()
         )
-        print("exiting delete_workflow_template")
         return response
 
     def create_eventsource(self, user_id, qualifier, pipeline_number):
-        print("entering create_eventsource")
-
         kafka_proxy_server = kafka_api.get_kafka_proxy()
 
         event_source_name = '%s-%s-%s' % (user_id, qualifier, str(pipeline_number))
@@ -86,9 +80,9 @@ class K8s_Proxy:
             }
         }
 
-        kafka_key = '%s-event' % event_source_name
-        event_source_template['spec']['kafka'][kafka_key] = _spec_kafka_template
-        print("event_source_template = ", event_source_template)
+        kafka_key = '%s-kafka' % event_source_name
+        #event_source_template['spec']['kafka'][kafka_key] = _spec_kafka_template
+        event_source_template['spec']['kafka'][event_source_name] = _spec_kafka_template
 
         response = self.api.create_namespaced_custom_object(
             group="argoproj.io",
@@ -97,13 +91,9 @@ class K8s_Proxy:
             plural="eventsources",
             body=event_source_template
         )
-        print("response = ", response)
-        print("exiting create_eventsource")
         return event_source_name, kafka_key
 
     def delete_eventsource(self, event_source_name):
-        print("Deleting eventsource...")
-        print("event_source_name = ", event_source_name)
         self.api.delete_namespaced_custom_object(
             group="argoproj.io",
             version="v1alpha1",
@@ -112,12 +102,8 @@ class K8s_Proxy:
             name=event_source_name,
             body=kubernetes.client.V1DeleteOptions()
         )
-        print("exiting delete_eventsource...")
 
     def create_sensor(self, event_name, kafka_key, workflow):
-        print("entering create_sensor")
-        print("event_name = ", event_name)
-
         sensor_name = '%s-job' % (event_name)
         trigger_name = '%s-trigger' % (event_name)
         sensor_template = {
@@ -165,11 +151,9 @@ class K8s_Proxy:
             body=sensor_template
         )
         #TODO save the created sensor id somewhere
-        print("exiting create_sensor")
         return response
 
     def delete_sensor(self, pipeline_id):
-        print("entering delete_sensor")
         response = self.api.delete_namespaced_custom_object(
             group="argoproj.io",
             version="v1alpha1",
@@ -178,36 +162,21 @@ class K8s_Proxy:
             name=pipeline_id,
             body=kubernetes.client.V1DeleteOptions()
         )
-        print("exiting delete_sensor")
 
     def create_deployment(self, deployment_def):
-        print("entering create_deployment")
         response = self.app_api.create_namespaced_deployment(DATALAKE_NAMESPACE, deployment_def)
-        print("response = ", response)
         name = response.metadata.name
-        print("name ", name)
-        print("exiting create_deployment")
         return name
 
     def create_service(self, service_def):
-        print("entering create_service")
         response = self.core_api.create_namespaced_service(DATALAKE_NAMESPACE, service_def)
-        print("response ", response)
         name = response.metadata.name
-        print("name ", name)
-        print("exiting create_service")
         return response
 
     def delete_deployment(self, name):
-        print("entering delete_deployment")
         response = self.app_api.delete_namespaced_deployment(name, DATALAKE_NAMESPACE)
-        print("response = ", response)
-        print("exiting delete_service")
         return
 
     def delete_service(self, name):
-        print("entering k8s delete_service")
         response = self.core_api.delete_namespaced_service(name, DATALAKE_NAMESPACE),
-        print("response = ", response)
-        print("exiting delete_service")
         return

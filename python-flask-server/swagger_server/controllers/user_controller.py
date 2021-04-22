@@ -23,7 +23,7 @@ def list_users():  # noqa: E501
 
     :rtype: List[str]
     """
-    return list(user_info.Users)
+    return list(user_info.get_users())
 
 def create_predefined_pipelines(user_id, s3_available : bool):
     print("entering create_predefined_pipelines")
@@ -115,7 +115,7 @@ def register_user(body):  # noqa: E501
         user_id = bodyUser.user_id
         #TODO: check authToken
         print ("register_user, user_id = ", user_id)
-        if user_id in user_info.Users:
+        if user_id in user_info.get_users():
             return Response("{'error message':'user already registered'}", status=409, mimetype='application/json')
 
         #TODO make data persistent
@@ -144,8 +144,6 @@ def register_user(body):  # noqa: E501
                 "userOutTopic": topic_name_out,
                 }
         pipeline_topics, predefined_pipes = create_predefined_pipelines(user_id, s3_bucket_name != None)
-        print(pipeline_topics)
-        print(predefined_pipes)
         # TODO: make variable names consistent
         availableResources = {
                 "pipelines": pipeline_topics,
@@ -156,7 +154,7 @@ def register_user(body):  # noqa: E501
             availableResources["s3_bucket"] = s3_bucket_name
         user_resources = UserResources(nameSpace, availableResources)
         u_info = UserInfo(bodyUser, user_resources, predefined_pipes)
-        user_info.Users[user_id] = u_info
+        user_info.add_user(user_id, u_info)
 
         return user_resources, 201
     except Exception as e:
@@ -187,8 +185,8 @@ def unregister_user():  # noqa: E501
         #TODO: check authToken
         print ("unregister_user, user_id = ", user_id)
         # verify the element exists
-        if user_id in user_info.Users:
-            user = user_info.Users[user_id]
+        if user_id in user_info.get_users():
+            user = user_info.get_user(user_id)
         else:
             return Response("{'error message':'user not registered'}", status=404, mimetype='application/json')
         # TODO cleanup all kinds of stuff
@@ -208,7 +206,7 @@ def unregister_user():  # noqa: E501
             # TODO: delete kafka topics, etc
             # TODO: ignore exceptions that occur here, and continue to clean up
             pipeline_controller.delete_pipeline_resources(p)
-            pipelines.remove(p)
+            user.del_pipeline(p)
 
         pipelines = user.predefinedPipes
         while len(pipelines) > 0:
@@ -216,6 +214,7 @@ def unregister_user():  # noqa: E501
             # TODO: delete kafka topics, etc
             # TODO: ignore exceptions that occur here, and continue to clean up
             pipeline_controller.delete_pipeline_resources(p)
+            # TODO: this isn't clean. need to do this in userInfo
             pipelines.remove(p)
 
         # delete all services:
@@ -225,10 +224,10 @@ def unregister_user():  # noqa: E501
             # TODO: delete kafka topics, etc
             # TODO: ignore exceptions that occur here, and continue to clean up
             service_controller.delete_service_resources(s)
-            services.remove(s)
+            user.del_service(s)
 
         print ("deleting user_id = ", user_id)
-        del user_info.Users[user_id]
+        user_info.del_user(user_id)
         return
     except Exception as e:
         print("Exception: ", str(e))

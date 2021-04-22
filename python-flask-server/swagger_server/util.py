@@ -1,7 +1,7 @@
 import datetime
-
 import six
 import typing
+import sys
 
 
 def _deserialize(data, klass):
@@ -23,10 +23,16 @@ def _deserialize(data, klass):
         return deserialize_date(data)
     elif klass == datetime.datetime:
         return deserialize_datetime(data)
-    elif type(klass) == typing.GenericMeta:
+    # the lines below changed from python 3.6 to 3.7+
+    elif sys.version_info[:3] < (3,7) and type(klass) == typing.GenericMeta:
         if klass.__extra__ == list:
             return _deserialize_list(data, klass.__args__[0])
         if klass.__extra__ == dict:
+            return _deserialize_dict(data, klass.__args__[1])
+    elif sys.version_info[:3] >= (3,7) and hasattr(klass, '__origin__'):
+        if klass.__origin__ == list:
+            return _deserialize_list(data, klass.__args__[0])
+        if klass.__origin__ == dict:
             return _deserialize_dict(data, klass.__args__[1])
     else:
         return deserialize_model(data, klass)
