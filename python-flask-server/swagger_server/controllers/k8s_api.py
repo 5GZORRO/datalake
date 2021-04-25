@@ -91,10 +91,11 @@ class K8s_Proxy:
             plural="eventsources",
             body=event_source_template
         )
+        print("create_eventsource, response = ", response)
         return event_source_name, kafka_key
 
     def delete_eventsource(self, event_source_name):
-        self.api.delete_namespaced_custom_object(
+        response = self.api.delete_namespaced_custom_object(
             group="argoproj.io",
             version="v1alpha1",
             namespace="argo-events",
@@ -102,6 +103,7 @@ class K8s_Proxy:
             name=event_source_name,
             body=kubernetes.client.V1DeleteOptions()
         )
+        print("delete_eventsource, response = ", response)
 
     def create_sensor(self, event_name, kafka_key, workflow):
         sensor_name = '%s-job' % (event_name)
@@ -150,6 +152,7 @@ class K8s_Proxy:
             plural="sensors",
             body=sensor_template
         )
+        print("create_sensor, response = ", response)
         #TODO save the created sensor id somewhere
         return response
 
@@ -162,6 +165,8 @@ class K8s_Proxy:
             name=pipeline_id,
             body=kubernetes.client.V1DeleteOptions()
         )
+        print("delete_sensor, response = ", response)
+        return response
 
     def create_deployment(self, deployment_def):
         response = self.app_api.create_namespaced_deployment(DATALAKE_NAMESPACE, deployment_def)

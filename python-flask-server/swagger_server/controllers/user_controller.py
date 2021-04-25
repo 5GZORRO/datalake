@@ -83,16 +83,19 @@ def create_predefined_pipelines(user_id, s3_available : bool):
     try:
         ingest_topic, kafka_key = k8s_proxy_server.create_eventsource(user_id, 'in', pipeline_number=0)
         response = k8s_proxy_server.create_sensor(ingest_topic, kafka_key, ingest_def)
+        print("response = ", response)
         pipeline_id = response['metadata']['name']
         pipe_metadata = PipelineMetadata(pipeline_id, ingest_topic)
         pipe_info = PipelineInfo(pipe_metadata, ingest_def)
         pipeline_topics["resourceMetricsIngestPipeline"] = ingest_topic
         predefined_pipes.append(pipe_info)
+        print("len of predefined_pipes = ", len(predefined_pipes))
     except Exception as e:
         print("Exception: ", str(e))
 
     # Add here additional pipelines, as needed
 
+    print("len of predefined_pipes = ", len(predefined_pipes))
     print("exiting create_predefined_pipelines")
     return pipeline_topics, predefined_pipes
 
@@ -153,8 +156,18 @@ def register_user(body):  # noqa: E501
         if s3_bucket_name:
             availableResources["s3_bucket"] = s3_bucket_name
         user_resources = UserResources(nameSpace, availableResources)
-        u_info = UserInfo(bodyUser, user_resources, predefined_pipes)
+        u_info = UserInfo(bodyUser, user_resources)
+
         user_info.add_user(user_id, u_info)
+
+        print("predefined_pipes = ", predefined_pipes)
+        print("len of predefined_pipes = ", len(predefined_pipes))
+        # only after the user_info exists can we register with it the predefined pipes
+        for p in predefined_pipes:
+            print("inside for, before add_pipeline: p = ", p)
+            u_info.add_pipeline(p, True)
+            print("inside for, after add_pipeline:  ")
+        print("after for loop")
 
         return user_resources, 201
     except Exception as e:
@@ -200,22 +213,24 @@ def unregister_user():  # noqa: E501
 
         # delete all pipelines:
         k8s_proxy_server = k8s_api.get_k8s_proxy()
-        pipelines = user.pipelineInfoList
-        while len(pipelines) > 0:
-            p = pipelines[0]
+        # use deep copy of the list of pipes, since the original list of pipes will be updated inside the loop
+        pipelines = user.pipelineInfoList.copy()
+        print("len pipelines = ", len(pipelines))
+        for p in pipelines:
             # TODO: delete kafka topics, etc
             # TODO: ignore exceptions that occur here, and continue to clean up
+            print("len pipelines = ", len(pipelines))
             pipeline_controller.delete_pipeline_resources(p)
-            user.del_pipeline(p)
+            user.del_pipeline(p, False)
 
-        pipelines = user.predefinedPipes
-        while len(pipelines) > 0:
-            p = pipelines[0]
+        pipelines = user.predefinedPipes.copy()
+        print("len predefined pipelines = ", len(pipelines))
+        for p in pipelines:
             # TODO: delete kafka topics, etc
             # TODO: ignore exceptions that occur here, and continue to clean up
             pipeline_controller.delete_pipeline_resources(p)
             # TODO: this isn't clean. need to do this in userInfo
-            pipelines.remove(p)
+            user.del_pipeline(p, True)
 
         # delete all services:
         services = user.serviceInfoList

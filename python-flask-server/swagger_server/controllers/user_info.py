@@ -10,27 +10,43 @@ Users = dict()
 
 DATALAKE_BASE_DIR = os.path.expanduser('~') + '/.datalake_info'
 
-def persist_init():
+def recover_state():
+    files = os.listdir(DATALAKE_BASE_DIR)
+    print("files = ", files)
+    for f in files:
+        print ("f = ", f)
+        dir_name_user = DATALAKE_BASE_DIR + '/' + f
+
+
+def init_users():
     if not os.path.exists(DATALAKE_BASE_DIR):
         os.mkdir(DATALAKE_BASE_DIR)
         return
     else:
-        # TODO: recover old state
+        # recover old state
+        recover_state()
         return
 
 
 def persist_user(user_id, available_resources):
+    print("entering persist_user")
+    print("user_id = ", user_id)
     dir_name = DATALAKE_BASE_DIR + '/' + user_id
     os.mkdir(dir_name)
     file_name = dir_name + '/' + 'available_resources'
     with open(file_name, 'w', encoding='utf-8') as f:
         json.dump(available_resources, f, ensure_ascii=False, indent=4)
+    dir_name = DATALAKE_BASE_DIR + '/' + user_id + '/predefined_pipelines'
+    os.mkdir(dir_name)
     dir_name = DATALAKE_BASE_DIR + '/' + user_id + '/pipelines'
     os.mkdir(dir_name)
     dir_name = DATALAKE_BASE_DIR + '/' + user_id + '/services'
     os.mkdir(dir_name)
+    print("exiting persist_user")
 
 def unpersist_user(user_id):
+    dir_name = DATALAKE_BASE_DIR + '/' + user_id + '/predefined_pipelines'
+    os.rmdir(dir_name)
     dir_name = DATALAKE_BASE_DIR + '/' + user_id + '/pipelines'
     os.rmdir(dir_name)
     dir_name = DATALAKE_BASE_DIR + '/' + user_id + '/services'
@@ -40,11 +56,17 @@ def unpersist_user(user_id):
     os.remove(file_name)
     os.rmdir(dir_name)
 
-def persist_pipeline(user_id, pipeline_info):
+def persist_pipeline(user_id, pipeline_info, predefined_pipeline: bool):
+    print("entering persist_pipeline")
+    print("user_id = ", user_id)
+    print("pipeline_info = ", pipeline_info)
     pipeline_metadata = pipeline_info.pipeline_metadata
     pipeline_definition = pipeline_info.pipeline_definition
     pipeline_id = pipeline_metadata.pipeline_id
-    dir_name = DATALAKE_BASE_DIR + '/' + user_id + '/pipelines/' + pipeline_id
+    if predefined_pipeline:
+        dir_name = DATALAKE_BASE_DIR + '/' + user_id + '/predefined_pipelines/' + pipeline_id
+    else:
+        dir_name = DATALAKE_BASE_DIR + '/' + user_id + '/pipelines/' + pipeline_id
     os.mkdir(dir_name)
     file_name = dir_name + '/' + 'input_topic'
     file_p = open(file_name, 'w')
@@ -53,9 +75,13 @@ def persist_pipeline(user_id, pipeline_info):
     file_name = dir_name + '/' + 'pipeline_definition'
     with open(file_name, 'w', encoding='utf-8') as f:
         json.dump(pipeline_definition, f, ensure_ascii=False, indent=4)
+    print("exiting persist_pipeline")
 
-def unpersist_pipeline(user_id, pipeline_id):
-    dir_name = DATALAKE_BASE_DIR + '/' + user_id + '/pipelines/' + pipeline_id
+def unpersist_pipeline(user_id, pipeline_id, predefined_pipeline: bool):
+    if predefined_pipeline:
+        dir_name = DATALAKE_BASE_DIR + '/' + user_id + '/predefined_pipelines/' + pipeline_id
+    else:
+        dir_name = DATALAKE_BASE_DIR + '/' + user_id + '/pipelines/' + pipeline_id
     file_name = dir_name + '/' + 'input_topic'
     os.remove(file_name)
     file_name = dir_name + '/' + 'pipeline_definition'
@@ -81,20 +107,34 @@ def unpersist_service(user_id, service_id):
 
 class UserInfo():
 
-    def __init__(self, user: User, userResources: UserResources, predefindPipes):
+    def __init__(self, user: User, userResources: UserResources):
         self.user = user
         self.userResources = userResources
-        self.predefinedPipes = predefindPipes
+        self.predefinedPipes = list()
         self.pipelineInfoList = list()
         self.serviceInfoList = list()
 
-    def add_pipeline(self, pipeline_info):
-        self.pipelineInfoList.append(pipeline_info)
-        persist_pipeline(self.user.user_id, pipeline_info)
+    def add_pipeline(self, pipeline_info, predefined_pipeline: bool):
+        print("entering UserInfo add_pipeline")
+        print("len of predefinedPipes = ", len(self.predefinedPipes))
+        if predefined_pipeline:
+            self.predefinedPipes.append(pipeline_info)
+        else:
+            self.pipelineInfoList.append(pipeline_info)
+        persist_pipeline(self.user.user_id, pipeline_info, predefined_pipeline)
+        print("len of predefinedPipes = ", len(self.predefinedPipes))
+        print("exiting UserInfo add_pipeline")
 
-    def del_pipeline(self, p):
-        unpersist_pipeline(self.user.user_id, p.pipeline_metadata.pipeline_id)
-        self.pipelineInfoList.remove(p)
+    def del_pipeline(self, p, predefined_pipeline: bool):
+        print("entering UserInfo del_pipeline")
+        print("len of predefinedPipes = ", len(self.predefinedPipes))
+        unpersist_pipeline(self.user.user_id, p.pipeline_metadata.pipeline_id, predefined_pipeline)
+        if predefined_pipeline:
+            self.predefinedPipes.remove(p)
+        else:
+            self.pipelineInfoList.remove(p)
+        print("len of predefinedPipes = ", len(self.predefinedPipes))
+        print("exiting UserInfo del_pipeline")
 
     def add_service(self, service_info):
         self.serviceInfoList.append(service_info)

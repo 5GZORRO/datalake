@@ -52,7 +52,7 @@ def create_pipeline(body):  # noqa: E501
         pipeline_id = response['metadata']['name']
         pipe_metadata = PipelineMetadata(pipeline_id, event_source_name)
         pipe_info = PipelineInfo(pipe_metadata, pipeline_def)
-        user.add_pipeline(pipe_info)
+        user.add_pipeline(pipe_info, False)
         print("exiting create_pipeline")
         return pipe_metadata, 201
     except Exception as e:
@@ -64,12 +64,10 @@ def delete_pipeline_resources(p):
     k8s_proxy_server = k8s_api.get_k8s_proxy()
     input_topic = p.pipeline_metadata.input_topic
     print("input_topic = ", input_topic)
-    k8s_proxy_server.delete_eventsource(input_topic)
     response = k8s_proxy_server.delete_sensor(p.pipeline_metadata.pipeline_id)
-    print("response = ", response)
+    k8s_proxy_server.delete_eventsource(input_topic)
     kafka_proxy_server = kafka_api.get_kafka_proxy()
     response = kafka_proxy_server.delete_topic(input_topic)
-    print("response = ", response)
     print("exiting delete_pipeline_resources")
     return
 
@@ -102,7 +100,7 @@ def delete_pipeline():  # noqa: E501
         for p in pipelines:
             if pipeline_id == p.pipeline_metadata.pipeline_id:
                 delete_pipeline_resources(p)
-                user.del_pipeline(p)
+                user.del_pipeline(p, False)
                 print("exiting delete_pipeline")
                 return
         return Response("{'error message':'pipeline not found'}", status=404, mimetype='application/json')
