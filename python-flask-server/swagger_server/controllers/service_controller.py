@@ -11,8 +11,6 @@ from swagger_server import util
 from swagger_server.controllers import user_info
 from swagger_server.controllers import k8s_api
 
-next_index = 101
-
 def prepare_deployment(container_def, service_id):
     deployment_template = {
         "apiVersion": "apps/v1",
@@ -99,9 +97,8 @@ def create_service(body):  # noqa: E501
             return Response("{'error message':'user not registered'}", status=400, mimetype='application/json')
 
         # TODO choose a better way to get a unique number
-        global next_index
-        service_id = user_id + '-service-' + str(next_index)
-        next_index = next_index + 1
+        service_id = user_id + '-service-' + str(user_info.next_index)
+        user_info.next_index = user_info.next_index + 1
 
         user = user_info.get_user(user_id)
         container_def = bodyService.container_definition

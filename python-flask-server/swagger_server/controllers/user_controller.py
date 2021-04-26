@@ -212,32 +212,20 @@ def unregister_user():  # noqa: E501
         #s3_proxy_server.delete_bucket(user.userResources.available_resources["s3_bucket"])
 
         # delete all pipelines:
-        k8s_proxy_server = k8s_api.get_k8s_proxy()
         # use deep copy of the list of pipes, since the original list of pipes will be updated inside the loop
-        pipelines = user.pipelineInfoList.copy()
-        print("len pipelines = ", len(pipelines))
+        pipelines = user.predefinedPipes.copy()
         for p in pipelines:
-            # TODO: delete kafka topics, etc
-            # TODO: ignore exceptions that occur here, and continue to clean up
-            print("len pipelines = ", len(pipelines))
+            pipeline_controller.delete_pipeline_resources(p)
+            user.del_pipeline(p, True)
+
+        pipelines = user.pipelineInfoList.copy()
+        for p in pipelines:
             pipeline_controller.delete_pipeline_resources(p)
             user.del_pipeline(p, False)
 
-        pipelines = user.predefinedPipes.copy()
-        print("len predefined pipelines = ", len(pipelines))
-        for p in pipelines:
-            # TODO: delete kafka topics, etc
-            # TODO: ignore exceptions that occur here, and continue to clean up
-            pipeline_controller.delete_pipeline_resources(p)
-            # TODO: this isn't clean. need to do this in userInfo
-            user.del_pipeline(p, True)
-
         # delete all services:
-        services = user.serviceInfoList
-        while len(services) > 0:
-            s = services[0]
-            # TODO: delete kafka topics, etc
-            # TODO: ignore exceptions that occur here, and continue to clean up
+        services = user.serviceInfoList.copy()
+        for s in services:
             service_controller.delete_service_resources(s)
             user.del_service(s)
 

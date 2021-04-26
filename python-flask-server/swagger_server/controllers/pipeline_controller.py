@@ -13,8 +13,6 @@ from swagger_server.controllers import user_info
 from swagger_server.controllers import k8s_api
 from swagger_server.controllers import kafka_api
 
-next_index = 101
-
 def create_pipeline(body):  # noqa: E501
     """Register a new pipeline
 
@@ -43,11 +41,10 @@ def create_pipeline(body):  # noqa: E501
 
         # load the argo workflow (pipeline) to k8s
         # TODO choose a better way to get a unique number
-        global next_index
-        event_source_name, kafka_key = k8s_proxy_server.create_eventsource(user_id, 'pipeline-in', next_index)
+        event_source_name, kafka_key = k8s_proxy_server.create_eventsource(user_id, 'pipeline-in', user_info.next_index)
         print("event_source_name = ", event_source_name)
         print("kafka_key = ", kafka_key)
-        next_index = next_index + 1
+        user_info.next_index = user_info.next_index + 1
         response = k8s_proxy_server.create_sensor(event_source_name, kafka_key, pipeline_def)
         pipeline_id = response['metadata']['name']
         pipe_metadata = PipelineMetadata(pipeline_id, event_source_name)

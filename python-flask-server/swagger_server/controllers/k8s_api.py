@@ -91,7 +91,6 @@ class K8s_Proxy:
             plural="eventsources",
             body=event_source_template
         )
-        print("create_eventsource, response = ", response)
         return event_source_name, kafka_key
 
     def delete_eventsource(self, event_source_name):
@@ -103,11 +102,11 @@ class K8s_Proxy:
             name=event_source_name,
             body=kubernetes.client.V1DeleteOptions()
         )
-        print("delete_eventsource, response = ", response)
 
     def create_sensor(self, event_name, kafka_key, workflow):
         sensor_name = '%s-job' % (event_name)
         trigger_name = '%s-trigger' % (event_name)
+        print("create_sensor, event_name = ", event_name, "kafka_key = ", kafka_key, "sensor_name = ", sensor_name, "trigger_name = ", trigger_name)
         sensor_template = {
             'apiVersion': 'argoproj.io/v1alpha1',
             'kind': 'Sensor',
@@ -152,7 +151,6 @@ class K8s_Proxy:
             plural="sensors",
             body=sensor_template
         )
-        print("create_sensor, response = ", response)
         #TODO save the created sensor id somewhere
         return response
 
@@ -165,7 +163,6 @@ class K8s_Proxy:
             name=pipeline_id,
             body=kubernetes.client.V1DeleteOptions()
         )
-        print("delete_sensor, response = ", response)
         return response
 
     def create_deployment(self, deployment_def):
