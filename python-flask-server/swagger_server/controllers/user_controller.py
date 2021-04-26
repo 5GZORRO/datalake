@@ -23,7 +23,7 @@ def list_users():  # noqa: E501
 
     :rtype: List[str]
     """
-    return list(user_info.Users)
+    return list(user_info.get_users())
 
 def create_predefined_pipelines(user_id, s3_available : bool):
     print("entering create_predefined_pipelines")
@@ -83,16 +83,19 @@ def create_predefined_pipelines(user_id, s3_available : bool):
     try:
         ingest_topic, kafka_key = k8s_proxy_server.create_eventsource(user_id, 'in', pipeline_number=0)
         response = k8s_proxy_server.create_sensor(ingest_topic, kafka_key, ingest_def)
+        print("response = ", response)
         pipeline_id = response['metadata']['name']
         pipe_metadata = PipelineMetadata(pipeline_id, ingest_topic)
         pipe_info = PipelineInfo(pipe_metadata, ingest_def)
         pipeline_topics["resourceMetricsIngestPipeline"] = ingest_topic
         predefined_pipes.append(pipe_info)
+        print("len of predefined_pipes = ", len(predefined_pipes))
     except Exception as e:
         print("Exception: ", str(e))
 
     # Add here additional pipelines, as needed
 
+    print("len of predefined_pipes = ", len(predefined_pipes))
     print("exiting create_predefined_pipelines")
     return pipeline_topics, predefined_pipes
 
@@ -115,7 +118,7 @@ def register_user(body):  # noqa: E501
         user_id = bodyUser.user_id
         #TODO: check authToken
         print ("register_user, user_id = ", user_id)
-        if user_id in user_info.Users:
+        if user_id in user_info.get_users():
             return Response("{'error message':'user already registered'}", status=409, mimetype='application/json')
 
         #TODO make data persistent
@@ -144,8 +147,6 @@ def register_user(body):  # noqa: E501
                 "userOutTopic": topic_name_out,
                 }
         pipeline_topics, predefined_pipes = create_predefined_pipelines(user_id, s3_bucket_name != None)
-        print(pipeline_topics)
-        print(predefined_pipes)
         # TODO: make variable names consistent
         availableResources = {
                 "pipelines": pipeline_topics,
@@ -155,8 +156,18 @@ def register_user(body):  # noqa: E501
         if s3_bucket_name:
             availableResources["s3_bucket"] = s3_bucket_name
         user_resources = UserResources(nameSpace, availableResources)
-        u_info = UserInfo(bodyUser, user_resources, predefined_pipes)
-        user_info.Users[user_id] = u_info
+        u_info = UserInfo(bodyUser, user_resources)
+
+        user_info.add_user(user_id, u_info)
+
+        print("predefined_pipes = ", predefined_pipes)
+        print("len of predefined_pipes = ", len(predefined_pipes))
+        # only after the user_info exists can we register with it the predefined pipes
+        for p in predefined_pipes:
+            print("inside for, before add_pipeline: p = ", p)
+            u_info.add_pipeline(p, True)
+            print("inside for, after add_pipeline:  ")
+        print("after for loop")
 
         return user_resources, 201
     except Exception as e:
@@ -187,8 +198,8 @@ def unregister_user():  # noqa: E501
         #TODO: check authToken
         print ("unregister_user, user_id = ", user_id)
         # verify the element exists
-        if user_id in user_info.Users:
-            user = user_info.Users[user_id]
+        if user_id in user_info.get_users():
+            user = user_info.get_user(user_id)
         else:
             return Response("{'error message':'user not registered'}", status=404, mimetype='application/json')
         # TODO cleanup all kinds of stuff
@@ -201,34 +212,25 @@ def unregister_user():  # noqa: E501
         #s3_proxy_server.delete_bucket(user.userResources.available_resources["s3_bucket"])
 
         # delete all pipelines:
-        k8s_proxy_server = k8s_api.get_k8s_proxy()
-        pipelines = user.pipelineInfoList
-        while len(pipelines) > 0:
-            p = pipelines[0]
-            # TODO: delete kafka topics, etc
-            # TODO: ignore exceptions that occur here, and continue to clean up
+        # use deep copy of the list of pipes, since the original list of pipes will be updated inside the loop
+        pipelines = user.predefinedPipes.copy()
+        for p in pipelines:
             pipeline_controller.delete_pipeline_resources(p)
-            pipelines.remove(p)
+            user.del_pipeline(p, True)
 
-        pipelines = user.predefinedPipes
-        while len(pipelines) > 0:
-            p = pipelines[0]
-            # TODO: delete kafka topics, etc
-            # TODO: ignore exceptions that occur here, and continue to clean up
+        pipelines = user.pipelineInfoList.copy()
+        for p in pipelines:
             pipeline_controller.delete_pipeline_resources(p)
-            pipelines.remove(p)
+            user.del_pipeline(p, False)
 
         # delete all services:
-        services = user.serviceInfoList
-        while len(services) > 0:
-            s = services[0]
-            # TODO: delete kafka topics, etc
-            # TODO: ignore exceptions that occur here, and continue to clean up
+        services = user.serviceInfoList.copy()
+        for s in services:
             service_controller.delete_service_resources(s)
-            services.remove(s)
+            user.del_service(s)
 
         print ("deleting user_id = ", user_id)
-        del user_info.Users[user_id]
+        user_info.del_user(user_id)
         return
     except Exception as e:
         print("Exception: ", str(e))
