@@ -10,6 +10,7 @@ from swagger_server.models.user import User  # noqa: E501
 from swagger_server import util
 from swagger_server.controllers import user_info
 from swagger_server.controllers import k8s_api
+from swagger_server.controllers import kafka_api
 
 def prepare_deployment(container_def, service_id):
     deployment_template = {
@@ -111,10 +112,17 @@ def create_service(body):  # noqa: E501
         response = k8s_proxy_server.create_service(service_def)
         # TODO Fix this up and save all the service info in one proper place.
         # TODO extract the ip address of the service
-        ports = response.spec.ports
-        ports2 = str(ports)
-        ports3 = json.loads(ports2.replace("'", '"'))
-        service_metadata = ServiceMetadata(service_id, ports3)
+        # In the meantime, do not expose the ports
+        #ports = response.spec.ports
+        #ports2 = str(ports)
+        #ports3 = json.loads(ports2.replace("'", '"'))
+        #service_metadata = ServiceMetadata(service_id, ports3)
+        topic_name_in = service_id + '-in'
+        topic_name_out = service_id + '-out'
+        kafka_proxy_server = kafka_api.get_kafka_proxy()
+        kafka_proxy_server.create_topic(user_id, topic_name_in)
+        kafka_proxy_server.create_topic(user_id, topic_name_out)
+        service_metadata = ServiceMetadata(service_id, topic_name_in, topic_name_out)
         service_info = ServiceInfo(service_metadata, container_def)
         user.add_service(service_info)
         return service_metadata, 201
@@ -128,6 +136,9 @@ def delete_service_resources(s):
     k8s_proxy_server.delete_service(name)
     name = s.service_metadata.service_id + "-deployment"
     k8s_proxy_server.delete_deployment(name)
+    kafka_proxy_server = kafka_api.get_kafka_proxy()
+    kafka_proxy_server.delete_topic(s.service_metadata.input_topic)
+    kafka_proxy_server.delete_topic(s.service_metadata.output_topic)
     return
 
 def delete_service():  # noqa: E501

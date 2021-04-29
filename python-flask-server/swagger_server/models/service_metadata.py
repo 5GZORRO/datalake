@@ -15,26 +15,31 @@ class ServiceMetadata(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, service_id: str=None, ports: List[object]=None):  # noqa: E501
+    def __init__(self, service_id: str=None, input_topic: str=None, output_topic: str=None):  # noqa: E501
         """ServiceMetadata - a model defined in Swagger
 
         :param service_id: The service_id of this ServiceMetadata.  # noqa: E501
         :type service_id: str
-        :param ports: The ports of this ServiceMetadata.  # noqa: E501
-        :type ports: List[object]
+        :param input_topic: The input_topic of this ServiceMetadata.  # noqa: E501
+        :type input_topic: str
+        :param output_topic: The output_topic of this ServiceMetadata.  # noqa: E501
+        :type output_topic: str
         """
         self.swagger_types = {
             'service_id': str,
-            'ports': List[object]
+            'input_topic': str,
+            'output_topic': str
         }
 
         self.attribute_map = {
             'service_id': 'serviceId',
-            'ports': 'ports'
+            'input_topic': 'inputTopic',
+            'output_topic': 'outputTopic'
         }
 
         self._service_id = service_id
-        self._ports = ports
+        self._input_topic = input_topic
+        self._output_topic = output_topic
 
     @classmethod
     def from_dict(cls, dikt) -> 'ServiceMetadata':
@@ -69,22 +74,43 @@ class ServiceMetadata(Model):
         self._service_id = service_id
 
     @property
-    def ports(self) -> List[object]:
-        """Gets the ports of this ServiceMetadata.
+    def input_topic(self) -> str:
+        """Gets the input_topic of this ServiceMetadata.
 
 
-        :return: The ports of this ServiceMetadata.
-        :rtype: List[object]
+        :return: The input_topic of this ServiceMetadata.
+        :rtype: str
         """
-        return self._ports
+        return self._input_topic
 
-    @ports.setter
-    def ports(self, ports: List[object]):
-        """Sets the ports of this ServiceMetadata.
+    @input_topic.setter
+    def input_topic(self, input_topic: str):
+        """Sets the input_topic of this ServiceMetadata.
 
 
-        :param ports: The ports of this ServiceMetadata.
-        :type ports: List[object]
+        :param input_topic: The input_topic of this ServiceMetadata.
+        :type input_topic: str
         """
 
-        self._ports = ports
+        self._input_topic = input_topic
+
+    @property
+    def output_topic(self) -> str:
+        """Gets the output_topic of this ServiceMetadata.
+
+
+        :return: The output_topic of this ServiceMetadata.
+        :rtype: str
+        """
+        return self._output_topic
+
+    @output_topic.setter
+    def output_topic(self, output_topic: str):
+        """Sets the output_topic of this ServiceMetadata.
+
+
+        :param output_topic: The output_topic of this ServiceMetadata.
+        :type output_topic: str
+        """
+
+        self._output_topic = output_topic

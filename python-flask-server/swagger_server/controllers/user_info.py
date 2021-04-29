@@ -26,12 +26,23 @@ def recover_service(service_dir_name, service_id):
     container_def = json.load(f)
     f.close()
 
-    file_name = dir_name + '/' + 'ports'
+    #file_name = dir_name + '/' + 'ports'
+    #f = open(file_name, 'r', encoding='utf-8')
+    #ports = json.load(f)
+    #f.close()
+
+    file_name = dir_name + '/' + 'input_topic'
     f = open(file_name, 'r', encoding='utf-8')
-    ports = json.load(f)
+    input_topic = f.read()
     f.close()
 
-    service_metadata = ServiceMetadata(service_id, ports)
+    file_name = dir_name + '/' + 'output_topic'
+    f = open(file_name, 'r', encoding='utf-8')
+    output_topic = f.read()
+    f.close()
+
+    #service_metadata = ServiceMetadata(service_id, ports)
+    service_metadata = ServiceMetadata(service_id, input_topic, output_topic)
     service_info = ServiceInfo(service_metadata, container_def)
 
     return service_info
@@ -186,9 +197,19 @@ def persist_service(user_id, service_info):
     dir_name = DATALAKE_BASE_DIR + '/' + user_id + '/services/' + service_id
     os.mkdir(dir_name)
 
-    file_name = dir_name + '/' + 'ports'
-    with open(file_name, 'w', encoding='utf-8') as f:
-        json.dump(service_metadata.ports, f, ensure_ascii=False, indent=4)
+    file_name = dir_name + '/' + 'input_topic'
+    file_p = open(file_name, 'w')
+    file_p.write(service_metadata.input_topic)
+    file_p.close()
+
+    file_name = dir_name + '/' + 'output_topic'
+    file_p = open(file_name, 'w')
+    file_p.write(service_metadata.output_topic)
+    file_p.close()
+
+    #file_name = dir_name + '/' + 'ports'
+    #with open(file_name, 'w', encoding='utf-8') as f:
+        #json.dump(service_metadata.ports, f, ensure_ascii=False, indent=4)
 
     file_name = dir_name + '/' + 'container_definition'
     with open(file_name, 'w', encoding='utf-8') as f:
@@ -198,7 +219,11 @@ def unpersist_service(user_id, service_id):
     dir_name = DATALAKE_BASE_DIR + '/' + user_id + '/services/' + service_id
     file_name = dir_name + '/' + 'container_definition'
     os.remove(file_name)
-    file_name = dir_name + '/' + 'ports'
+    #file_name = dir_name + '/' + 'ports'
+    #os.remove(file_name)
+    file_name = dir_name + '/' + 'input_topic'
+    os.remove(file_name)
+    file_name = dir_name + '/' + 'output_topic'
     os.remove(file_name)
     os.rmdir(dir_name)
 
