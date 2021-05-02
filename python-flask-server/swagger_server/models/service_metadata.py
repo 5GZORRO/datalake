@@ -15,7 +15,7 @@ class ServiceMetadata(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, service_id: str=None, input_topic: str=None, output_topic: str=None):  # noqa: E501
+    def __init__(self, service_id: str=None, input_topic: str=None, output_topic: str=None, ports: List[object]=None):  # noqa: E501
         """ServiceMetadata - a model defined in Swagger
 
         :param service_id: The service_id of this ServiceMetadata.  # noqa: E501
@@ -24,22 +24,27 @@ class ServiceMetadata(Model):
         :type input_topic: str
         :param output_topic: The output_topic of this ServiceMetadata.  # noqa: E501
         :type output_topic: str
+        :param ports: The ports of this ServiceMetadata.  # noqa: E501
+        :type ports: List[object]
         """
         self.swagger_types = {
             'service_id': str,
             'input_topic': str,
-            'output_topic': str
+            'output_topic': str,
+            'ports': List[object]
         }
 
         self.attribute_map = {
             'service_id': 'serviceId',
             'input_topic': 'inputTopic',
-            'output_topic': 'outputTopic'
+            'output_topic': 'outputTopic',
+            'ports': 'ports'
         }
 
         self._service_id = service_id
         self._input_topic = input_topic
         self._output_topic = output_topic
+        self._ports = ports
 
     @classmethod
     def from_dict(cls, dikt) -> 'ServiceMetadata':
@@ -114,3 +119,24 @@ class ServiceMetadata(Model):
         """
 
         self._output_topic = output_topic
+
+    @property
+    def ports(self) -> List[object]:
+        """Gets the ports of this ServiceMetadata.
+
+
+        :return: The ports of this ServiceMetadata.
+        :rtype: List[object]
+        """
+        return self._ports
+
+    @ports.setter
+    def ports(self, ports: List[object]):
+        """Sets the ports of this ServiceMetadata.
+
+
+        :param ports: The ports of this ServiceMetadata.
+        :type ports: List[object]
+        """
+
+        self._ports = ports

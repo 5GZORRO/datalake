@@ -1,5 +1,6 @@
 import connexion
 import six
+import os
 
 from flask import Response
 from swagger_server.models.user import User  # noqa: E501
@@ -53,19 +54,19 @@ def create_predefined_pipelines(user_id, s3_available : bool):
                 "inputs": {
                     "parameters": [ {
                         "name": "args"
-                } ]
+                    } ]
                 },
                 "container": {
                     "image": "ingest",
-            "env": [
-                { "name": "S3_URL",
-                "value": "192.168.122.176:9000" },
-                { "name": "S3_ACCESS_KEY",
-                "value": "user" },
-                { "name": "S3_SECRET_KEY",
-                "value": "password" }
-            ],
-            "imagePullPolicy": "Never",
+                    "env": [
+                        { "name": "S3_URL",
+                        "value": os.getenv('S3_URL', '127.0.0.1:9000') },
+                        { "name": "S3_ACCESS_KEY",
+                        "value": os.getenv('S3_ACCESS_KEY', 'user') },
+                        { "name": "S3_SECRET_KEY",
+                        "value": os.getenv('S3_SECRET_KEY', 'password') },
+                    ],
+                    "imagePullPolicy": "Never",
                     "command": [ "python", "./__main__.py" ],
                     "args": ["{{inputs.parameters.args}}"],
                     "resources": {
@@ -83,19 +84,16 @@ def create_predefined_pipelines(user_id, s3_available : bool):
     try:
         ingest_topic, kafka_key = k8s_proxy_server.create_eventsource(user_id, 'in', pipeline_number=0)
         response = k8s_proxy_server.create_sensor(ingest_topic, kafka_key, ingest_def)
-        print("response = ", response)
         pipeline_id = response['metadata']['name']
         pipe_metadata = PipelineMetadata(pipeline_id, ingest_topic)
         pipe_info = PipelineInfo(pipe_metadata, ingest_def)
         pipeline_topics["resourceMetricsIngestPipeline"] = ingest_topic
         predefined_pipes.append(pipe_info)
-        print("len of predefined_pipes = ", len(predefined_pipes))
     except Exception as e:
         print("Exception: ", str(e))
 
     # Add here additional pipelines, as needed
 
-    print("len of predefined_pipes = ", len(predefined_pipes))
     print("exiting create_predefined_pipelines")
     return pipeline_topics, predefined_pipes
 
@@ -164,10 +162,7 @@ def register_user(body):  # noqa: E501
         print("len of predefined_pipes = ", len(predefined_pipes))
         # only after the user_info exists can we register with it the predefined pipes
         for p in predefined_pipes:
-            print("inside for, before add_pipeline: p = ", p)
             u_info.add_pipeline(p, True)
-            print("inside for, after add_pipeline:  ")
-        print("after for loop")
 
         return user_resources, 201
     except Exception as e:
