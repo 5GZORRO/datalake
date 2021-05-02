@@ -435,12 +435,20 @@ definitions:
         type: "string"
       outputTopic:
         type: "string"
+      ports:
+        type: "array"
+        items:
+          type: "object"
+          properties: {}
     xml:
       name: "ServiceMetadata"
     example:
       outputTopic: "outputTopic"
       serviceId: "serviceId"
       inputTopic: "inputTopic"
+      ports:
+      - "{}"
+      - "{}"
   ServiceInfo:
     type: "object"
     properties:
@@ -456,4 +464,7 @@ definitions:
         outputTopic: "outputTopic"
         serviceId: "serviceId"
         inputTopic: "inputTopic"
+        ports:
+        - "{}"
+        - "{}"
       containerDefinition: "{}"

@@ -1,6 +1,7 @@
 import connexion
 import six
 import json
+import os
 
 from swagger_server.models.create_service import CreateService  # noqa: E501
 from swagger_server.models.get_service import GetService  # noqa: E501
@@ -62,7 +63,6 @@ def prepare_service(container_def, service_id):
 
     # loop through the ports and create a service for each one
     ports = container_def['ports']
-    print("ports = ", ports)
     for p in ports:
         entry = {"port": p["containerPort"]}
         if "name" in p:
@@ -103,26 +103,40 @@ def create_service(body):  # noqa: E501
 
         user = user_info.get_user(user_id)
         container_def = bodyService.container_definition
-        deployment_def = prepare_deployment(container_def, service_id)
-        service_def = prepare_service(container_def, service_id)
+        print("container_def = ", container_def)
 
-        # load the service to k8s
-        k8s_proxy_server = k8s_api.get_k8s_proxy()
-        k8s_proxy_server.create_deployment(deployment_def)
-        response = k8s_proxy_server.create_service(service_def)
-        # TODO Fix this up and save all the service info in one proper place.
-        # TODO extract the ip address of the service
-        # In the meantime, do not expose the ports
-        #ports = response.spec.ports
-        #ports2 = str(ports)
-        #ports3 = json.loads(ports2.replace("'", '"'))
-        #service_metadata = ServiceMetadata(service_id, ports3)
+        # create kafka topics for use by the service
         topic_name_in = service_id + '-in'
         topic_name_out = service_id + '-out'
         kafka_proxy_server = kafka_api.get_kafka_proxy()
         kafka_proxy_server.create_topic(user_id, topic_name_in)
         kafka_proxy_server.create_topic(user_id, topic_name_out)
-        service_metadata = ServiceMetadata(service_id, topic_name_in, topic_name_out)
+
+        # add stuff to container environment variables
+        if 'env' not in container_def:
+            container_def['env'] = []
+        kafka_url = os.getenv('KAFKA_URL', '127.0.0.1:9092')
+        container_def['env'].append({"name": "KAFKA_URL", "value": kafka_url})
+        container_def['env'].append({"name": "KAFKA_TOPIC_IN", "value": topic_name_in})
+        container_def['env'].append({"name": "KAFKA_TOPIC_OUT", "value": topic_name_out})
+        container_def['imagePullPolicy'] = "Never"
+
+        deployment_def = prepare_deployment(container_def, service_id)
+
+        # load the service to k8s
+        k8s_proxy_server = k8s_api.get_k8s_proxy()
+        k8s_proxy_server.create_deployment(deployment_def)
+        if 'ports' in container_def:
+            service_def = prepare_service(container_def, service_id)
+            response = k8s_proxy_server.create_service(service_def)
+            # TODO Fix this up and save all the service info in one proper place.
+            # TODO extract the ip address of the service
+            ports = response.spec.ports
+            ports2 = str(ports)
+            ports3 = json.loads(ports2.replace("'", '"'))
+        else:
+            ports3 = []
+        service_metadata = ServiceMetadata(service_id, topic_name_in, topic_name_out, ports3)
         service_info = ServiceInfo(service_metadata, container_def)
         user.add_service(service_info)
         return service_metadata, 201
@@ -132,8 +146,10 @@ def create_service(body):  # noqa: E501
 
 def delete_service_resources(s):
     k8s_proxy_server = k8s_api.get_k8s_proxy()
-    name = s.service_metadata.service_id + "-service"
-    k8s_proxy_server.delete_service(name)
+    # delete the kubernetes service if there were ports that we exposed
+    if s.service_metadata.ports != None and len(s.service_metadata.ports) > 0:
+        name = s.service_metadata.service_id + "-service"
+        k8s_proxy_server.delete_service(name)
     name = s.service_metadata.service_id + "-deployment"
     k8s_proxy_server.delete_deployment(name)
     kafka_proxy_server = kafka_api.get_kafka_proxy()
