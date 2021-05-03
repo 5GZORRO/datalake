@@ -14,19 +14,4 @@ When calling `POST datalake/v1/pipeline`, set `pipelineDefinition` to the json r
 # Programs that are not function-as-a-service
 
 To run a program that is not function-as-a-service (e.g. a web server with a REST API), we provide the datalake `service`, which is essentially a Kubernetes deployment and service of a single container.
-The input required to define the service is the part of the Kubernetes job yaml that usually comes under `containers`.
-For example, to run nginx web server, the following container definition is required.
-
-```
-{
-    "name": "nginx",
-    "image": "nginx:1.14.2",
-    "ports": [ {
-        "name": "web",
-        "containerPort": 80,
-        "protocol": "TCP"
-  } ]
-}
-```
-The main parameters are the `image` parameter and ports needed to be made avilable.
-Perform a `POST datalake/v1/service` operation with the above data to run the specified container on Kubernetes.
+See instructions under the services directory.
