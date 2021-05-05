@@ -81,8 +81,7 @@ class K8s_Proxy:
         }
 
         kafka_key = '%s-kafka' % event_source_name
-        #event_source_template['spec']['kafka'][kafka_key] = _spec_kafka_template
-        event_source_template['spec']['kafka'][event_source_name] = _spec_kafka_template
+        event_source_template['spec']['kafka'][kafka_key] = _spec_kafka_template
 
         response = self.api.create_namespaced_custom_object(
             group="argoproj.io",
