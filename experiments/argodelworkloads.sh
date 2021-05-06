@@ -1,1 +1,1 @@
-argo delete -n argo-events --all
+argo delete -n dl-argo-events --all

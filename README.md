@@ -26,9 +26,29 @@ Kubernetes should use Docker container management (rather than containerd) for a
 
 For kubernetes, it is possible to run a simulated minikube cluster.
 
-In Argo, it is necessary to define the `argo-events` namespace.
+To set up Argo and standard argo-events:
+```
+kubectl create namespace argo
+kubectl apply -n argo -f https://raw.githubusercontent.com/argoproj/argo/v2.12.0-rc3/manifests/install.yaml
+kubectl create rolebinding default-admin --clusterrole=admin --serviceaccount=default:default
+kubectl create namespace argo-events
+kubectl apply -f https://raw.githubusercontent.com/argoproj/argo-events/v1.1.0/manifests/install.yaml
+kubectl apply -n argo-events -f https://raw.githubusercontent.com/argoproj/argo-events/v1.1.0/examples/eventbus/native.yaml
+```
+In Argo, it is necessary to define the `dl-argo-events` namespace.
+```
+kubectl create namespace dl-argo-events
+cd config
+kubectl apply -f ./install.yaml
+kubectl apply -n dl-argo-events -f https://raw.githubusercontent.com/argoproj/argo-events/v1.1.0/examples/eventbus/native.yaml
+```
+
+To see the Argo GUI, run `argo server` at the command line, and then connect via a web browser to `http://localhost:2746`.
 
 In Kubernetes, it is necessary to define the `datalake` namespace.
+```
+kubectl create namespace datalake
+```
 
 The ingest pipeline must be compiled and dockerized with a name of `ingest` before bringing up the datalake python-flask-server.
 

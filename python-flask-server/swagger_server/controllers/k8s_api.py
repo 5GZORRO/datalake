@@ -35,7 +35,7 @@ class K8s_Proxy:
         response = self.api.create_namespaced_custom_object(
             group="argoproj.io",
             version="v1alpha1",
-            namespace="argo-events",
+            namespace="dl-argo-events",
             plural="workflows",
             body=template
         )
@@ -45,7 +45,7 @@ class K8s_Proxy:
         response = self.api.delete_namespaced_custom_object(
             group="argoproj.io",
             version="v1alpha1",
-            namespace="argo-events",
+            namespace="dl-argo-events",
             plural="workflows",
             name=pipeline_id,
             body=kubernetes.client.V1DeleteOptions()
@@ -86,7 +86,7 @@ class K8s_Proxy:
         response = self.api.create_namespaced_custom_object(
             group="argoproj.io",
             version="v1alpha1",
-            namespace="argo-events",
+            namespace="dl-argo-events",
             plural="eventsources",
             body=event_source_template
         )
@@ -96,7 +96,7 @@ class K8s_Proxy:
         response = self.api.delete_namespaced_custom_object(
             group="argoproj.io",
             version="v1alpha1",
-            namespace="argo-events",
+            namespace="dl-argo-events",
             plural="eventsources",
             name=event_source_name,
             body=kubernetes.client.V1DeleteOptions()
@@ -146,7 +146,7 @@ class K8s_Proxy:
         response = self.api.create_namespaced_custom_object(
             group="argoproj.io",
             version="v1alpha1",
-            namespace="argo-events",
+            namespace="dl-argo-events",
             plural="sensors",
             body=sensor_template
         )
@@ -157,7 +157,7 @@ class K8s_Proxy:
         response = self.api.delete_namespaced_custom_object(
             group="argoproj.io",
             version="v1alpha1",
-            namespace="argo-events",
+            namespace="dl-argo-events",
             plural="sensors",
             name=pipeline_id,
             body=kubernetes.client.V1DeleteOptions()
