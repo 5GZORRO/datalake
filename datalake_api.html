@@ -1,0 +1,943 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Data Lake API</title>
+    <style type="text/css">
+      body {
+	font-family: Trebuchet MS, sans-serif;
+	font-size: 15px;
+	color: #444;
+	margin-right: 24px;
+}
+
+h1	{
+	font-size: 25px;
+}
+h2	{
+	font-size: 20px;
+}
+h3	{
+	font-size: 16px;
+	font-weight: bold;
+}
+hr	{
+	height: 1px;
+	border: 0;
+	color: #ddd;
+	background-color: #ddd;
+}
+
+.app-desc {
+  clear: both;
+  margin-left: 20px;
+}
+.param-name {
+  width: 100%;
+}
+.license-info {
+  margin-left: 20px;
+}
+
+.license-url {
+  margin-left: 20px;
+}
+
+.model {
+  margin: 0 0 0px 20px;
+}
+
+.method {
+  margin-left: 20px;
+}
+
+.method-notes	{
+	margin: 10px 0 20px 0;
+	font-size: 90%;
+	color: #555;
+}
+
+pre {
+  padding: 10px;
+  margin-bottom: 2px;
+}
+
+.http-method {
+ text-transform: uppercase;
+}
+
+pre.get {
+  background-color: #0f6ab4;
+}
+
+pre.post {
+  background-color: #10a54a;
+}
+
+pre.put {
+  background-color: #c5862b;
+}
+
+pre.delete {
+  background-color: #a41e22;
+}
+
+.huge	{
+	color: #fff;
+}
+
+pre.example {
+  background-color: #f3f3f3;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+code {
+  white-space: pre;
+}
+
+.nickname {
+  font-weight: bold;
+}
+
+.method-path {
+  font-size: 1.5em;
+  background-color: #0f6ab4;
+}
+
+.up {
+  float:right;
+}
+
+.parameter {
+  width: 500px;
+}
+
+.param {
+  width: 500px;
+  padding: 10px 0 0 20px;
+  font-weight: bold;
+}
+
+.param-desc {
+  width: 700px;
+  padding: 0 0 0 20px;
+  color: #777;
+}
+
+.param-type {
+  font-style: italic;
+}
+
+.param-enum-header {
+width: 700px;
+padding: 0 0 0 60px;
+color: #777;
+font-weight: bold;
+}
+
+.param-enum {
+width: 700px;
+padding: 0 0 0 80px;
+color: #777;
+font-style: italic;
+}
+
+.field-label {
+  padding: 0;
+  margin: 0;
+  clear: both;
+}
+
+.field-items	{
+	padding: 0 0 15px 0;
+	margin-bottom: 15px;
+}
+
+.return-type {
+  clear: both;
+  padding-bottom: 10px;
+}
+
+.param-header {
+  font-weight: bold;
+}
+
+.method-tags {
+  text-align: right;
+}
+
+.method-tag {
+  background: none repeat scroll 0% 0% #24A600;
+  border-radius: 3px;
+  padding: 2px 10px;
+  margin: 2px;
+  color: #FFF;
+  display: inline-block;
+  text-decoration: none;
+}
+
+    </style>
+  </head>
+  <body>
+  <h1>Data Lake API</h1>
+    <div class="app-desc">This is a simple server to support 5gzorro data lake operations.</div>
+    <div class="app-desc">More information: <a href="https://helloreverb.com">https://helloreverb.com</a></div>
+    <div class="app-desc">Contact Info: <a href="meth@il.ibm.com">meth@il.ibm.com</a></div>
+    <div class="app-desc">Version: 1.0.0</div>
+    <div class="app-desc">BasePath:/datalake/v1</div>
+    <div class="license-info">Apache 2.0</div>
+    <div class="license-url">http://www.apache.org/licenses/LICENSE-2.0.html</div>
+  <h2>Access</h2>
+
+  <h2><a name="__Methods">Methods</a></h2>
+  [ Jump to <a href="#__Models">Models</a> ]
+
+  <h3>Table of Contents </h3>
+  <div class="method-summary"></div>
+  <h4><a href="#Pipeline">Pipeline</a></h4>
+  <ul>
+  <li><a href="#createPipeline"><code><span class="http-method">post</span> /pipeline</code></a></li>
+  <li><a href="#deletePipeline"><code><span class="http-method">delete</span> /pipeline</code></a></li>
+  <li><a href="#getPipeline"><code><span class="http-method">get</span> /pipeline</code></a></li>
+  <li><a href="#listPipelines"><code><span class="http-method">get</span> /pipeline/all</code></a></li>
+  </ul>
+  <h4><a href="#Service">Service</a></h4>
+  <ul>
+  <li><a href="#createService"><code><span class="http-method">post</span> /service</code></a></li>
+  <li><a href="#deleteService"><code><span class="http-method">delete</span> /service</code></a></li>
+  <li><a href="#getService"><code><span class="http-method">get</span> /service</code></a></li>
+  <li><a href="#listServices"><code><span class="http-method">get</span> /service/all</code></a></li>
+  </ul>
+  <h4><a href="#User">User</a></h4>
+  <ul>
+  <li><a href="#listUsers"><code><span class="http-method">get</span> /user/all</code></a></li>
+  <li><a href="#registerUser"><code><span class="http-method">post</span> /user</code></a></li>
+  <li><a href="#unregisterUser"><code><span class="http-method">delete</span> /user</code></a></li>
+  </ul>
+
+  <h1><a name="Pipeline">Pipeline</a></h1>
+  <div class="method"><a name="createPipeline"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /pipeline</code></pre></div>
+    <div class="method-summary">Register a new pipeline (<span class="nickname">createPipeline</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#CreatePipeline">CreatePipeline</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Parameters to register pipeline </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#PipelineMetadata">PipelineMetadata</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "inputTopic" : "inputTopic",
+  "pipelineId" : "pipelineId"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">201</h4>
+    successful operation
+        <a href="#PipelineMetadata">PipelineMetadata</a>
+    <h4 class="field-label">400</h4>
+    Bad Request
+        <a href="#"></a>
+    <h4 class="field-label">401</h4>
+    Unauthorized
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="deletePipeline"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="delete"><code class="huge"><span class="http-method">delete</span> /pipeline</code></pre></div>
+    <div class="method-summary">Delete a pipeline (<span class="nickname">deletePipeline</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#GetPipeline">GetPipeline</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Parameters to delete a pipeline </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">204</h4>
+    Pipeline deleted successfully
+        <a href="#"></a>
+    <h4 class="field-label">400</h4>
+    Bad Request
+        <a href="#"></a>
+    <h4 class="field-label">401</h4>
+    Unauthorized
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    User or Pipeline not found
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="getPipeline"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /pipeline</code></pre></div>
+    <div class="method-summary">Return details of specified pipeline (<span class="nickname">getPipeline</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#GetPipeline">GetPipeline</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Parameters to get a pipeline </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#PipelineInfo">PipelineInfo</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "pipelineMetadata" : {
+    "inputTopic" : "inputTopic",
+    "pipelineId" : "pipelineId"
+  },
+  "pipelineDefinition" : "{}"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    successful operation
+        <a href="#PipelineInfo">PipelineInfo</a>
+    <h4 class="field-label">400</h4>
+    Bad Request
+        <a href="#"></a>
+    <h4 class="field-label">401</h4>
+    Unauthorized
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    User or Pipeline not found
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="listPipelines"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /pipeline/all</code></pre></div>
+    <div class="method-summary">List all of the User's pipelines (<span class="nickname">listPipelines</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#User">User</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      array[<a href="#PipelineInfo">PipelineInfo</a>]
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  "pipelineMetadata" : {
+    "inputTopic" : "inputTopic",
+    "pipelineId" : "pipelineId"
+  },
+  "pipelineDefinition" : "{}"
+}, {
+  "pipelineMetadata" : {
+    "inputTopic" : "inputTopic",
+    "pipelineId" : "pipelineId"
+  },
+  "pipelineDefinition" : "{}"
+} ]</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    successful operation
+        
+    <h4 class="field-label">400</h4>
+    Bad Request
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <h1><a name="Service">Service</a></h1>
+  <div class="method"><a name="createService"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /service</code></pre></div>
+    <div class="method-summary">Register a new service (<span class="nickname">createService</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#CreateService">CreateService</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Parameters to register service </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#ServiceMetadata">ServiceMetadata</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "outputTopic" : "outputTopic",
+  "serviceId" : "serviceId",
+  "inputTopic" : "inputTopic",
+  "ports" : [ "{}", "{}" ]
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">201</h4>
+    successful operation
+        <a href="#ServiceMetadata">ServiceMetadata</a>
+    <h4 class="field-label">400</h4>
+    Bad Request
+        <a href="#"></a>
+    <h4 class="field-label">401</h4>
+    Unauthorized
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="deleteService"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="delete"><code class="huge"><span class="http-method">delete</span> /service</code></pre></div>
+    <div class="method-summary">Delete a service (<span class="nickname">deleteService</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#GetService">GetService</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Parameters to delete a service </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">204</h4>
+    Service deleted successfully
+        <a href="#"></a>
+    <h4 class="field-label">400</h4>
+    Bad Request
+        <a href="#"></a>
+    <h4 class="field-label">401</h4>
+    Unauthorized
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    User or Service not found
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="getService"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /service</code></pre></div>
+    <div class="method-summary">Return details of specified service (<span class="nickname">getService</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#GetService">GetService</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Parameters to get a service </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#ServiceInfo">ServiceInfo</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "serviceMetadata" : {
+    "outputTopic" : "outputTopic",
+    "serviceId" : "serviceId",
+    "inputTopic" : "inputTopic",
+    "ports" : [ "{}", "{}" ]
+  },
+  "containerDefinition" : "{}"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    successful operation
+        <a href="#ServiceInfo">ServiceInfo</a>
+    <h4 class="field-label">400</h4>
+    Bad Request
+        <a href="#"></a>
+    <h4 class="field-label">401</h4>
+    Unauthorized
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    User or Service not found
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="listServices"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /service/all</code></pre></div>
+    <div class="method-summary">List all of the User's services (<span class="nickname">listServices</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#User">User</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      array[<a href="#ServiceInfo">ServiceInfo</a>]
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  "serviceMetadata" : {
+    "outputTopic" : "outputTopic",
+    "serviceId" : "serviceId",
+    "inputTopic" : "inputTopic",
+    "ports" : [ "{}", "{}" ]
+  },
+  "containerDefinition" : "{}"
+}, {
+  "serviceMetadata" : {
+    "outputTopic" : "outputTopic",
+    "serviceId" : "serviceId",
+    "inputTopic" : "inputTopic",
+    "ports" : [ "{}", "{}" ]
+  },
+  "containerDefinition" : "{}"
+} ]</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    successful operation
+        
+    <h4 class="field-label">400</h4>
+    Bad Request
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <h1><a name="User">User</a></h1>
+  <div class="method"><a name="listUsers"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /user/all</code></pre></div>
+    <div class="method-summary">List all User IDs (<span class="nickname">listUsers</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      
+      array[String]
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ "", "" ]</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    successful operation
+        
+    <h4 class="field-label">400</h4>
+    Bad Request
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="registerUser"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /user</code></pre></div>
+    <div class="method-summary">Register a new user (<span class="nickname">registerUser</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#User">User</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Parameters to register User that is connecting to the services of the Data Lake </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#UserResources">UserResources</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "nameSpace" : "nameSpace",
+  "availableResources" : "{}"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">201</h4>
+    successful operation
+        <a href="#UserResources">UserResources</a>
+    <h4 class="field-label">400</h4>
+    Bad Request
+        <a href="#"></a>
+    <h4 class="field-label">401</h4>
+    Unauthorized
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="unregisterUser"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="delete"><code class="huge"><span class="http-method">delete</span> /user</code></pre></div>
+    <div class="method-summary">Unregister a user (<span class="nickname">unregisterUser</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#User">User</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Parameters to unregister User from the Data Lake </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">204</h4>
+    User unregistered successfully
+        <a href="#"></a>
+    <h4 class="field-label">400</h4>
+    Bad Request
+        <a href="#"></a>
+    <h4 class="field-label">401</h4>
+    Unauthorized
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    User not found
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+
+  <h2><a name="__Models">Models</a></h2>
+  [ Jump to <a href="#__Methods">Methods</a> ]
+
+  <h3>Table of Contents</h3>
+  <ol>
+    <li><a href="#CreatePipeline"><code>CreatePipeline</code> - </a></li>
+    <li><a href="#CreateService"><code>CreateService</code> - </a></li>
+    <li><a href="#GetPipeline"><code>GetPipeline</code> - </a></li>
+    <li><a href="#GetService"><code>GetService</code> - </a></li>
+    <li><a href="#PipelineInfo"><code>PipelineInfo</code> - </a></li>
+    <li><a href="#PipelineMetadata"><code>PipelineMetadata</code> - </a></li>
+    <li><a href="#ServiceInfo"><code>ServiceInfo</code> - </a></li>
+    <li><a href="#ServiceMetadata"><code>ServiceMetadata</code> - </a></li>
+    <li><a href="#User"><code>User</code> - </a></li>
+    <li><a href="#UserResources"><code>UserResources</code> - </a></li>
+  </ol>
+
+  <div class="model">
+    <h3><a name="CreatePipeline"><code>CreatePipeline</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">userInfo (optional)</div><div class="param-desc"><span class="param-type"><a href="#User">User</a></span>  </div>
+<div class="param">pipelineDefinition (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="CreateService"><code>CreateService</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">userInfo (optional)</div><div class="param-desc"><span class="param-type"><a href="#User">User</a></span>  </div>
+<div class="param">containerDefinition (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="GetPipeline"><code>GetPipeline</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">userInfo (optional)</div><div class="param-desc"><span class="param-type"><a href="#User">User</a></span>  </div>
+<div class="param">pipelineId (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="GetService"><code>GetService</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">userInfo (optional)</div><div class="param-desc"><span class="param-type"><a href="#User">User</a></span>  </div>
+<div class="param">serviceId (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="PipelineInfo"><code>PipelineInfo</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">pipelineMetadata (optional)</div><div class="param-desc"><span class="param-type"><a href="#PipelineMetadata">PipelineMetadata</a></span>  </div>
+<div class="param">pipelineDefinition (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="PipelineMetadata"><code>PipelineMetadata</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">pipelineId (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">inputTopic (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="ServiceInfo"><code>ServiceInfo</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">serviceMetadata (optional)</div><div class="param-desc"><span class="param-type"><a href="#ServiceMetadata">ServiceMetadata</a></span>  </div>
+<div class="param">containerDefinition (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="ServiceMetadata"><code>ServiceMetadata</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">serviceId (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">inputTopic (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">outputTopic (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">ports (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">array[Object]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="User"><code>User</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">userId (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">authToken (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="UserResources"><code>UserResources</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">nameSpace (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">availableResources (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  </body>
+</html>
