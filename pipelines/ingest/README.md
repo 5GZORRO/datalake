@@ -6,7 +6,7 @@ This component ingests data sent to its input topic and places the recieved data
 ## Requirements
 Python 3.6
 
-## Create Docker cotainer
+## Create Docker container
 
 docker build -t ingest .
 
