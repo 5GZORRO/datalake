@@ -30,7 +30,7 @@
 			"value": "password" }
 		],
 		"imagePullPolicy": "Never",
-                "command": [ "python", "./__main__.py" ],
+                "command": [ "python", "./ingest.py" ],
                 "args": ["{{inputs.parameters.args}}"],
                 "resources": {
                     "limits": {

@@ -7,9 +7,7 @@ WORKDIR /usr/src/app
 
 RUN pip3 install minio
 
-COPY . /usr/src/app
+ADD ingest.py /usr/src/app
 
-ENTRYPOINT ["python3"]
-
-CMD ["__main__.py"]
+CMD ["python", "ingest.py"]
 

@@ -33,23 +33,53 @@ def create_predefined_pipelines(user_id, s3_available : bool):
     if not s3_available:
         return pipeline_topics, predefined_pipes
     # create default ingest metrics pipeline
-    # TODO: Fix the URLs of the parameters
-    # TODO: Do not return the secrets to the user!!!
+    # TODO: perhaps move this to a config file yaml and have a more general mechanism to add predefined pipelines
     ingest_def = {
         "apiVersion": "argoproj.io/v1alpha1",
         "kind": "Workflow",
         "metadata": {
-            "generateName": "ingest-"
+            "generateName": "ingest-pipeline-"
         },
         "spec": {
-            "entrypoint": "ingest",
+            "entrypoint": "ingest-and-index",
             "arguments": {
                 "parameters": [ {
                     "name": "args",
                     "value": "my args"
                 } ]
             },
-            "templates": [ {
+            "templates": [
+              {
+                "name": "ingest-and-index",
+                "inputs": {
+                    "parameters": [ {
+                        "name": "args"
+                    } ]
+                },
+                "steps": [
+                    [ {
+                        "name": "ingest1",
+                        "template": "ingest",
+                        "arguments": {
+                            "parameters": [ {
+                                "name": "args",
+                                "value": "{{inputs.parameters.args}}"
+                            } ]
+                        }
+                    } ],
+                    [ {
+                        "name": "index1",
+                        "template": "metrics-index",
+                        "arguments": {
+                            "parameters": [ {
+                                "name": "args",
+                                "value": "{{steps.ingest1.outputs.result}}"
+                            } ]
+                        }
+                    } ]
+                ]
+              },
+              {
                 "name": "ingest",
                 "inputs": {
                     "parameters": [ {
@@ -67,7 +97,7 @@ def create_predefined_pipelines(user_id, s3_available : bool):
                         "value": os.getenv('S3_SECRET_KEY', 'password') },
                     ],
                     "imagePullPolicy": "Never",
-                    "command": [ "python", "./__main__.py" ],
+                    "command": [ "python", "./ingest.py" ],
                     "args": ["{{inputs.parameters.args}}"],
                     "resources": {
                         "limits": {
@@ -76,13 +106,38 @@ def create_predefined_pipelines(user_id, s3_available : bool):
                         }
                     }
                 }
-            } ]
+              },
+              {
+                "name": "metrics-index",
+                "inputs": {
+                    "parameters": [ {
+                        "name": "args"
+                    } ]
+                },
+                "container": {
+                    "image": "metrics_index",
+                    "env": [
+                        { "name": "POSTGRES_HOST",
+                        "value": os.getenv("POSTGRES_HOST", "127.0.0.1") },
+                    ],
+                    "imagePullPolicy": "Never",
+                    "command": [ "python", "./metrics_index.py" ],
+                    "args": ["{{inputs.parameters.args}}"],
+                    "resources": {
+                        "limits": {
+                            "memory": "32Mi",
+                            "cpu": "100m"
+                        }
+                    }
+                }
+              }
+            ]
         }
     }
-    # TODO: fix parameters
     k8s_proxy_server = k8s_api.get_k8s_proxy()
     try:
         ingest_topic, kafka_key = k8s_proxy_server.create_eventsource(user_id, 'in', pipeline_number=0)
+        print("ingest_topic = ", ingest_topic)
         response = k8s_proxy_server.create_sensor(ingest_topic, kafka_key, ingest_def)
         pipeline_id = response['metadata']['name']
         pipe_metadata = PipelineMetadata(pipeline_id, ingest_topic)
@@ -94,7 +149,6 @@ def create_predefined_pipelines(user_id, s3_available : bool):
 
     # Add here additional pipelines, as needed
 
-    print("exiting create_predefined_pipelines")
     return pipeline_topics, predefined_pipes
 
 def register_user(body):  # noqa: E501
@@ -119,22 +173,18 @@ def register_user(body):  # noqa: E501
         if user_id in user_info.get_users():
             return Response("{'error message':'user already registered'}", status=409, mimetype='application/json')
 
-        #TODO make data persistent
-
         # generate returned data
         nameSpace = user_id
-
-        #TODO: define the available Resources
         k8s_proxy_server = k8s_api.get_k8s_proxy()
         s3_proxy_server = s3_api.get_s3_proxy()
         kafka_proxy_server = kafka_api.get_kafka_proxy()
-        # TODO change this to a function call
         s3_bucket_name = s3_proxy_server.create_bucket(user_id, "dl-bucket")
         urls = {}
         urls['k8s_url'] = k8s_proxy_server.k8s_url
         urls['kafka_url'] = kafka_proxy_server.kafka_url
         if s3_bucket_name:
             urls['s3_url'] = s3_proxy_server.s3_url
+
         # create general kafka topics for the user to use
         topic_name_in = user_id + "-topic-in"
         topic_name_out = user_id + "-topic-out"
@@ -159,7 +209,6 @@ def register_user(body):  # noqa: E501
         user_info.add_user(user_id, u_info)
 
         print("predefined_pipes = ", predefined_pipes)
-        print("len of predefined_pipes = ", len(predefined_pipes))
         # only after the user_info exists can we register with it the predefined pipes
         for p in predefined_pipes:
             u_info.add_pipeline(p, True)
@@ -197,7 +246,7 @@ def unregister_user():  # noqa: E501
             user = user_info.get_user(user_id)
         else:
             return Response("{'error message':'user not registered'}", status=404, mimetype='application/json')
-        # TODO cleanup all kinds of stuff
+        # cleanup all kinds of stuff
         kafka_proxy_server = kafka_api.get_kafka_proxy()
         kafka_proxy_server.delete_topic(user.userResources.available_resources["topics"]["userInTopic"])
         kafka_proxy_server.delete_topic(user.userResources.available_resources["topics"]["userOutTopic"])
