@@ -1,0 +1,97 @@
+
+{
+    "apiVersion": "argoproj.io/v1alpha1",
+    "kind": "Workflow",
+    "metadata": {
+        "generateName": "steps-"
+    },
+    "spec": {
+        "entrypoint": "ingest-and-index",
+        "arguments": {
+            "parameters": [ {
+                "name": "args",
+                "value": "my args"
+            } ]
+        },
+        "templates": [
+          {
+            "name": "ingest-and-index",
+            "inputs": {
+                "parameters": [ {
+                    "name": "args"
+                } ]
+            },
+            "steps": [
+                [ {
+                    "name": "ingest1",
+                    "template": "ingest",
+                    "arguments": {
+                        "parameters": [ {
+                            "name": "args",
+                            "value": "{{inputs.parameters.args}}"
+                        } ]
+                    }
+                } ],
+                [ {
+                    "name": "index1",
+                    "template": "metrics-index",
+                    "arguments": {
+                        "parameters": [ {
+                            "name": "args",
+		            "value": "{{steps.ingest1.outputs.result}}"
+                        } ]
+                    }
+                } ]
+            ]
+          },
+          {
+            "name": "ingest",
+            "inputs": {
+                "parameters": [ {
+                    "name": "args"
+                } ]
+            },
+            "container": {
+                "image": "ingest",
+                "env": [
+                    { "name": "S3_URL", "value": "192.168.122.176:9000" },
+                    { "name": "S3_ACCESS_KEY", "value": "user" },
+                    { "name": "S3_SECRET_KEY", "value": "password" }
+                ],
+                "imagePullPolicy": "Never",
+                "command": [ "python", "./ingest.py" ],
+                "args": ["{{inputs.parameters.args}}"],
+                "resources": {
+                    "limits": {
+                        "memory": "32Mi",
+                        "cpu": "100m"
+                    }
+                }
+            }
+          },
+          {
+            "name": "metrics-index",
+            "inputs": {
+                "parameters": [ {
+                    "name": "args"
+                } ]
+            },
+            "container": {
+                "image": "metrics_index",
+                "env": [
+                    { "name": "POSTGRES_HOST", "value": "192.168.122.176" }
+                ],
+                "imagePullPolicy": "Never",
+                "command": [ "python", "./metrics_index.py" ],
+                "args": ["{{inputs.parameters.args}}"],
+                "resources": {
+                    "limits": {
+                        "memory": "32Mi",
+                        "cpu": "100m"
+                    }
+                }
+            }
+          }
+        ]
+    }
+}

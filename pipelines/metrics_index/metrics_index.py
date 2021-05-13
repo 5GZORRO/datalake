@@ -26,7 +26,7 @@ def metrics_index(args):
         return
 
     # place the data in database
-    db_host = os.getenv('POSTGRES_HOST', 'localhost')
+    db_host = os.getenv('POSTGRES_HOST', '127.0.0.1')
     conn = psycopg2.connect(
         host=db_host,
         database=DATALAKE_DB,
@@ -46,6 +46,7 @@ def main():
     else:
         args = '{}'
     metrics_index(args)
+    print(args)
 
 if __name__ == '__main__':
     main()

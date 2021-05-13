@@ -33,8 +33,6 @@ def create_predefined_pipelines(user_id, s3_available : bool):
     if not s3_available:
         return pipeline_topics, predefined_pipes
     # create default ingest metrics pipeline
-    # TODO: Fix the URLs of the parameters
-    # TODO: Do not return the secrets to the user!!!
     ingest_def = {
         "apiVersion": "argoproj.io/v1alpha1",
         "kind": "Workflow",
@@ -79,7 +77,6 @@ def create_predefined_pipelines(user_id, s3_available : bool):
             } ]
         }
     }
-    # TODO: fix parameters
     k8s_proxy_server = k8s_api.get_k8s_proxy()
     try:
         ingest_topic, kafka_key = k8s_proxy_server.create_eventsource(user_id, 'in', pipeline_number=0)
@@ -119,22 +116,18 @@ def register_user(body):  # noqa: E501
         if user_id in user_info.get_users():
             return Response("{'error message':'user already registered'}", status=409, mimetype='application/json')
 
-        #TODO make data persistent
-
         # generate returned data
         nameSpace = user_id
-
-        #TODO: define the available Resources
         k8s_proxy_server = k8s_api.get_k8s_proxy()
         s3_proxy_server = s3_api.get_s3_proxy()
         kafka_proxy_server = kafka_api.get_kafka_proxy()
-        # TODO change this to a function call
         s3_bucket_name = s3_proxy_server.create_bucket(user_id, "dl-bucket")
         urls = {}
         urls['k8s_url'] = k8s_proxy_server.k8s_url
         urls['kafka_url'] = kafka_proxy_server.kafka_url
         if s3_bucket_name:
             urls['s3_url'] = s3_proxy_server.s3_url
+
         # create general kafka topics for the user to use
         topic_name_in = user_id + "-topic-in"
         topic_name_out = user_id + "-topic-out"
@@ -159,7 +152,6 @@ def register_user(body):  # noqa: E501
         user_info.add_user(user_id, u_info)
 
         print("predefined_pipes = ", predefined_pipes)
-        print("len of predefined_pipes = ", len(predefined_pipes))
         # only after the user_info exists can we register with it the predefined pipes
         for p in predefined_pipes:
             u_info.add_pipeline(p, True)
@@ -197,7 +189,7 @@ def unregister_user():  # noqa: E501
             user = user_info.get_user(user_id)
         else:
             return Response("{'error message':'user not registered'}", status=404, mimetype='application/json')
-        # TODO cleanup all kinds of stuff
+        # cleanup all kinds of stuff
         kafka_proxy_server = kafka_api.get_kafka_proxy()
         kafka_proxy_server.delete_topic(user.userResources.available_resources["topics"]["userInTopic"])
         kafka_proxy_server.delete_topic(user.userResources.available_resources["topics"]["userOutTopic"])

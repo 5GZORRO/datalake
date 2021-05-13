@@ -54,7 +54,7 @@ def Ingest(data):
     output_params['metricValue'] = monitoring_data['metricValue']
     output_params['timestamp'] = monitoring_data['timestamp']
     output_params['storageLocation'] = s3_url + '/' + bucket_name + '/' + object_name
-    print(output_params)
+    print(json.dumps(output_params))
 
 def main():
     # extract paramters from argv[1]

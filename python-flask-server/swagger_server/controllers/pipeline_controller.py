@@ -23,7 +23,6 @@ def create_pipeline(body):  # noqa: E501
 
     :rtype: PipelineMetadata
     """
-    print("entering create_pipeline")
     try:
         if connexion.request.is_json:
             body_json = connexion.request.get_json(force=True)
@@ -32,7 +31,7 @@ def create_pipeline(body):  # noqa: E501
             return Response("{'error message':'data is not in json format'}", status=400, mimetype='application/json')
         user_id = bodyPipeline.user_info.user_id
         #TODO: check authToken
-        print ("user_id = ", user_id)
+        print ("create_pipeline, user_id = ", user_id)
         if not user_id in user_info.get_users():
             return Response("{'error message':'user not registered'}", status=400, mimetype='application/json')
         user = user_info.get_user(user_id)
@@ -43,14 +42,12 @@ def create_pipeline(body):  # noqa: E501
         # TODO choose a better way to get a unique number
         event_source_name, kafka_key = k8s_proxy_server.create_eventsource(user_id, 'pipeline-in', user_info.next_index)
         print("event_source_name = ", event_source_name)
-        print("kafka_key = ", kafka_key)
         user_info.next_index = user_info.next_index + 1
         response = k8s_proxy_server.create_sensor(event_source_name, kafka_key, pipeline_def)
         pipeline_id = response['metadata']['name']
         pipe_metadata = PipelineMetadata(pipeline_id, event_source_name)
         pipe_info = PipelineInfo(pipe_metadata, pipeline_def)
         user.add_pipeline(pipe_info, False)
-        print("exiting create_pipeline")
         return pipe_metadata, 201
     except Exception as e:
         print("Exception: ", str(e))
@@ -65,7 +62,6 @@ def delete_pipeline_resources(p):
     k8s_proxy_server.delete_eventsource(input_topic)
     kafka_proxy_server = kafka_api.get_kafka_proxy()
     response = kafka_proxy_server.delete_topic(input_topic)
-    print("exiting delete_pipeline_resources")
     return
 
 def delete_pipeline():  # noqa: E501
@@ -78,7 +74,6 @@ def delete_pipeline():  # noqa: E501
 
     :rtype: None
     """
-    print("entering delete_pipeline")
     try:
         if connexion.request.is_json:
             body_json = connexion.request.get_json(force=True)
@@ -88,7 +83,7 @@ def delete_pipeline():  # noqa: E501
         user_id = bodyPipeline.user_info.user_id
         pipeline_id = bodyPipeline.pipeline_id
         #TODO: check authToken
-        print ("user_id = ", user_id)
+        print ("delete_pipeline, user_id = ", user_id)
         if not user_id in user_info.get_users():
             return Response("{'error message':'user not registered'}", status=400, mimetype='application/json')
         user = user_info.get_user(user_id)
@@ -98,7 +93,6 @@ def delete_pipeline():  # noqa: E501
             if pipeline_id == p.pipeline_metadata.pipeline_id:
                 delete_pipeline_resources(p)
                 user.del_pipeline(p, False)
-                print("exiting delete_pipeline")
                 return
         return Response("{'error message':'pipeline not found'}", status=404, mimetype='application/json')
 
