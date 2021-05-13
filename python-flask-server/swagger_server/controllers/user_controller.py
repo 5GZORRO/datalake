@@ -33,21 +33,53 @@ def create_predefined_pipelines(user_id, s3_available : bool):
     if not s3_available:
         return pipeline_topics, predefined_pipes
     # create default ingest metrics pipeline
+    # TODO: perhaps move this to a config file yaml and have a more general mechanism to add predefined pipelines
     ingest_def = {
         "apiVersion": "argoproj.io/v1alpha1",
         "kind": "Workflow",
         "metadata": {
-            "generateName": "ingest-"
+            "generateName": "ingest-pipeline-"
         },
         "spec": {
-            "entrypoint": "ingest",
+            "entrypoint": "ingest-and-index",
             "arguments": {
                 "parameters": [ {
                     "name": "args",
                     "value": "my args"
                 } ]
             },
-            "templates": [ {
+            "templates": [
+              {
+                "name": "ingest-and-index",
+                "inputs": {
+                    "parameters": [ {
+                        "name": "args"
+                    } ]
+                },
+                "steps": [
+                    [ {
+                        "name": "ingest1",
+                        "template": "ingest",
+                        "arguments": {
+                            "parameters": [ {
+                                "name": "args",
+                                "value": "{{inputs.parameters.args}}"
+                            } ]
+                        }
+                    } ],
+                    [ {
+                        "name": "index1",
+                        "template": "metrics-index",
+                        "arguments": {
+                            "parameters": [ {
+                                "name": "args",
+                                "value": "{{steps.ingest1.outputs.result}}"
+                            } ]
+                        }
+                    } ]
+                ]
+              },
+              {
                 "name": "ingest",
                 "inputs": {
                     "parameters": [ {
@@ -65,7 +97,7 @@ def create_predefined_pipelines(user_id, s3_available : bool):
                         "value": os.getenv('S3_SECRET_KEY', 'password') },
                     ],
                     "imagePullPolicy": "Never",
-                    "command": [ "python", "./__main__.py" ],
+                    "command": [ "python", "./ingest.py" ],
                     "args": ["{{inputs.parameters.args}}"],
                     "resources": {
                         "limits": {
@@ -74,12 +106,38 @@ def create_predefined_pipelines(user_id, s3_available : bool):
                         }
                     }
                 }
-            } ]
+              },
+              {
+                "name": "metrics-index",
+                "inputs": {
+                    "parameters": [ {
+                        "name": "args"
+                    } ]
+                },
+                "container": {
+                    "image": "metrics_index",
+                    "env": [
+                        { "name": "POSTGRES_HOST",
+                        "value": os.getenv("POSTGRES_HOST", "127.0.0.1") },
+                    ],
+                    "imagePullPolicy": "Never",
+                    "command": [ "python", "./metrics_index.py" ],
+                    "args": ["{{inputs.parameters.args}}"],
+                    "resources": {
+                        "limits": {
+                            "memory": "32Mi",
+                            "cpu": "100m"
+                        }
+                    }
+                }
+              }
+            ]
         }
     }
     k8s_proxy_server = k8s_api.get_k8s_proxy()
     try:
         ingest_topic, kafka_key = k8s_proxy_server.create_eventsource(user_id, 'in', pipeline_number=0)
+        print("ingest_topic = ", ingest_topic)
         response = k8s_proxy_server.create_sensor(ingest_topic, kafka_key, ingest_def)
         pipeline_id = response['metadata']['name']
         pipe_metadata = PipelineMetadata(pipeline_id, ingest_topic)
@@ -91,7 +149,6 @@ def create_predefined_pipelines(user_id, s3_available : bool):
 
     # Add here additional pipelines, as needed
 
-    print("exiting create_predefined_pipelines")
     return pipeline_topics, predefined_pipes
 
 def register_user(body):  # noqa: E501

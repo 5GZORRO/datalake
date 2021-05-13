@@ -28,6 +28,14 @@ def Ingest(data):
         print("exception: ", e)
         return
 
+    # TODO: verify that bucket name is consistent with operator
+    if not bucket_name.startswith(operator_id):
+        # illegal bucket
+        message = 'invalid bucket: operator_id = %s, bucket_name = %s' % (operator_id, bucket_name)
+        e = Exception(message)
+        print("exception: ", e)
+        raise e
+
     # place the data in Object Store in specified location
     s3_url = os.getenv('S3_URL', '127.0.0.1:9000')
     s3_access_key = os.getenv('S3_ACCESS_KEY', 'user')
