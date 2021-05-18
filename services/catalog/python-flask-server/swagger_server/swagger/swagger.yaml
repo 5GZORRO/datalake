@@ -1,0 +1,122 @@
+---
+swagger: "2.0"
+info:
+  description: "This is a simple server to support 5gzorro data lake catalog operations."
+  version: "1.0.0"
+  title: "Data Lake Catalog Service API"
+  contact:
+    email: "meth@il.ibm.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+basePath: "/datalake/v1/catalog"
+tags:
+- name: "resource"
+  description: "Operations on resource ID"
+- name: "reference"
+  description: "Operations on reference ID"
+schemes:
+- "https"
+- "http"
+paths:
+  /resource/{resourceId}:
+    get:
+      tags:
+      - "resource"
+      summary: "Return entries related to specified resource"
+      description: ""
+      operationId: "get_resouce"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "resourceId"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Parameters to get a entries related to resource"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ResourceEntriesInfo"
+        "400":
+          description: "Bad Request"
+      x-swagger-router-controller: "swagger_server.controllers.resource_controller"
+  /reference/{referenceId}:
+    get:
+      tags:
+      - "resource"
+      summary: "Return entries related to specified reference"
+      description: ""
+      operationId: "get_reference"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "referenceId"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Parameters to get a entries related to resource"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ResourceEntriesInfo"
+        "400":
+          description: "Bad Request"
+      x-swagger-router-controller: "swagger_server.controllers.resource_controller"
+definitions:
+  User:
+    type: "object"
+    properties:
+      userId:
+        type: "string"
+      authToken:
+        type: "string"
+    xml:
+      name: "User"
+    example:
+      authToken: "authToken"
+      userId: "userId"
+  ResourceEntriesInfo:
+    type: "object"
+    properties:
+      resourceId:
+        type: "string"
+      referenceId:
+        type: "string"
+      metricName:
+        type: "string"
+      metricValue:
+        type: "string"
+      timestamp:
+        type: "string"
+      storageLocation:
+        type: "string"
+    xml:
+      name: "ResourceEntriesInfo"
+    example:
+      resourceId: "resourceId"
+      metricName: "metricName"
+      metricValue: "metricValue"
+      storageLocation: "storageLocation"
+      referenceId: "referenceId"
+      timestamp: "timestamp"
