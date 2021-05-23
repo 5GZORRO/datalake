@@ -61,5 +61,6 @@ docker run -v ${KUBE_PATH_NAME}:/root/.kube -p 8080:8080 \
   --env S3_URL='127.0.0.1:9000' \
   --env S3_ACCESS_KEY='user' \
   --env S3_SECRET_KEY='password' \
+  --env POSTGRES_HOST='127.0.0.1' \
   swagger_server
 ```

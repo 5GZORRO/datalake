@@ -35,6 +35,8 @@ class Kafka_Proxy:
         topic_list.append(NewTopic(name=topic, num_partitions=1, replication_factor=1))
         try:
             response = self.client.create_topics(new_topics=topic_list, validate_only=False)
+            # TODO: verify success
+            print("response = ", response)
         except Exception as e:
             if isinstance(e, TopicAlreadyExistsError):
                 return topic
