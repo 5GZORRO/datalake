@@ -69,6 +69,8 @@ def prepare_service(container_def, service_id):
             entry["name"] = p["name"]
         if "protocol" in p:
             entry["protocol"] = p["protocol"]
+        if "nodePort" in p:
+            entry["nodePort"] = p["nodePort"]
         service_template["spec"]["ports"].append(entry)
 
     print("exiting prepare_service")

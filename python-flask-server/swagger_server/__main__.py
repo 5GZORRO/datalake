@@ -7,6 +7,7 @@ from swagger_server.controllers.k8s_api import K8s_Proxy, set_k8s_proxy
 from swagger_server.controllers.s3_api import S3_Proxy, set_s3_proxy
 from swagger_server.controllers.kafka_api import Kafka_Proxy, set_kafka_proxy
 from swagger_server.controllers import user_info
+from swagger_server.controllers import dl_global_services
 
 
 def main():
@@ -21,6 +22,9 @@ def main():
     set_s3_proxy(s3_proxy)
     kafka_proxy = Kafka_Proxy()
     set_kafka_proxy(kafka_proxy)
+    print("dl_catalaog_server_url = ", dl_global_services.dl_catalaog_server_url)
+    dl_global_services.create_global_services()
+    print("dl_catalaog_server_url = ", dl_global_services.dl_catalaog_server_url)
     app.run(port=8080)
 
 

@@ -150,6 +150,8 @@ class K8s_Proxy:
             plural="sensors",
             body=sensor_template
         )
+        # TODO: verify success
+        print("response = ", response)
         #TODO save the created sensor id somewhere
         return response
 

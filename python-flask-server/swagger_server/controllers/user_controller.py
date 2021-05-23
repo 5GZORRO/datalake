@@ -15,6 +15,7 @@ from swagger_server.controllers import s3_api
 from swagger_server.controllers import kafka_api
 from swagger_server.controllers import pipeline_controller
 from swagger_server.controllers import service_controller
+from swagger_server.controllers import dl_global_services
 
 def list_users():  # noqa: E501
     """List all User IDs
@@ -184,6 +185,7 @@ def register_user(body):  # noqa: E501
         urls['kafka_url'] = kafka_proxy_server.kafka_url
         if s3_bucket_name:
             urls['s3_url'] = s3_proxy_server.s3_url
+        urls['dl_catalaog_server_url'] = dl_global_services.dl_catalaog_server_url
 
         # create general kafka topics for the user to use
         topic_name_in = user_id + "-topic-in"
@@ -208,7 +210,6 @@ def register_user(body):  # noqa: E501
 
         user_info.add_user(user_id, u_info)
 
-        print("predefined_pipes = ", predefined_pipes)
         # only after the user_info exists can we register with it the predefined pipes
         for p in predefined_pipes:
             u_info.add_pipeline(p, True)
