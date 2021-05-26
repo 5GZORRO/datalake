@@ -37,6 +37,9 @@ def prepare_deployment(container_def, service_id):
 	            }
                 },
                 "spec": {
+                    "imagePullSecrets": [
+                        { "name": "datalakeregistrykey" }
+                    ],
                     "containers":  [ container_def ]
                 }
             }

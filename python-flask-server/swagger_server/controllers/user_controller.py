@@ -43,6 +43,9 @@ def create_predefined_pipelines(user_id, s3_available : bool):
         },
         "spec": {
             "entrypoint": "ingest-and-index",
+            "imagePullSecrets": [
+                { "name": "datalakeregistrykey" }
+            ],
             "arguments": {
                 "parameters": [ {
                     "name": "args",
@@ -88,7 +91,7 @@ def create_predefined_pipelines(user_id, s3_available : bool):
                     } ]
                 },
                 "container": {
-                    "image": "ingest",
+                    "image": "docker.pkg.github.com/5gzorro/datalake/ingest",
                     "env": [
                         { "name": "S3_URL",
                         "value": os.getenv('S3_URL', '127.0.0.1:9000') },
@@ -97,7 +100,6 @@ def create_predefined_pipelines(user_id, s3_available : bool):
                         { "name": "S3_SECRET_KEY",
                         "value": os.getenv('S3_SECRET_KEY', 'password') },
                     ],
-                    "imagePullPolicy": "Never",
                     "command": [ "python", "./ingest.py" ],
                     "args": ["{{inputs.parameters.args}}"],
                     "resources": {
@@ -116,12 +118,11 @@ def create_predefined_pipelines(user_id, s3_available : bool):
                     } ]
                 },
                 "container": {
-                    "image": "metrics_index",
+                    "image": "docker.pkg.github.com/5gzorro/datalake/metrics_index",
                     "env": [
                         { "name": "POSTGRES_HOST",
                         "value": os.getenv("POSTGRES_HOST", "127.0.0.1") },
                     ],
-                    "imagePullPolicy": "Never",
                     "command": [ "python", "./metrics_index.py" ],
                     "args": ["{{inputs.parameters.args}}"],
                     "resources": {
