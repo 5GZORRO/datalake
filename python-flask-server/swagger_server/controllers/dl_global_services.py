@@ -28,7 +28,10 @@ def create_dl_catalog_service():
     # keep the nodePort identical across reincarnations of the service
     container_def = {
         "name": dl_catalog_server_name,
-        "image": "dl_catalog_server",
+        "image": "docker.pkg.github.com/5gzorro/datalake/dl_catalog_server",
+        "imagePullSecrets": [
+            { "name": "datalakeregistrykey" }
+        ],
         "ports": [ {
             "name": "web",
             "containerPort": 8086,
@@ -37,8 +40,7 @@ def create_dl_catalog_service():
         } ],
         "env": [
             { "name": "POSTGRES_HOST", "value": postrges_host }
-        ],
-        "imagePullPolicy": "Never"
+        ]
     }
     deployment_def = service_controller.prepare_deployment(container_def, dl_catalog_server_name)
     k8s_proxy_server.create_deployment(deployment_def)
