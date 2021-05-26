@@ -57,7 +57,7 @@ kubectl create namespace datalake
 
 To set up postgres, see instructions at https://www.postgresqltutorial.com/install-postgresql-linux/ and
 https://www.postgresql.org/download/linux/ubuntu/.
-The perform the following:
+Then perform the following:
 ```
 CREATE DATABASE datalake;
 sudo -i -u postgres
@@ -85,7 +85,7 @@ grant all privileges on sequence datalake_metrics_transaction_id_seq to datalake
 Before bringing up the datalake python-flask-server:
 - The ingest pipeline must be compiled and dockerized with a name of `ingest`.
 - The metrics_index pipeline must be compiled and dockerized with a name of `metrics_index`.
-- The catalog service must be compiled and dockerized with name dl_catalog_server.
+- The catalog service must be compiled and dockerized with name `dl_catalog_server`.
 
 This is a POC implementation.
 Authentication is not yet implemented.
