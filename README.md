@@ -10,7 +10,12 @@ The API itself is specified in datalake_swagger.yaml.
 This code is work-in-progess.
 
 ## Requirements
-The datalake server requires that there first be running: [kubernetes](https://github.com/5GZORRO/infrastructure/blob/master/docs/kubernetes.md), [kafka](https://github.com/5GZORRO/infrastructure/blob/master/docs/kafka.md), [argo](https://github.com/5GZORRO/issm/blob/master/docs/argo.md), s3 object store (can be minio).
+The datalake server requires that there first be running:
+- [kubernetes](https://github.com/5GZORRO/infrastructure/blob/master/docs/kubernetes.md)
+- [kafka](https://github.com/5GZORRO/infrastructure/blob/master/docs/kafka.md)
+- [argo](https://github.com/5GZORRO/issm/blob/master/docs/argo.md)
+- s3 object store (can be minio)
+- postgres database
 
 To set up minio:
 ```
@@ -50,7 +55,37 @@ In Kubernetes, it is necessary to define the `datalake` namespace.
 kubectl create namespace datalake
 ```
 
-The ingest pipeline must be compiled and dockerized with a name of `ingest` before bringing up the datalake python-flask-server.
+To set up postgres, see instructions at https://www.postgresqltutorial.com/install-postgresql-linux/ and
+https://www.postgresql.org/download/linux/ubuntu/.
+The perform the following:
+```
+CREATE DATABASE datalake;
+sudo -i -u postgres
+psql
+\l
+\c datalake
+CREATE TABLE datalake_metrics(
+         transaction_id SERIAL PRIMARY KEY,
+	 resourceID VARCHAR,
+	 referenceID VARCHAR,
+	 metricName VARCHAR,
+	 metricValue VARCHAR,
+	 timestamp VARCHAR,
+	 storageLocation VARCHAR
+);
+create user datalake_user with encrypted password 'datalake_pw';
+grant all privileges on database datalake to datalake_user;
+grant usage on schema public to datalake_user;
+grant all privileges on table datalake_metrics to datalake_user;
+grant all privileges on sequence datalake_metrics_transaction_id_seq to datalake_user;
+```
+
+
+
+Before bringing up the datalake python-flask-server:
+- The ingest pipeline must be compiled and dockerized with a name of `ingest`.
+- The metrics_index pipeline must be compiled and dockerized with a name of `metrics_index`.
+- The catalog service must be compiled and dockerized with name dl_catalog_server.
 
 This is a POC implementation.
 Authentication is not yet implemented.
