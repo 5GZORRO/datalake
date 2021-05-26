@@ -10,6 +10,11 @@ Python 3.6
 
 docker build -t ingest .
 
+## Push container to repository
+docker build -t docker.pkg.github.com/5gzorro/datalake/ingest:latest .
+docker push docker.pkg.github.com/5gzorro/datalake/ingest:latest
+
+
 ### Run
 
 Use the ingest_pipeline.json to load a pipeline that runs the ingest container whenever data arrives on the input topic.
