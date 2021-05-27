@@ -57,12 +57,15 @@ kubectl create namespace datalake
 
 To set up postgres, see instructions at https://www.postgresqltutorial.com/install-postgresql-linux/ and
 https://www.postgresql.org/download/linux/ubuntu/.
+
+Allow access from outside servers by following the insructions in https://stackoverflow.com/questions/38466190/cant-connect-to-postgresql-on-port-5432.
+
 Then perform the following:
 ```
-CREATE DATABASE datalake;
 sudo -i -u postgres
 psql
 \l
+CREATE DATABASE datalake;
 \c datalake
 CREATE TABLE datalake_metrics(
          transaction_id SERIAL PRIMARY KEY,
@@ -91,8 +94,8 @@ The ingest, metrics_index, and dl_catalog_server containers are pulled from the 
 In order to enable their access, supply the following secrets to kuberentes.
 
 ```
-kubectl apply -f docker_secret1.yaml
-kubectl apply -f docker_secret2.yaml
+cd config
+kubectl apply -f ./docker-secret.yaml
 ```
 
 This is a POC implementation.
