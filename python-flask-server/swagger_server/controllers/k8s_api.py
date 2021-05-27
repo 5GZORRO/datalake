@@ -143,6 +143,7 @@ class K8s_Proxy:
                 }
             }
         sensor_template['spec']['triggers'][0]['template']['k8s']['source']['resource'] = workflow
+        workflow['spec']['serviceAccountName'] = 'argo-events-sa'
         response = self.api.create_namespaced_custom_object(
             group="argoproj.io",
             version="v1alpha1",
