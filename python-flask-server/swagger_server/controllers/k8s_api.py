@@ -171,14 +171,18 @@ class K8s_Proxy:
         name = response.metadata.name
         return name
 
+    def delete_deployment(self, name):
+        response = self.app_api.delete_namespaced_deployment(name, DATALAKE_NAMESPACE)
+        return
+
     def create_service(self, service_def):
         response = self.core_api.create_namespaced_service(DATALAKE_NAMESPACE, service_def)
         name = response.metadata.name
         return response
 
-    def delete_deployment(self, name):
-        response = self.app_api.delete_namespaced_deployment(name, DATALAKE_NAMESPACE)
-        return
+    def read_service(self, name):
+        response = self.core_api.read_namespaced_service(name=name, namespace=DATALAKE_NAMESPACE),
+        return response
 
     def delete_service(self, name):
         response = self.core_api.delete_namespaced_service(name, DATALAKE_NAMESPACE),
