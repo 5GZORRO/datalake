@@ -57,7 +57,7 @@ def setup_dl_catalog_service():
     global dl_catalaog_server_url
     dl_catalaog_server_url = k8s_host + ":" + str(ports[0]['node_port'])
     print("dl_catalaog_server_url = ", dl_catalaog_server_url)
-    print("esiting setup_dl_catalog_service")
+    print("exiting setup_dl_catalog_service")
 
 
 def create_global_services():

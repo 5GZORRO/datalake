@@ -49,6 +49,8 @@ docker run -p 8086:8086 dl_catalog_server
 ```
 
 ## Push container to repository
+```
 docker build -t docker.pkg.github.com/5gzorro/datalake/dl_catalog_server:latest .
 docker push docker.pkg.github.com/5gzorro/datalake/dl_catalog_server:latest
+```
 
