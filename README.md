@@ -29,7 +29,11 @@ export MINIO_SECRET_KEY=password
 ```
 Kubernetes should use Docker container management (rather than containerd) for argo to work properly.
 
-For kubernetes, it is possible to run a simulated minikube cluster.
+For kubernetes, it is possible to run a simulated minikube cluster. To install minikube see: https://minikube.sigs.k8s.io/docs/start/.
+```
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+```
 
 To set up Argo and standard argo-events:
 ```
