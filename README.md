@@ -47,7 +47,7 @@ kubectl apply -n argo-events -f https://raw.githubusercontent.com/argoproj/argo-
 In Argo, it is necessary to define the `dl-argo-events` namespace.
 ```
 kubectl create namespace dl-argo-events
-cd config
+cd datalake/config
 kubectl apply -f ./install.yaml
 kubectl apply -n dl-argo-events -f https://raw.githubusercontent.com/argoproj/argo-events/v1.1.0/examples/eventbus/native.yaml
 ```
@@ -98,7 +98,7 @@ The ingest, metrics_index, and dl_catalog_server containers are pulled from the 
 In order to enable their access, supply the following secrets to kuberentes.
 
 ```
-cd config
+cd datalake/config
 kubectl apply -f ./docker-secret.yaml
 ```
 
