@@ -17,6 +17,37 @@ from swagger_server.controllers import pipeline_controller
 from swagger_server.controllers import service_controller
 from swagger_server.controllers import dl_global_services
 
+def get_user():  # noqa: E501
+    """Get user availableResources
+
+     # noqa: E501
+
+    :param body: Parameters to get User info from the Data Lake
+    :type body: dict | bytes
+
+    :rtype: UserResources
+    """
+    try:
+        if connexion.request.is_json:
+            body_json = connexion.request.get_json(force=True)
+            bodyUser = User.from_dict(body_json)
+        else:
+            raise Exception('data payload is not json')
+        # TODO check validity of parameters
+        user_id = bodyUser.user_id
+        #TODO: check authToken
+        print ("get_user, user_id = ", user_id)
+        # verify the element exists
+        if user_id in user_info.get_users():
+            user = user_info.get_user(user_id)
+        else:
+            return Response("{'error message':'user not registered'}", status=404, mimetype='application/json')
+        user_resources = user.userResources
+        return user_resources, 201
+    except Exception as e:
+        print("Exception: ", str(e))
+        raise e
+
 def list_users():  # noqa: E501
     """List all User IDs
 
