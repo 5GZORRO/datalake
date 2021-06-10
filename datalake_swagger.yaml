@@ -22,6 +22,31 @@ schemes:
 - "http"
 paths:
   /user:
+    get:
+      tags:
+      - "user"
+      summary: "Get user availableResources"
+      description: ""
+      operationId: "get_user"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Parameters to get User info from the Data Lake"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        "201":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/UserResources"
+        "400":
+          description: "Bad Request"
+        "401":
+          description: "Unauthorized"
+      x-swagger-router-controller: "swagger_server.controllers.user_controller"
     post:
       tags:
       - "user"

@@ -4,3 +4,4 @@ export S3_URL=127.0.0.1:9000
 export S3_ACCESS_KEY=user
 export S3_SECRET_KEY=password
 export POSTGRES_HOST=127.0.0.1
+export DATALAKE_IMAGES_VERSION=1.0
