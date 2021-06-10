@@ -35,6 +35,7 @@ def create_predefined_pipelines(user_id, s3_available : bool):
         return pipeline_topics, predefined_pipes
     # create default ingest metrics pipeline
     # TODO: perhaps move this to a config file yaml and have a more general mechanism to add predefined pipelines
+    datalake_images_version = os.getenv('DATALAKE_IMAGES_VERSION', '1.0')
     ingest_def = {
         "apiVersion": "argoproj.io/v1alpha1",
         "kind": "Workflow",
@@ -91,7 +92,7 @@ def create_predefined_pipelines(user_id, s3_available : bool):
                     } ]
                 },
                 "container": {
-                    "image": "docker.pkg.github.com/5gzorro/datalake/ingest",
+                    "image": "docker.pkg.github.com/5gzorro/datalake/ingest:"+datalake_images_version,
                     "env": [
                         { "name": "S3_URL",
                         "value": os.getenv('S3_URL', '127.0.0.1:9000') },
@@ -118,7 +119,7 @@ def create_predefined_pipelines(user_id, s3_available : bool):
                     } ]
                 },
                 "container": {
-                    "image": "docker.pkg.github.com/5gzorro/datalake/metrics_index",
+                    "image": "docker.pkg.github.com/5gzorro/datalake/metrics_index:"+datalake_images_version,
                     "env": [
                         { "name": "POSTGRES_HOST",
                         "value": os.getenv("POSTGRES_HOST", "127.0.0.1") },

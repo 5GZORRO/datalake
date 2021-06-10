@@ -13,9 +13,10 @@ def create_dl_catalog_service():
     k8s_proxy_server = k8s_api.get_k8s_proxy()
 
     postrges_host = os.getenv('POSTGRES_HOST', '127.0.0.1')
+    datalake_images_version = os.getenv('DATALAKE_IMAGES_VERSION', '1.0')
     container_def = {
         "name": dl_catalog_server_name,
-        "image": "docker.pkg.github.com/5gzorro/datalake/dl_catalog_server",
+        "image": "docker.pkg.github.com/5gzorro/datalake/dl_catalog_server:"+datalake_images_version,
         "imagePullSecrets": [
             { "name": "datalakeregistrykey" }
         ],
