@@ -5,7 +5,7 @@ import json
 import psycopg2
 
 DATALAKE_DB = "datalake"
-DATALAKE_DB_TABLE = "datalake_metrics"
+DATALAKE_DB_TABLE = "datalake_metrics_1_1"
 DATALAKE_DB_USER = "datalake_user"
 DATALAKE_DB_USER_PW = "datalake_pw"
 
@@ -17,6 +17,9 @@ def metrics_index(args):
 
         resoure_id = metrics_params['resourceID']
         reference_id = metrics_params['referenceID']
+        transaction_id = metrics_params['transactionID']
+        procuct_id = metrics_params['productID']
+        instance_id = metrics_params['instanceID']
         metric_name = metrics_params['metricName']
         metric_value = metrics_params['metricValue']
         timestamp = metrics_params['timestamp']
@@ -33,8 +36,8 @@ def metrics_index(args):
         user=DATALAKE_DB_USER,
         password=DATALAKE_DB_USER_PW)
     cur = conn.cursor()
-    sql = "INSERT INTO datalake_metrics (resourceID, referenceID, metricName, metricValue, timestamp, storageLocation) VALUES (%s, %s, %s, %s, %s, %s);"
-    cur.execute(sql, (resoure_id, reference_id, metric_name, metric_value, timestamp, storage_location))
+    sql = "INSERT INTO " + DATALAKE_DB_TABLE + "(resourceID, referenceID, transactionID, productID, instanceID, metricName, metricValue, timestamp, storageLocation) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"
+    cur.execute(sql, (resoure_id, reference_id, transaction_id, procuct_id, instance_id, metric_name, metric_value, timestamp, storage_location))
     cur.close()
     conn.commit()
     conn.close()

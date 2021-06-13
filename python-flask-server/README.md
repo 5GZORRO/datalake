@@ -34,33 +34,3 @@ Your Swagger definition lives here:
 http://localhost:8080/datalake/v1/swagger.json
 ```
 
-## Running with Docker
-
-Log in to kubernetes master
-
-### Build 
-
-```bash
-docker build -t swagger_server .
-```
-
-### Run
-
-Update kubernetes configuration path accordingly
-
-```bash
-export KUBE_PATH_NAME=${HOME}/.kube
-```
-
-Override the needed environment variables and start the container
-
-```bash
-docker run -v ${KUBE_PATH_NAME}:/root/.kube -p 8080:8080 \
-  --env KUBERNETES_URL='127.0.0.1:8443' \
-  --env KAFKA_URL='127.0.0.1:9092' \
-  --env S3_URL='127.0.0.1:9000' \
-  --env S3_ACCESS_KEY='user' \
-  --env S3_SECRET_KEY='password' \
-  --env POSTGRES_HOST='127.0.0.1' \
-  swagger_server
-```

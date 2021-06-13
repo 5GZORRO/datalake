@@ -8,7 +8,7 @@ from swagger_server.models.user import User  # noqa: E501
 from swagger_server import util
 
 DATALAKE_DB = "datalake"
-DATALAKE_DB_TABLE = "datalake_metrics"
+DATALAKE_DB_TABLE = "datalake_metrics_1_1"
 DATALAKE_DB_USER = "datalake_user"
 DATALAKE_DB_USER_PW = "datalake_pw"
 
@@ -46,7 +46,7 @@ def get_reference(referenceId):  # noqa: E501
     if connexion.request.is_json:
         body = User.from_dict(connexion.request.get_json())  # noqa: E501
     print("get_resouce: referenceId = ", referenceId)
-    sql = "SELECT json_agg(datalake_metrics) FROM datalake_metrics WHERE datalake_metrics.referenceID = '%s'" % referenceId
+    sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".referenceID = '%s'" % referenceId
     cur.execute(sql)
     rows = cur.fetchone()
     content = rows[0]
@@ -68,7 +68,7 @@ def get_resouce(resourceId):  # noqa: E501
     if connexion.request.is_json:
         body = User.from_dict(connexion.request.get_json())  # noqa: E501
     print("get_resouce: resourceId = ", resourceId)
-    sql = "SELECT json_agg(datalake_metrics) FROM datalake_metrics WHERE datalake_metrics.resourceID = '%s'" % resourceId
+    sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".referenceID = '%s'" % resourceId
     cur.execute(sql)
     rows = cur.fetchone()
     content = rows[0]
