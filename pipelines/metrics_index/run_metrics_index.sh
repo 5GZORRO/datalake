@@ -1,0 +1,1 @@
+python3 metrics_index.py '{ "resourceID": "res_123", "referenceID": "ref_123", "transactionID": "tran1", "productID": "prod1", "instanceID": "inst1", "metricName": "met_123", "metricValue": "metVal_123", "timestamp": "ts_124", "storageLocation": "storLoc_123" }'

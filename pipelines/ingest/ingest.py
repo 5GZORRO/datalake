@@ -14,27 +14,25 @@ def Ingest(data):
     try:
         # verify structure of the data; create an exception if dictionary structure is not correct
         ingest_params = json.loads(data)
-        operator_id = ingest_params['OperatorID']
+        operator_id = ingest_params['operatorID']
+        business_id = ingest_params['businessID']
+        network_id = ingest_params['networkID']
         monitoring_data = ingest_params['MonitoringData']
-        bucket_name = ingest_params['StorageLocation']
-        data_hash = ingest_params['DataHash']
 
         resoure_id = monitoring_data['resourceID']
         reference_id = monitoring_data['referenceID']
         metric_name = monitoring_data['metricName']
         metric_value = monitoring_data['metricValue']
         timestamp = monitoring_data['timestamp']
+        transaction_id = monitoring_data['transactionID']
+        product_id = monitoring_data['productID']
+        instance_id = monitoring_data['instanceID']
     except Exception as e:
         print("exception: ", e)
         return
 
     # TODO: verify that bucket name is consistent with operator
-    if not bucket_name.startswith(operator_id):
-        # illegal bucket
-        message = 'invalid bucket: operator_id = %s, bucket_name = %s' % (operator_id, bucket_name)
-        e = Exception(message)
-        print("exception: ", e)
-        raise e
+    bucket_name = operator_id + "-dl-bucket"
 
     # place the data in Object Store in specified location
     s3_url = os.getenv('S3_URL', '127.0.0.1:9000')
@@ -58,6 +56,9 @@ def Ingest(data):
     output_params = {}
     output_params['resourceID'] = monitoring_data['resourceID']
     output_params['referenceID'] = monitoring_data['referenceID']
+    output_params['transactionID'] = monitoring_data['transactionID']
+    output_params['productID'] = monitoring_data['productID']
+    output_params['instanceID'] = monitoring_data['instanceID']
     output_params['metricName'] = monitoring_data['metricName']
     output_params['metricValue'] = monitoring_data['metricValue']
     output_params['timestamp'] = monitoring_data['timestamp']
