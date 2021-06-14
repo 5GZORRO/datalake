@@ -71,7 +71,8 @@ psql
 \l
 CREATE DATABASE datalake;
 \c datalake
-CREATE TABLE datalake_metrics_1_1(
+DROP TABLE IF EXISTS datalake_metrics;
+CREATE TABLE datalake_metrics(
            seq_id SERIAL PRIMARY KEY,
 		 resourceID VARCHAR,
 		 referenceID VARCHAR,
@@ -87,8 +88,8 @@ CREATE TABLE datalake_metrics_1_1(
 create user datalake_user with encrypted password 'datalake_pw';
 grant all privileges on database datalake to datalake_user;
 grant usage on schema public to datalake_user;
-grant all privileges on table datalake_metrics_1_1 to datalake_user;
-grant all privileges on sequence datalake_metrics_1_1_seq_id_seq to datalake_user;
+grant all privileges on table datalake_metrics to datalake_user;
+grant all privileges on sequence datalake_metrics_seq_id_seq to datalake_user;
 ```
 
 

@@ -30,7 +30,7 @@ data = {
 
 The schema for the database is:
 ```
-CREATE TABLE datalake_metrics_1_1(
+CREATE TABLE datalake_metrics(
            seq_id SERIAL PRIMARY KEY,
 		 resourceID VARCHAR,
 		 referenceID VARCHAR,
@@ -44,8 +44,8 @@ CREATE TABLE datalake_metrics_1_1(
 );
 
 
-grant all privileges on table datalake_metrics_1_1 to datalake_user;
-grant all privileges on sequence datalake_metrics_1_1_seq_id_seq to datalake_user;
+grant all privileges on table datalake_metrics to datalake_user;
+grant all privileges on sequence datalake_metrics_seq_id_seq to datalake_user;
 
 ```
 
