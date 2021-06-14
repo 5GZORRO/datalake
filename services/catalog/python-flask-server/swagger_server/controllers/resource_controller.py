@@ -8,7 +8,7 @@ from swagger_server.models.user import User  # noqa: E501
 from swagger_server import util
 
 DATALAKE_DB = "datalake"
-DATALAKE_DB_TABLE = "datalake_metrics_1_1"
+DATALAKE_DB_TABLE = "datalake_metrics"
 DATALAKE_DB_USER = "datalake_user"
 DATALAKE_DB_USER_PW = "datalake_pw"
 
