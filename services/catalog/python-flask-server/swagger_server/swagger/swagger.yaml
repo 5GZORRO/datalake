@@ -15,6 +15,12 @@ tags:
   description: "Operations on resource ID"
 - name: "reference"
   description: "Operations on reference ID"
+- name: "transaction"
+  description: "Operations on transaction ID"
+- name: "product"
+  description: "Operations on product ID"
+- name: "instance"
+  description: "Operations on instance ID"
 schemes:
 - "https"
 - "http"
@@ -25,7 +31,7 @@ paths:
       - "resource"
       summary: "Return entries related to specified resource"
       description: ""
-      operationId: "get_resouce"
+      operationId: "get_resource"
       consumes:
       - "application/json"
       produces:
@@ -54,7 +60,7 @@ paths:
   /reference/{referenceId}:
     get:
       tags:
-      - "resource"
+      - "reference"
       summary: "Return entries related to specified reference"
       description: ""
       operationId: "get_reference"
@@ -69,7 +75,103 @@ paths:
         type: "string"
       - in: "body"
         name: "body"
-        description: "Parameters to get a entries related to resource"
+        description: "Parameters to get a entries related to reference"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ResourceEntriesInfo"
+        "400":
+          description: "Bad Request"
+      x-swagger-router-controller: "swagger_server.controllers.resource_controller"
+  /transaction/{transactionId}:
+    get:
+      tags:
+      - "transaction"
+      summary: "Return entries related to specified reference"
+      description: ""
+      operationId: "get_transaction"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "transactionId"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Parameters to get a entries related to transaction"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ResourceEntriesInfo"
+        "400":
+          description: "Bad Request"
+      x-swagger-router-controller: "swagger_server.controllers.resource_controller"
+  /product/{productId}:
+    get:
+      tags:
+      - "product"
+      summary: "Return entries related to specified product"
+      description: ""
+      operationId: "get_product"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "productId"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Parameters to get a entries related to product"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ResourceEntriesInfo"
+        "400":
+          description: "Bad Request"
+      x-swagger-router-controller: "swagger_server.controllers.resource_controller"
+  /instance/{instanceId}:
+    get:
+      tags:
+      - "instance"
+      summary: "Return entries related to specified reference"
+      description: ""
+      operationId: "get_instance"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "instanceId"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Parameters to get a entries related to instance"
         required: true
         schema:
           $ref: "#/definitions/User"
@@ -103,6 +205,12 @@ definitions:
         type: "string"
       referenceId:
         type: "string"
+      transactionId:
+        type: "string"
+      productId:
+        type: "string"
+      instanceId:
+        type: "string"
       metricName:
         type: "string"
       metricValue:
@@ -115,8 +223,11 @@ definitions:
       name: "ResourceEntriesInfo"
     example:
       resourceId: "resourceId"
+      referenceId: "referenceId"
+      transactionId: "transactionId"
+      productId: "productId"
+      instanceId: "instanceId"
       metricName: "metricName"
       metricValue: "metricValue"
       storageLocation: "storageLocation"
-      referenceId: "referenceId"
       timestamp: "timestamp"

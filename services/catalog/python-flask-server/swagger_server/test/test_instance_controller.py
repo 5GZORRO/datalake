@@ -10,17 +10,17 @@ from swagger_server.models.user import User  # noqa: E501
 from swagger_server.test import BaseTestCase
 
 
-class TestResourceController(BaseTestCase):
-    """ResourceController integration test stubs"""
+class TestInstanceController(BaseTestCase):
+    """InstanceController integration test stubs"""
 
-    def test_get_resource(self):
-        """Test case for get_resource
+    def test_get_instance(self):
+        """Test case for get_instance
 
-        Return entries related to specified resource
+        Return entries related to specified reference
         """
         body = User()
         response = self.client.open(
-            '/datalake/v1/catalog/resource/{resourceId}'.format(resourceId='resourceId_example'),
+            '/datalake/v1/catalog/instance/{instanceId}'.format(instanceId='instanceId_example'),
             method='GET',
             data=json.dumps(body),
             content_type='application/json')
