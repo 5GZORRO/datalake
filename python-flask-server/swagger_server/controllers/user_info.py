@@ -8,6 +8,7 @@ from swagger_server.models.pipeline_info import PipelineInfo
 from swagger_server.models.pipeline_metadata import PipelineMetadata
 from swagger_server.models.service_info import ServiceInfo
 from swagger_server.models.service_metadata import ServiceMetadata
+from swagger_server.controllers import dl_global_services
 
 
 Users = dict()
@@ -76,8 +77,9 @@ def recover_user_state(user_id):
     user_resources = UserResources(user_id, available_resources)
     f.close()
 
-    # TODO: save and recover User
-    # TODO: This needs some work
+    # Fix the address of the catalog server, in case it changed
+    available_resources['urls']['dl_catalog_server_url'] = dl_global_services.dl_catalaog_server_url
+
     user = User(user_id, 'blah')
 
     u_info = UserInfo(user, user_resources)

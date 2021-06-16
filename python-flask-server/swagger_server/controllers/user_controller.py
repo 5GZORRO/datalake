@@ -58,6 +58,7 @@ def list_users():  # noqa: E501
     """
     return list(user_info.get_users())
 
+#TODO separate this out into a separate file
 def create_predefined_pipelines(user_id, s3_available : bool):
     print("entering create_predefined_pipelines")
     predefined_pipes = list()
@@ -218,7 +219,7 @@ def register_user(body):  # noqa: E501
         urls['kafka_url'] = kafka_proxy_server.kafka_url
         if s3_bucket_name:
             urls['s3_url'] = s3_proxy_server.s3_url
-        urls['dl_catalaog_server_url'] = dl_global_services.dl_catalaog_server_url
+        urls['dl_catalog_server_url'] = dl_global_services.dl_catalaog_server_url
 
         # create general kafka topics for the user to use
         topic_name_in = user_id + "-topic-in"
