@@ -15,13 +15,19 @@ class ResourceEntriesInfo(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, resource_id: str=None, reference_id: str=None, metric_name: str=None, metric_value: str=None, timestamp: str=None, storage_location: str=None):  # noqa: E501
+    def __init__(self, resource_id: str=None, reference_id: str=None, transaction_id: str=None, product_id: str=None, instance_id: str=None, metric_name: str=None, metric_value: str=None, timestamp: str=None, storage_location: str=None):  # noqa: E501
         """ResourceEntriesInfo - a model defined in Swagger
 
         :param resource_id: The resource_id of this ResourceEntriesInfo.  # noqa: E501
         :type resource_id: str
         :param reference_id: The reference_id of this ResourceEntriesInfo.  # noqa: E501
         :type reference_id: str
+        :param transaction_id: The transaction_id of this ResourceEntriesInfo.  # noqa: E501
+        :type transaction_id: str
+        :param product_id: The product_id of this ResourceEntriesInfo.  # noqa: E501
+        :type product_id: str
+        :param instance_id: The instance_id of this ResourceEntriesInfo.  # noqa: E501
+        :type instance_id: str
         :param metric_name: The metric_name of this ResourceEntriesInfo.  # noqa: E501
         :type metric_name: str
         :param metric_value: The metric_value of this ResourceEntriesInfo.  # noqa: E501
@@ -34,6 +40,9 @@ class ResourceEntriesInfo(Model):
         self.swagger_types = {
             'resource_id': str,
             'reference_id': str,
+            'transaction_id': str,
+            'product_id': str,
+            'instance_id': str,
             'metric_name': str,
             'metric_value': str,
             'timestamp': str,
@@ -43,6 +52,9 @@ class ResourceEntriesInfo(Model):
         self.attribute_map = {
             'resource_id': 'resourceId',
             'reference_id': 'referenceId',
+            'transaction_id': 'transactionId',
+            'product_id': 'productId',
+            'instance_id': 'instanceId',
             'metric_name': 'metricName',
             'metric_value': 'metricValue',
             'timestamp': 'timestamp',
@@ -51,6 +63,9 @@ class ResourceEntriesInfo(Model):
 
         self._resource_id = resource_id
         self._reference_id = reference_id
+        self._transaction_id = transaction_id
+        self._product_id = product_id
+        self._instance_id = instance_id
         self._metric_name = metric_name
         self._metric_value = metric_value
         self._timestamp = timestamp
@@ -108,6 +123,69 @@ class ResourceEntriesInfo(Model):
         """
 
         self._reference_id = reference_id
+
+    @property
+    def transaction_id(self) -> str:
+        """Gets the transaction_id of this ResourceEntriesInfo.
+
+
+        :return: The transaction_id of this ResourceEntriesInfo.
+        :rtype: str
+        """
+        return self._transaction_id
+
+    @transaction_id.setter
+    def transaction_id(self, transaction_id: str):
+        """Sets the transaction_id of this ResourceEntriesInfo.
+
+
+        :param transaction_id: The transaction_id of this ResourceEntriesInfo.
+        :type transaction_id: str
+        """
+
+        self._transaction_id = transaction_id
+
+    @property
+    def product_id(self) -> str:
+        """Gets the product_id of this ResourceEntriesInfo.
+
+
+        :return: The product_id of this ResourceEntriesInfo.
+        :rtype: str
+        """
+        return self._product_id
+
+    @product_id.setter
+    def product_id(self, product_id: str):
+        """Sets the product_id of this ResourceEntriesInfo.
+
+
+        :param product_id: The product_id of this ResourceEntriesInfo.
+        :type product_id: str
+        """
+
+        self._product_id = product_id
+
+    @property
+    def instance_id(self) -> str:
+        """Gets the instance_id of this ResourceEntriesInfo.
+
+
+        :return: The instance_id of this ResourceEntriesInfo.
+        :rtype: str
+        """
+        return self._instance_id
+
+    @instance_id.setter
+    def instance_id(self, instance_id: str):
+        """Sets the instance_id of this ResourceEntriesInfo.
+
+
+        :param instance_id: The instance_id of this ResourceEntriesInfo.
+        :type instance_id: str
+        """
+
+        self._instance_id = instance_id
 
     @property
     def metric_name(self) -> str:

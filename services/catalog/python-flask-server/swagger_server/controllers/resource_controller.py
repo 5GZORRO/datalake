@@ -45,7 +45,7 @@ def get_reference(referenceId):  # noqa: E501
     """
     if connexion.request.is_json:
         body = User.from_dict(connexion.request.get_json())  # noqa: E501
-    print("get_resouce: referenceId = ", referenceId)
+    print("get_reference: referenceId = ", referenceId)
     sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".referenceID = '%s'" % referenceId
     cur.execute(sql)
     rows = cur.fetchone()
@@ -53,7 +53,7 @@ def get_reference(referenceId):  # noqa: E501
     return content
 
 
-def get_resouce(resourceId):  # noqa: E501
+def get_resource(resourceId):  # noqa: E501
     """Return entries related to specified resource
 
      # noqa: E501
@@ -67,8 +67,71 @@ def get_resouce(resourceId):  # noqa: E501
     """
     if connexion.request.is_json:
         body = User.from_dict(connexion.request.get_json())  # noqa: E501
-    print("get_resouce: resourceId = ", resourceId)
-    sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".referenceID = '%s'" % resourceId
+    print("get_resource: resourceId = ", resourceId)
+    sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".resourceID = '%s'" % resourceId
+    cur.execute(sql)
+    rows = cur.fetchone()
+    content = rows[0]
+    return content
+
+def get_product(productId):  # noqa: E501
+    """Return entries related to specified product
+
+     # noqa: E501
+
+    :param productId: 
+    :type productId: str
+    :param body: Parameters to get a entries related to product
+    :type body: dict | bytes
+
+    :rtype: List[ResourceEntriesInfo]
+    """
+    if connexion.request.is_json:
+        body = User.from_dict(connexion.request.get_json())  # noqa: E501
+    print("get_product: productId = ", productId)
+    sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".productID = '%s'" % productId
+    cur.execute(sql)
+    rows = cur.fetchone()
+    content = rows[0]
+    return content
+
+def get_transaction(transactionId):  # noqa: E501
+    """Return entries related to specified transaction
+
+     # noqa: E501
+
+    :param transactionId: 
+    :type transactionId: str
+    :param body: Parameters to get a entries related to transaction
+    :type body: dict | bytes
+
+    :rtype: List[ResourceEntriesInfo]
+    """
+    if connexion.request.is_json:
+        body = User.from_dict(connexion.request.get_json())  # noqa: E501
+    print("get_transaction: transactionId = ", transactionId)
+    sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".transactionID = '%s'" % transactionId
+    cur.execute(sql)
+    rows = cur.fetchone()
+    content = rows[0]
+    return content
+
+def get_instance(instanceId):  # noqa: E501
+    """Return entries related to specified instance
+
+     # noqa: E501
+
+    :param instanceId: 
+    :type instanceId: str
+    :param body: Parameters to get a entries related to instance
+    :type body: dict | bytes
+
+    :rtype: List[ResourceEntriesInfo]
+    """
+    if connexion.request.is_json:
+        body = User.from_dict(connexion.request.get_json())  # noqa: E501
+    print("get_instance: instanceId = ", instanceId)
+    sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".instanceID = '%s'" % instanceId
     cur.execute(sql)
     rows = cur.fetchone()
     content = rows[0]
