@@ -4,7 +4,7 @@
 This repository contains code and other files to implement the 5GZORRO datalake catalog service.
 
 Data is placed into the catalog database.
-The catalog service looks up data in the database and returns to requestor, based on resource_id, reference_id, etc.
+The catalog service looks up data in the database and returns to requestor, based on resource_id, instance_id, etc.
 
 # Data formats of different versions
 
@@ -19,11 +19,9 @@ data = {
       "productID": "8888",
       "instanceID": "2",
       "resourceID": "X",
-      "referenceID": "Y",
       "timestamp": "the time which the metric was measured"
     },
     "operatorID": "id_example",
-    "businessID": "business_id_flow",
     "networkID": "network_slice_id"
 }
 ```
@@ -33,7 +31,6 @@ The schema for the database is:
 CREATE TABLE datalake_metrics(
            seq_id SERIAL PRIMARY KEY,
 		 resourceID VARCHAR,
-		 referenceID VARCHAR,
 		 transactionID VARCHAR,
 		 productID VARCHAR,
 		 instanceID VARCHAR,
@@ -56,7 +53,6 @@ The format of the expected ingest data is:
 ```
     monitoring_data = {
             "resourceID": <resource-id>
-            "referenceID": <reference-id>
             "metricName": <metric-name>
             "metricsData": <metric-value-json>
             "timestamp": <timestamp>
@@ -75,7 +71,6 @@ The schema of the database is as follows:
 CREATE TABLE datalake_metrics(
          transaction_id SERIAL PRIMARY KEY,
          resourceID VARCHAR,
-         referenceID VARCHAR,
          metricName VARCHAR,
          metricValue VARCHAR,
          timestamp VARCHAR,

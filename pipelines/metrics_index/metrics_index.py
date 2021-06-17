@@ -16,7 +16,6 @@ def metrics_index(args):
         metrics_params = json.loads(args)
 
         resoure_id = metrics_params['resourceID']
-        reference_id = metrics_params['referenceID']
         transaction_id = metrics_params['transactionID']
         procuct_id = metrics_params['productID']
         instance_id = metrics_params['instanceID']
@@ -36,8 +35,8 @@ def metrics_index(args):
         user=DATALAKE_DB_USER,
         password=DATALAKE_DB_USER_PW)
     cur = conn.cursor()
-    sql = "INSERT INTO " + DATALAKE_DB_TABLE + "(resourceID, referenceID, transactionID, productID, instanceID, metricName, metricValue, timestamp, storageLocation) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"
-    cur.execute(sql, (resoure_id, reference_id, transaction_id, procuct_id, instance_id, metric_name, metric_value, timestamp, storage_location))
+    sql = "INSERT INTO " + DATALAKE_DB_TABLE + "(resourceID, transactionID, productID, instanceID, metricName, metricValue, timestamp, storageLocation) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"
+    cur.execute(sql, (resoure_id, transaction_id, procuct_id, instance_id, metric_name, metric_value, timestamp, storage_location))
     cur.close()
     conn.commit()
     conn.close()

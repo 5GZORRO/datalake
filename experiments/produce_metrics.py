@@ -11,7 +11,6 @@ def get_monitoring_data(operator_id):
     print("entering send_monitoring_data")
     monitoring_data = {
             "resourceID": "resource1",
-            "referenceID": "ref1",
             "transactionID": "tran1",
             "productID": "prod1",
             "instanceID": "inst1",
@@ -21,7 +20,6 @@ def get_monitoring_data(operator_id):
             }
     postMonitoringDataDict = {
             "operatorID": operator_id,
-            "businessID": operator_id,
             "networkID": operator_id,
             "MonitoringData": monitoring_data,
             }

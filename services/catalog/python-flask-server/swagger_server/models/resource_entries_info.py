@@ -15,13 +15,11 @@ class ResourceEntriesInfo(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, resource_id: str=None, reference_id: str=None, transaction_id: str=None, product_id: str=None, instance_id: str=None, metric_name: str=None, metric_value: str=None, timestamp: str=None, storage_location: str=None):  # noqa: E501
+    def __init__(self, resource_id: str=None, transaction_id: str=None, product_id: str=None, instance_id: str=None, metric_name: str=None, metric_value: str=None, timestamp: str=None, storage_location: str=None):  # noqa: E501
         """ResourceEntriesInfo - a model defined in Swagger
 
         :param resource_id: The resource_id of this ResourceEntriesInfo.  # noqa: E501
         :type resource_id: str
-        :param reference_id: The reference_id of this ResourceEntriesInfo.  # noqa: E501
-        :type reference_id: str
         :param transaction_id: The transaction_id of this ResourceEntriesInfo.  # noqa: E501
         :type transaction_id: str
         :param product_id: The product_id of this ResourceEntriesInfo.  # noqa: E501
@@ -39,7 +37,6 @@ class ResourceEntriesInfo(Model):
         """
         self.swagger_types = {
             'resource_id': str,
-            'reference_id': str,
             'transaction_id': str,
             'product_id': str,
             'instance_id': str,
@@ -51,7 +48,6 @@ class ResourceEntriesInfo(Model):
 
         self.attribute_map = {
             'resource_id': 'resourceId',
-            'reference_id': 'referenceId',
             'transaction_id': 'transactionId',
             'product_id': 'productId',
             'instance_id': 'instanceId',
@@ -62,7 +58,6 @@ class ResourceEntriesInfo(Model):
         }
 
         self._resource_id = resource_id
-        self._reference_id = reference_id
         self._transaction_id = transaction_id
         self._product_id = product_id
         self._instance_id = instance_id
@@ -102,27 +97,6 @@ class ResourceEntriesInfo(Model):
         """
 
         self._resource_id = resource_id
-
-    @property
-    def reference_id(self) -> str:
-        """Gets the reference_id of this ResourceEntriesInfo.
-
-
-        :return: The reference_id of this ResourceEntriesInfo.
-        :rtype: str
-        """
-        return self._reference_id
-
-    @reference_id.setter
-    def reference_id(self, reference_id: str):
-        """Sets the reference_id of this ResourceEntriesInfo.
-
-
-        :param reference_id: The reference_id of this ResourceEntriesInfo.
-        :type reference_id: str
-        """
-
-        self._reference_id = reference_id
 
     @property
     def transaction_id(self) -> str:

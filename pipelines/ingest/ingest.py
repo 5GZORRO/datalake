@@ -15,12 +15,10 @@ def Ingest(data):
         # verify structure of the data; create an exception if dictionary structure is not correct
         ingest_params = json.loads(data)
         operator_id = ingest_params['operatorID']
-        business_id = ingest_params['businessID']
         network_id = ingest_params['networkID']
         monitoring_data = ingest_params['MonitoringData']
 
         resoure_id = monitoring_data['resourceID']
-        reference_id = monitoring_data['referenceID']
         metric_name = monitoring_data['metricName']
         metric_value = monitoring_data['metricValue']
         timestamp = monitoring_data['timestamp']
@@ -55,7 +53,6 @@ def Ingest(data):
         rc = client.put_object(bucket_name, object_name, value_as_a_stream, len(data))
     output_params = {}
     output_params['resourceID'] = monitoring_data['resourceID']
-    output_params['referenceID'] = monitoring_data['referenceID']
     output_params['transactionID'] = monitoring_data['transactionID']
     output_params['productID'] = monitoring_data['productID']
     output_params['instanceID'] = monitoring_data['instanceID']

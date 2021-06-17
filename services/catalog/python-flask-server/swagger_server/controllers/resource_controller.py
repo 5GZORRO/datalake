@@ -29,30 +29,6 @@ def init_catalog_access():
     global cur
     cur = conn.cursor()
 
-
-
-def get_reference(referenceId):  # noqa: E501
-    """Return entries related to specified reference
-
-     # noqa: E501
-
-    :param referenceId: 
-    :type referenceId: str
-    :param body: Parameters to get a entries related to resource
-    :type body: dict | bytes
-
-    :rtype: List[ResourceEntriesInfo]
-    """
-    if connexion.request.is_json:
-        body = User.from_dict(connexion.request.get_json())  # noqa: E501
-    print("get_reference: referenceId = ", referenceId)
-    sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".referenceID = '%s'" % referenceId
-    cur.execute(sql)
-    rows = cur.fetchone()
-    content = rows[0]
-    return content
-
-
 def get_resource(resourceId):  # noqa: E501
     """Return entries related to specified resource
 

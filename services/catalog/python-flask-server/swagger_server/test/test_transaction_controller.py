@@ -16,7 +16,7 @@ class TestTransactionController(BaseTestCase):
     def test_get_transaction(self):
         """Test case for get_transaction
 
-        Return entries related to specified reference
+        Return entries related to specified transaction 
         """
         body = User()
         response = self.client.open(

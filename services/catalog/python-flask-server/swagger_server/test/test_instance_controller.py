@@ -16,7 +16,7 @@ class TestInstanceController(BaseTestCase):
     def test_get_instance(self):
         """Test case for get_instance
 
-        Return entries related to specified reference
+        Return entries related to specified instance 
         """
         body = User()
         response = self.client.open(

@@ -13,8 +13,6 @@ basePath: "/datalake/v1/catalog"
 tags:
 - name: "resource"
   description: "Operations on resource ID"
-- name: "reference"
-  description: "Operations on reference ID"
 - name: "transaction"
   description: "Operations on transaction ID"
 - name: "product"
@@ -57,43 +55,11 @@ paths:
         "400":
           description: "Bad Request"
       x-swagger-router-controller: "swagger_server.controllers.resource_controller"
-  /reference/{referenceId}:
-    get:
-      tags:
-      - "reference"
-      summary: "Return entries related to specified reference"
-      description: ""
-      operationId: "get_reference"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "referenceId"
-        in: "path"
-        required: true
-        type: "string"
-      - in: "body"
-        name: "body"
-        description: "Parameters to get a entries related to reference"
-        required: true
-        schema:
-          $ref: "#/definitions/User"
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/ResourceEntriesInfo"
-        "400":
-          description: "Bad Request"
-      x-swagger-router-controller: "swagger_server.controllers.resource_controller"
   /transaction/{transactionId}:
     get:
       tags:
       - "transaction"
-      summary: "Return entries related to specified reference"
+      summary: "Return entries related to specified transaction"
       description: ""
       operationId: "get_transaction"
       consumes:
@@ -157,7 +123,7 @@ paths:
     get:
       tags:
       - "instance"
-      summary: "Return entries related to specified reference"
+      summary: "Return entries related to specified instance"
       description: ""
       operationId: "get_instance"
       consumes:
@@ -203,8 +169,6 @@ definitions:
     properties:
       resourceId:
         type: "string"
-      referenceId:
-        type: "string"
       transactionId:
         type: "string"
       productId:
@@ -223,7 +187,6 @@ definitions:
       name: "ResourceEntriesInfo"
     example:
       resourceId: "resourceId"
-      referenceId: "referenceId"
       transactionId: "transactionId"
       productId: "productId"
       instanceId: "instanceId"
