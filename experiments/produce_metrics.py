@@ -23,7 +23,7 @@ def get_monitoring_data(operator_id):
             "operatorID": operator_id,
             "businessID": operator_id,
             "networkID": operator_id,
-            "MonitoringData": monitoring_data,
+            "monitoringData": monitoring_data,
             }
     print("postMonitoringDataDict = ", postMonitoringDataDict)
 
