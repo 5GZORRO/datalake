@@ -11,25 +11,24 @@ from minio.error import S3Error
 # Ingest is not a class method; it is a stand-alone function
 def Ingest(data):
     # ingest_params is expected to be a str representing a json dictionary with the appropriate keys
-    try:
-        # verify structure of the data; create an exception if dictionary structure is not correct
-        ingest_params = json.loads(data)
-        operator_id = ingest_params['operatorID']
-        business_id = ingest_params['businessID']
-        network_id = ingest_params['networkID']
+    ingest_params = json.loads(data)
+    operator_id = ingest_params['operatorID']
+    transaction_id = ingest_params['transactionID']
+    network_id = ingest_params['networkID']
+    instance_id = ingest_params['instanceID']
+    product_id = ingest_params['productID']
+    if 'monitoringData' in ingest_params:
+        monitoring_data = ingest_params['monitoringData']
+    elif 'MonitoringData' in ingest_params:
         monitoring_data = ingest_params['MonitoringData']
+    else:
+        raise("monitoringData field is missing")
 
-        resoure_id = monitoring_data['resourceID']
-        reference_id = monitoring_data['referenceID']
-        metric_name = monitoring_data['metricName']
-        metric_value = monitoring_data['metricValue']
-        timestamp = monitoring_data['timestamp']
-        transaction_id = monitoring_data['transactionID']
-        product_id = monitoring_data['productID']
-        instance_id = monitoring_data['instanceID']
-    except Exception as e:
-        print("exception: ", e)
-        return
+    resource_id = monitoring_data['resourceID']
+    metric_name = monitoring_data['metricName']
+    metric_value = monitoring_data['metricValue']
+    timestamp = monitoring_data['timestamp']
+    reference_id = monitoring_data.get('referenceID', 'missing')
 
     # TODO: verify that bucket name is consistent with operator
     bucket_name = operator_id + "-dl-bucket"
@@ -45,7 +44,7 @@ def Ingest(data):
         secure=False,
     )
 
-    object_name = resoure_id + '/' + timestamp
+    object_name = resource_id + '/' + str(timestamp)
     found = client.bucket_exists(bucket_name)
     # convert data string into a bytes stream to be consumable by s3 client put_object.
     b = data.encode('utf-8')
@@ -53,15 +52,16 @@ def Ingest(data):
     if found:
         # TODO add hash as metadata to object
         rc = client.put_object(bucket_name, object_name, value_as_a_stream, len(data))
+
     output_params = {}
-    output_params['resourceID'] = monitoring_data['resourceID']
-    output_params['referenceID'] = monitoring_data['referenceID']
-    output_params['transactionID'] = monitoring_data['transactionID']
-    output_params['productID'] = monitoring_data['productID']
-    output_params['instanceID'] = monitoring_data['instanceID']
-    output_params['metricName'] = monitoring_data['metricName']
-    output_params['metricValue'] = monitoring_data['metricValue']
-    output_params['timestamp'] = monitoring_data['timestamp']
+    output_params['resourceID'] = resource_id
+    output_params['referenceID'] = reference_id
+    output_params['transactionID'] = transaction_id
+    output_params['productID'] = product_id
+    output_params['instanceID'] = instance_id
+    output_params['metricName'] = metric_name
+    output_params['metricValue'] = metric_value
+    output_params['timestamp'] = timestamp
     output_params['storageLocation'] = s3_url + '/' + bucket_name + '/' + object_name
     print(json.dumps(output_params))
 
