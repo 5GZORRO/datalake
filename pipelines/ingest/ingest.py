@@ -15,14 +15,15 @@ def Ingest(data):
     operator_id = ingest_params['operatorID']
     transaction_id = ingest_params['transactionID']
     network_id = ingest_params['networkID']
-    instance_id = ingest_params['instanceID']
-    product_id = ingest_params['productID']
     if 'monitoringData' in ingest_params:
         monitoring_data = ingest_params['monitoringData']
     elif 'MonitoringData' in ingest_params:
         monitoring_data = ingest_params['MonitoringData']
     else:
         raise("monitoringData field is missing")
+
+    instance_id = monitoring_data['instanceID']
+    product_id = monitoring_data['productID']
 
     resource_id = monitoring_data['resourceID']
     metric_name = monitoring_data['metricName']
