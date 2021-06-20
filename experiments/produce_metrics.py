@@ -13,14 +13,14 @@ def get_monitoring_data(operator_id):
             "resourceID": "resource1",
             "metricName": "metric1",
             "metricValue": "value1",
+            "instanceID": "inst1",
+            "productID": "prod1",
             "timestamp": 't'+str(time.time())
             }
     postMonitoringDataDict = {
             "operatorID": operator_id,
             "transactionID": "tran1",
             "networkID": operator_id,
-            "instanceID": "inst1",
-            "productID": "prod1",
             "monitoringData": monitoring_data,
             }
     print("postMonitoringDataDict = ", postMonitoringDataDict)
