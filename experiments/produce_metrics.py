@@ -11,18 +11,16 @@ def get_monitoring_data(operator_id):
     print("entering send_monitoring_data")
     monitoring_data = {
             "resourceID": "resource1",
-            "referenceID": "ref1",
-            "transactionID": "tran1",
-            "productID": "prod1",
-            "instanceID": "inst1",
             "metricName": "metric1",
             "metricValue": "value1",
             "timestamp": 't'+str(time.time())
             }
     postMonitoringDataDict = {
             "operatorID": operator_id,
-            "businessID": operator_id,
+            "transactionID": "tran1",
             "networkID": operator_id,
+            "instanceID": "inst1",
+            "productID": "prod1",
             "monitoringData": monitoring_data,
             }
     print("postMonitoringDataDict = ", postMonitoringDataDict)
