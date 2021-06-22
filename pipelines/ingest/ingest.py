@@ -22,11 +22,21 @@ def Ingest(data):
     else:
         raise("monitoringData field is missing")
 
-    instance_id = monitoring_data['instanceID']
+    if 'instanceID' in monitoring_data:
+        instance_id = monitoring_data['instanceID']
+    elif 'instanceID' in ingest_params:
+        instance_id = ingest_params['instanceID']
+    else:
+        raise("instanceID field is missing")
+
     if 'productID' in monitoring_data:
         product_id = monitoring_data['productID']
     elif 'ProductID' in monitoring_data:
         product_id = monitoring_data['ProductID']
+    elif 'productID' in ingest_params:
+        product_id = ingest_params['ProductID']
+    elif 'ProductID' in ingest_params:
+        product_id = ingest_params['ProductID']
     else:
         raise("productID field is missing")
 
