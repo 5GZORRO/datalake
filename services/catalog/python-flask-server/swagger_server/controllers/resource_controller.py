@@ -29,6 +29,15 @@ def init_catalog_access():
     global cur
     cur = conn.cursor()
 
+def process_query(sql):
+    cur.execute(sql)
+    rows = cur.fetchone()
+    content = rows[0]
+    ttype = type(content)
+    // remove undesired fields from returned content
+    for ee in content:
+        del ee['seq_id']
+    return content
 
 
 def get_reference(referenceId):  # noqa: E501
@@ -45,11 +54,10 @@ def get_reference(referenceId):  # noqa: E501
     """
     if connexion.request.is_json:
         body = User.from_dict(connexion.request.get_json())  # noqa: E501
+    # TODO: check user and permissions
     print("get_reference: referenceId = ", referenceId)
     sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".referenceID = '%s'" % referenceId
-    cur.execute(sql)
-    rows = cur.fetchone()
-    content = rows[0]
+    content = process_query(sql)
     return content
 
 
@@ -69,9 +77,7 @@ def get_resource(resourceId):  # noqa: E501
         body = User.from_dict(connexion.request.get_json())  # noqa: E501
     print("get_resource: resourceId = ", resourceId)
     sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".resourceID = '%s'" % resourceId
-    cur.execute(sql)
-    rows = cur.fetchone()
-    content = rows[0]
+    content = process_query(sql)
     return content
 
 def get_product(productId):  # noqa: E501
@@ -90,9 +96,7 @@ def get_product(productId):  # noqa: E501
         body = User.from_dict(connexion.request.get_json())  # noqa: E501
     print("get_product: productId = ", productId)
     sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".productID = '%s'" % productId
-    cur.execute(sql)
-    rows = cur.fetchone()
-    content = rows[0]
+    content = process_query(sql)
     return content
 
 def get_transaction(transactionId):  # noqa: E501
@@ -111,9 +115,7 @@ def get_transaction(transactionId):  # noqa: E501
         body = User.from_dict(connexion.request.get_json())  # noqa: E501
     print("get_transaction: transactionId = ", transactionId)
     sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".transactionID = '%s'" % transactionId
-    cur.execute(sql)
-    rows = cur.fetchone()
-    content = rows[0]
+    content = process_query(sql)
     return content
 
 def get_instance(instanceId):  # noqa: E501
@@ -132,7 +134,5 @@ def get_instance(instanceId):  # noqa: E501
         body = User.from_dict(connexion.request.get_json())  # noqa: E501
     print("get_instance: instanceId = ", instanceId)
     sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".instanceID = '%s'" % instanceId
-    cur.execute(sql)
-    rows = cur.fetchone()
-    content = rows[0]
+    content = process_query(sql)
     return content
