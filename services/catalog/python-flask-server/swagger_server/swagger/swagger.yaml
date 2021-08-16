@@ -46,7 +46,7 @@ paths:
         description: "Parameters to get a entries related to resource"
         required: true
         schema:
-          $ref: "#/definitions/User"
+          $ref: "#/definitions/ResourceQuery"
       responses:
         "200":
           description: "successful operation"
@@ -78,7 +78,7 @@ paths:
         description: "Parameters to get a entries related to reference"
         required: true
         schema:
-          $ref: "#/definitions/User"
+          $ref: "#/definitions/ResourceQuery"
       responses:
         "200":
           description: "successful operation"
@@ -110,7 +110,7 @@ paths:
         description: "Parameters to get a entries related to transaction"
         required: true
         schema:
-          $ref: "#/definitions/User"
+          $ref: "#/definitions/ResourceQuery"
       responses:
         "200":
           description: "successful operation"
@@ -142,7 +142,7 @@ paths:
         description: "Parameters to get a entries related to product"
         required: true
         schema:
-          $ref: "#/definitions/User"
+          $ref: "#/definitions/ResourceQuery"
       responses:
         "200":
           description: "successful operation"
@@ -174,7 +174,7 @@ paths:
         description: "Parameters to get a entries related to instance"
         required: true
         schema:
-          $ref: "#/definitions/User"
+          $ref: "#/definitions/ResourceQuery"
       responses:
         "200":
           description: "successful operation"
@@ -198,6 +198,34 @@ definitions:
     example:
       authToken: "authToken"
       userId: "userId"
+  TimeInterval:
+    type: "object"
+    properties:
+      startTime:
+        type: "string"
+      endTime:
+        type: "string"
+    xml:
+      name: "TimeInterval"
+    example:
+      startTime: "1618828209"
+      endTime: "1620730277"
+  ResourceQuery:
+    type: "object"
+    properties:
+      userInfo:
+        $ref: "#/definitions/User"
+      timeInfo:
+        $ref: "#/definitions/TimeInterval"
+    xml:
+      name: "ResourceQuery"
+    example:
+      userInfo:
+        authToken: "authToken"
+        userId: "userId"
+      timeInfo:
+        startTime: "1618828209"
+        endTime: "1620730277"
   ResourceEntriesInfo:
     type: "object"
     properties:
