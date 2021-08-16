@@ -5,6 +5,7 @@ import psycopg2
 
 from swagger_server.models.resource_entries_info import ResourceEntriesInfo  # noqa: E501
 from swagger_server.models.user import User  # noqa: E501
+from swagger_server.models.resource_query import ResourceQuery  # noqa: E501
 from swagger_server import util
 
 DATALAKE_DB = "datalake"
@@ -29,7 +30,35 @@ def init_catalog_access():
     global cur
     cur = conn.cursor()
 
+def process_query(query_specific, time_interval):
+    if time_interval:
+        start_time = "'%s'" % time_interval.start_time
+        end_time = "'%s'" % time_interval.end_time
+        sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + query_specific + " AND " + DATALAKE_DB_TABLE + ".timestamp >= " + start_time + " AND " + DATALAKE_DB_TABLE + ".timestamp <= " + end_time
+    else:
+        sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + query_specific
+    cur.execute(sql)
+    rows = cur.fetchone()
+    content = rows[0]
+    if not isinstance(content, list):
+        return
+    # remove undesired fields from returned content
+    for ee in content:
+        del ee['seq_id']
+    return content
 
+
+def process_json_parameters():
+    if connexion.request.is_json:
+        body = ResourceQuery.from_dict(connexion.request.get_json())
+    else:
+        raise("content is not json")
+
+    # TODO: check user and permissions
+    user = body.user_info
+    time_interval = body.time_info
+    # TODO check for valid user info
+    return user, time_interval
 
 def get_reference(referenceId):  # noqa: E501
     """Return entries related to specified reference
@@ -43,13 +72,9 @@ def get_reference(referenceId):  # noqa: E501
 
     :rtype: List[ResourceEntriesInfo]
     """
-    if connexion.request.is_json:
-        body = User.from_dict(connexion.request.get_json())  # noqa: E501
-    print("get_reference: referenceId = ", referenceId)
-    sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".referenceID = '%s'" % referenceId
-    cur.execute(sql)
-    rows = cur.fetchone()
-    content = rows[0]
+    user, time_interval = process_json_parameters()
+    query_specific = ".referenceID = '%s'" % referenceId
+    content = process_query(query_specific, time_interval)
     return content
 
 
@@ -65,13 +90,9 @@ def get_resource(resourceId):  # noqa: E501
 
     :rtype: List[ResourceEntriesInfo]
     """
-    if connexion.request.is_json:
-        body = User.from_dict(connexion.request.get_json())  # noqa: E501
-    print("get_resource: resourceId = ", resourceId)
-    sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".resourceID = '%s'" % resourceId
-    cur.execute(sql)
-    rows = cur.fetchone()
-    content = rows[0]
+    user, time_interval = process_json_parameters()
+    query_specific = ".resourceID = '%s'" % resourceId
+    content = process_query(query_specific, time_interval)
     return content
 
 def get_product(productId):  # noqa: E501
@@ -86,13 +107,9 @@ def get_product(productId):  # noqa: E501
 
     :rtype: List[ResourceEntriesInfo]
     """
-    if connexion.request.is_json:
-        body = User.from_dict(connexion.request.get_json())  # noqa: E501
-    print("get_product: productId = ", productId)
-    sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".productID = '%s'" % productId
-    cur.execute(sql)
-    rows = cur.fetchone()
-    content = rows[0]
+    user, time_interval = process_json_parameters()
+    query_specific = ".productID = '%s'" % productId
+    content = process_query(query_specific, time_interval)
     return content
 
 def get_transaction(transactionId):  # noqa: E501
@@ -107,13 +124,9 @@ def get_transaction(transactionId):  # noqa: E501
 
     :rtype: List[ResourceEntriesInfo]
     """
-    if connexion.request.is_json:
-        body = User.from_dict(connexion.request.get_json())  # noqa: E501
-    print("get_transaction: transactionId = ", transactionId)
-    sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".transactionID = '%s'" % transactionId
-    cur.execute(sql)
-    rows = cur.fetchone()
-    content = rows[0]
+    user, time_interval = process_json_parameters()
+    query_specific = ".transactionID = '%s'" % transactionId
+    content = process_query(query_specific, time_interval)
     return content
 
 def get_instance(instanceId):  # noqa: E501
@@ -128,11 +141,7 @@ def get_instance(instanceId):  # noqa: E501
 
     :rtype: List[ResourceEntriesInfo]
     """
-    if connexion.request.is_json:
-        body = User.from_dict(connexion.request.get_json())  # noqa: E501
-    print("get_instance: instanceId = ", instanceId)
-    sql = "SELECT json_agg(" + DATALAKE_DB_TABLE + ") FROM " + DATALAKE_DB_TABLE + " WHERE "+ DATALAKE_DB_TABLE + ".instanceID = '%s'" % instanceId
-    cur.execute(sql)
-    rows = cur.fetchone()
-    content = rows[0]
+    user, time_interval = process_json_parameters()
+    query_specific = ".instanceID = '%s'" % instanceId
+    content = process_query(query_specific, time_interval)
     return content
