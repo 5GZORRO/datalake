@@ -1,0 +1,42 @@
+{
+    "apiVersion": "argoproj.io/v1alpha1",
+    "kind": "Workflow",
+    "metadata": {
+        "generateName": "copy-to-topic-"
+    },
+    "spec": {
+        "entrypoint": "copy-to-topic",
+        "arguments": {
+            "parameters": [ {
+                "name": "args",
+                "value": "my args"
+		    } ]
+		},
+        "templates": [ {
+            "name": "copy-to-topic",
+            "inputs": {
+                "parameters": [ {
+                    "name": "args"
+			} ]
+		    },
+            "container": {
+                "image": "copy_to_topic",
+		"env": [
+			{ "name": "KAFKA_TOPIC",
+			"value": "dl_stream_topic" },
+			{ "name": "KAFKA_URL",
+			"value": "192.168.122.176:49153" }
+		],
+		"imagePullPolicy": "Never",
+                "command": [ "python", "./copy_to_topic.py" ],
+                "args": ["{{inputs.parameters.args}}"],
+                "resources": {
+                    "limits": {
+                        "memory": "32Mi",
+                        "cpu": "100m"
+                    }
+                }
+            }
+        } ]
+    }
+}

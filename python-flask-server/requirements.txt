@@ -4,3 +4,4 @@ setuptools >= 21.0.0
 kubernetes==12.0.1
 kafka-python==2.0.2
 minio
+

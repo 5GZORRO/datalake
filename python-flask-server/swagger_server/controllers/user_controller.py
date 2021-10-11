@@ -90,6 +90,7 @@ def register_user(body):  # noqa: E501
         if s3_bucket_name:
             urls['s3_url'] = s3_proxy_server.s3_url
         urls['dl_catalog_server_url'] = dl_global_services.dl_catalaog_server_url
+        urls['dl_stream_data_server_url'] = dl_global_services.dl_stream_data_server_url
 
         # create general kafka topics for the user to use
         topic_name_in = user_id + "-topic-in"

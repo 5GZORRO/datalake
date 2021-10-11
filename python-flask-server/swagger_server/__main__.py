@@ -11,7 +11,6 @@ from swagger_server.controllers import dl_global_services
 
 
 def main():
-    print("entering main")
     app = connexion.App(__name__, specification_dir='./swagger/')
     app.app.json_encoder = encoder.JSONEncoder
     app.add_api('swagger.yaml', arguments={'title': 'Data Lake API'})
@@ -21,10 +20,8 @@ def main():
     set_s3_proxy(s3_proxy)
     kafka_proxy = Kafka_Proxy()
     set_kafka_proxy(kafka_proxy)
-    print("dl_catalaog_server_url = ", dl_global_services.dl_catalaog_server_url)
     dl_global_services.create_global_services()
     user_info.init_users()
-    print("dl_catalaog_server_url = ", dl_global_services.dl_catalaog_server_url)
     app.run(port=8080)
 
 

@@ -30,7 +30,7 @@ def get_monitoring_data(operator_id):
 def main():
     print("entering main")
     if len(sys.argv) < 3:
-        print("Usage: python3 metrics_producer.py <operator_id> <kafka_topic>")
+        print("Usage: python3 produce_metrics.py <operator_id> <kafka_topic>")
         raise Exception('incorrect number of command-line parameters')
 
     operator_id = sys.argv[1]
