@@ -79,6 +79,7 @@ def recover_user_state(user_id):
 
     # Fix the address of the catalog server, in case it changed
     available_resources['urls']['dl_catalog_server_url'] = dl_global_services.dl_catalaog_server_url
+    available_resources['urls']['dl_stream_data_server_url'] = dl_global_services.dl_stream_data_server_url
 
     user = User(user_id, 'blah')
 

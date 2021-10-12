@@ -3,6 +3,7 @@ import os
 from swagger_server.models.pipeline_metadata import PipelineMetadata
 from swagger_server.models.pipeline_info import PipelineInfo
 from swagger_server.controllers import k8s_api
+from swagger_server.controllers.dl_global_services import dl_stream_data_server_topic
 
 
 def create_predefined_pipelines(user_id, s3_available : bool):
@@ -41,6 +42,16 @@ def create_predefined_pipelines(user_id, s3_available : bool):
                 },
                 "steps": [
                     [ {
+                        "name": "copy-to-topic1",
+                        "template": "copy-to-topic",
+                        "arguments": {
+                            "parameters": [ {
+                                "name": "args",
+                                "value": "{{inputs.parameters.args}}"
+                            } ]
+                        }
+                    } ],
+                    [ {
                         "name": "ingest1",
                         "template": "ingest",
                         "arguments": {
@@ -61,6 +72,31 @@ def create_predefined_pipelines(user_id, s3_available : bool):
                         }
                     } ]
                 ]
+              },
+              {
+                "name": "copy-to-topic",
+                "inputs": {
+                    "parameters": [ {
+                        "name": "args"
+                    } ]
+                },
+                "container": {
+                    "image": "docker.pkg.github.com/5gzorro/datalake/copy_to_topic:"+datalake_images_version,
+                    "env": [
+                        { "name": "KAFKA_URL",
+                        "value": os.getenv('KAFKA_URL', '127.0.0.1:9092') },
+                        { "name": "KAFKA_TOPIC",
+                        "value": dl_stream_data_server_topic },
+                    ],
+                    "command": [ "python", "./copy_to_topic.py" ],
+                    "args": ["{{inputs.parameters.args}}"],
+                    "resources": {
+                        "limits": {
+                            "memory": "32Mi",
+                            "cpu": "100m"
+                        }
+                    }
+                }
               },
               {
                 "name": "ingest",
