@@ -29,7 +29,6 @@ def handle_stream_data():
             value_serializer=str.encode)
 
     for message in consumer:
-        print("message = ", message)
         data = message.value.decode('utf-8')
         try:
             ingest_params = json.loads(data)
@@ -60,21 +59,19 @@ def handle_stream_data():
             continue
 
         if product_id not in mapping_table:
-            print("product_id %s not in table " %product_id)
             continue
 
         kafka_topic_out = mapping_table[product_id]
         producer.send(kafka_topic_out, value=data)
+        producer.flush()
 
 
 
 def init_stream_data():
     global kafka_url
     kafka_url = os.getenv('KAFKA_URL', '127.0.0.1:9092')
-    print("kafka_url = ", kafka_url)
     global kafka_topic_in
     kafka_topic_in = os.getenv('KAFKA_TOPIC_IN', 'dl_stream_topic')
-    print("kafka_topic_in = ", kafka_topic_in)
     t = threading.Thread(target=handle_stream_data)
     t.start()
     return
