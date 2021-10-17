@@ -14,6 +14,7 @@ def copy_to_topic(data):
         producer = KafkaProducer(bootstrap_servers=[kafka_url],
                          value_serializer=str.encode)
         producer.send(kafka_topic, value=data)
+        producer.flush()
 
     except Exception as e:
         print("Exception: ", str(e))

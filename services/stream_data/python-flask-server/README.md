@@ -47,3 +47,10 @@ docker build -t swagger_server .
 # starting up a container
 docker run -p 8087:8087 swagger_server
 ```
+
+## Push container to repository
+```
+docker build -t docker.pkg.github.com/5gzorro/datalake/stream_data:latest .
+docker push docker.pkg.github.com/5gzorro/datalake/stream_data:latest
+```
+
