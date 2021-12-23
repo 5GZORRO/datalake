@@ -39,7 +39,9 @@ def create_dl_catalog_service():
     response = k8s_proxy_server.create_service(service_def)
     ports1 = response.spec.ports
     ports2 = str(ports1)
-    ports = json.loads(ports2.replace("'", '"'))
+    ports3 = ports2.replace("'", '"')
+    ports4 = ports3.replace('None', '""')
+    ports = json.loads(ports4)
     print("exiting create_dl_catalog_service")
     return ports
 
@@ -70,7 +72,9 @@ def create_dl_stream_data_service():
     response = k8s_proxy_server.create_service(service_def)
     ports1 = response.spec.ports
     ports2 = str(ports1)
-    ports = json.loads(ports2.replace("'", '"'))
+    ports3 = ports2.replace("'", '"')
+    ports4 = ports3.replace('None', '""')
+    ports = json.loads(ports4)
     print("exiting create_dl_catalog_service")
     return ports
 
@@ -86,7 +90,9 @@ def setup_dl_catalog_service():
         response = k8s_proxy_server.read_service(name)
         ports1 = response[0].spec.ports
         ports2 = str(ports1)
-        ports = json.loads(ports2.replace("'", '"'))
+        ports3 = ports2.replace("'", '"')
+        ports4 = ports3.replace('None', '""')
+        ports = json.loads(ports4)
     except Exception as e:
         print("did not find old dl-catalog-server service;")
         ports = create_dl_catalog_service()
@@ -106,7 +112,9 @@ def setup_dl_stream_data_service():
         response = k8s_proxy_server.read_service(name)
         ports1 = response[0].spec.ports
         ports2 = str(ports1)
-        ports = json.loads(ports2.replace("'", '"'))
+        ports3 = ports2.replace("'", '"')
+        ports4 = ports3.replace('None', '""')
+        ports = json.loads(ports4)
     except Exception as e:
         print("did not find old dl-stream-data-server service;")
         ports = create_dl_stream_data_service()
