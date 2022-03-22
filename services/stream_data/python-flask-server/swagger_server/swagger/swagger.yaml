@@ -11,64 +11,64 @@ info:
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 basePath: "/datalake/v1/stream_data"
 tags:
-- name: "product"
-  description: "Operations on product ID"
+- name: "transaction"
+  description: "Operations on transaction ID"
 schemes:
 - "https"
 - "http"
 paths:
-  /register/{productId}:
+  /register/{transactionId}:
     post:
       tags:
-      - "product"
-      summary: "register productId for which data should be streamed"
+      - "transaction"
+      summary: "register transactionId for which data should be streamed"
       description: ""
-      operationId: "register_product_topic"
+      operationId: "register_transaction_topic"
       consumes:
       - "application/json"
       produces:
       - "application/json"
       parameters:
-      - name: "productId"
+      - name: "transactionId"
         in: "path"
         required: true
         type: "string"
       - in: "body"
         name: "body"
-        description: "Parameters to get a entries related to productId"
+        description: "Parameters to get a entries related to transactionId"
         required: true
         schema:
-          $ref: "#/definitions/ProductQuery"
+          $ref: "#/definitions/TransactionQuery"
       responses:
         "201":
           description: "successful operation"
-      x-swagger-router-controller: "swagger_server.controllers.product_controller"
-  /unregister/{productId}:
+      x-swagger-router-controller: "swagger_server.controllers.transaction_controller"
+  /unregister/{transactionId}:
     post:
       tags:
-      - "product"
-      summary: "stop stream data for specified  productId"
+      - "transaction"
+      summary: "stop stream data for specified  transactionId"
       description: ""
-      operationId: "unregister_product_topic"
+      operationId: "unregister_transaction_topic"
       consumes:
       - "application/json"
       produces:
       - "application/json"
       parameters:
-      - name: "productId"
+      - name: "transactionId"
         in: "path"
         required: true
         type: "string"
       - in: "body"
         name: "body"
-        description: "Parameters to unregister streaming for productId"
+        description: "Parameters to unregister streaming for transactionId"
         required: true
         schema:
           $ref: "#/definitions/User"
       responses:
         "204":
           description: "successful operation"
-      x-swagger-router-controller: "swagger_server.controllers.product_controller"
+      x-swagger-router-controller: "swagger_server.controllers.transaction_controller"
 definitions:
   User:
     type: "object"
@@ -82,27 +82,27 @@ definitions:
     example:
       authToken: "authToken"
       userId: "userId"
-  ProductInfo:
+  TransactionInfo:
     type: "object"
     properties:
       topic:
         type: "string"
     xml:
-      name: "ProductInfo"
+      name: "TransactionInfo"
     example:
       topic: "topic1"
-  ProductQuery:
+  TransactionQuery:
     type: "object"
     properties:
       userInfo:
         $ref: "#/definitions/User"
-      productInfo:
-        $ref: "#/definitions/ProductInfo"
+      transactionInfo:
+        $ref: "#/definitions/TransactionInfo"
     xml:
-      name: "ProductQuery"
+      name: "TransactionQuery"
     example:
       userInfo:
         authToken: "authToken"
         userId: "userId"
-      productInfo:
+      transactionInfo:
         topic: "topic1"

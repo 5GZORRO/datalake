@@ -696,8 +696,8 @@ margin-bottom: 20px;
   <script>
     // Script section to load models into a JS Var
     var defs = {}
-        defs["ProductInfo"] = {"type":"object","properties":{"topic":{"type":"string"}},"xml":{"name":"ProductInfo"},"example":{"topic":"topic1"}};
-        defs["ProductQuery"] = {"type":"object","properties":{"userInfo":{"$ref":"#/definitions/User"},"productInfo":{"$ref":"#/definitions/ProductInfo"}},"xml":{"name":"ProductQuery"}};
+        defs["TransactionInfo"] = {"type":"object","properties":{"topic":{"type":"string"}},"xml":{"name":"TransactionInfo"},"example":{"topic":"topic1"}};
+        defs["TransactionQuery"] = {"type":"object","properties":{"userInfo":{"$ref":"#/definitions/User"},"transactionInfo":{"$ref":"#/definitions/TransactionInfo"}},"xml":{"name":"TransactionQuery"}};
         defs["User"] = {"type":"object","properties":{"userId":{"type":"string"},"authToken":{"type":"string"}},"xml":{"name":"User"},"example":{"authToken":"authToken","userId":"userId"}};
   </script>
 
@@ -715,12 +715,12 @@ margin-bottom: 20px;
             -->
             <li class="nav-fixed nav-header active" data-group="_"><a href="#api-_">API Summary</a></li>
 
-                  <li class="nav-header" data-group="Product"><a href="#api-Product">API Methods - Product</a></li>
-                    <li data-group="Product" data-name="registerProductTopic" class="">
-                      <a href="#api-Product-registerProductTopic">registerProductTopic</a>
+                  <li class="nav-header" data-group="Transaction"><a href="#api-Transaction">API Methods - Transaction</a></li>
+                    <li data-group="Transaction" data-name="registerTransactionTopic" class="">
+                      <a href="#api-Transaction-registerTransactionTopic">registerTransactionTopic</a>
                     </li>
-                    <li data-group="Product" data-name="unregisterProductTopic" class="">
-                      <a href="#api-Product-unregisterProductTopic">unregisterProductTopic</a>
+                    <li data-group="Transaction" data-name="unregisterTransactionTopic" class="">
+                      <a href="#api-Transaction-unregisterTransactionTopic">unregisterTransactionTopic</a>
                     </li>
           </ul>
         </nav>
@@ -741,13 +741,13 @@ margin-bottom: 20px;
           </div>
         </div>
         <div id="sections">
-                <section id="api-Product">
-                  <h1>Product</h1>
-                    <div id="api-Product-registerProductTopic">
-                      <article id="api-Product-registerProductTopic-0" data-group="User" data-name="registerProductTopic" data-version="0">
+                <section id="api-Transaction">
+                  <h1>Transaction</h1>
+                    <div id="api-Transaction-registerTransactionTopic">
+                      <article id="api-Transaction-registerTransactionTopic-0" data-group="User" data-name="registerTransactionTopic" data-version="0">
                         <div class="pull-left">
-                          <h1>registerProductTopic</h1>
-                          <p>register productId for which data should be streamed</p>
+                          <h1>registerTransactionTopic</h1>
+                          <p>register transactionId for which data should be streamed</p>
                         </div>
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
@@ -755,84 +755,84 @@ margin-bottom: 20px;
                         <p class="marked"></p>
                         <p></p>
                         <br />
-                        <pre class="prettyprint language-html prettyprinted" data-type="post"><code><span class="pln">/register/{productId}</span></code></pre>
+                        <pre class="prettyprint language-html prettyprinted" data-type="post"><code><span class="pln">/register/{transactionId}</span></code></pre>
                         <p>
                           <h3>Usage and SDK Samples</h3>
                         </p>
                         <ul class="nav nav-tabs nav-tabs-examples">
-                          <li class="active"><a href="#examples-Product-registerProductTopic-0-curl">Curl</a></li>
-                          <li class=""><a href="#examples-Product-registerProductTopic-0-java">Java</a></li>
-                          <li class=""><a href="#examples-Product-registerProductTopic-0-android">Android</a></li>
-                          <!--<li class=""><a href="#examples-Product-registerProductTopic-0-groovy">Groovy</a></li>-->
-                          <li class=""><a href="#examples-Product-registerProductTopic-0-objc">Obj-C</a></li>
-                          <li class=""><a href="#examples-Product-registerProductTopic-0-javascript">JavaScript</a></li>
-                          <!--<li class=""><a href="#examples-Product-registerProductTopic-0-angular">Angular</a></li>-->
-                          <li class=""><a href="#examples-Product-registerProductTopic-0-csharp">C#</a></li>
-                          <li class=""><a href="#examples-Product-registerProductTopic-0-php">PHP</a></li>
-                          <li class=""><a href="#examples-Product-registerProductTopic-0-perl">Perl</a></li>
-                          <li class=""><a href="#examples-Product-registerProductTopic-0-python">Python</a></li>
+                          <li class="active"><a href="#examples-Transaction-registerTransactionTopic-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Transaction-registerTransactionTopic-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Transaction-registerTransactionTopic-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Transaction-registerTransactionTopic-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Transaction-registerTransactionTopic-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Transaction-registerTransactionTopic-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Transaction-registerTransactionTopic-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Transaction-registerTransactionTopic-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Transaction-registerTransactionTopic-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Transaction-registerTransactionTopic-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Transaction-registerTransactionTopic-0-python">Python</a></li>
                         </ul>
 
                         <div class="tab-content">
-                          <div class="tab-pane active" id="examples-Product-registerProductTopic-0-curl">
-                            <pre class="prettyprint"><code class="language-bsh">curl -X POST "https://localhost/datalake/v1/stream_data/register/{productId}"</code></pre>
+                          <div class="tab-pane active" id="examples-Transaction-registerTransactionTopic-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X POST "https://localhost/datalake/v1/stream_data/register/{transactionId}"</code></pre>
                           </div>
-                          <div class="tab-pane" id="examples-Product-registerProductTopic-0-java">
+                          <div class="tab-pane" id="examples-Transaction-registerTransactionTopic-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
 import io.swagger.client.auth.*;
 import io.swagger.client.model.*;
-import io.swagger.client.api.ProductApi;
+import io.swagger.client.api.TransactionApi;
 
 import java.io.File;
 import java.util.*;
 
-public class ProductApiExample {
+public class TransactionApiExample {
 
     public static void main(String[] args) {
         
-        ProductApi apiInstance = new ProductApi();
-        String productId = productId_example; // String | 
-        ProductQuery body = ; // ProductQuery | Parameters to get a entries related to productId
+        TransactionApi apiInstance = new TransactionApi();
+        String transactionId = transactionId_example; // String | 
+        TransactionQuery body = ; // TransactionQuery | Parameters to get a entries related to transactionId
         try {
-            apiInstance.registerProductTopic(productId, body);
+            apiInstance.registerTransactionTopic(transactionId, body);
         } catch (ApiException e) {
-            System.err.println("Exception when calling ProductApi#registerProductTopic");
+            System.err.println("Exception when calling TransactionApi#registerTransactionTopic");
             e.printStackTrace();
         }
     }
 }</code></pre>
                           </div>
 
-                          <div class="tab-pane" id="examples-Product-registerProductTopic-0-android">
-                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.ProductApi;
+                          <div class="tab-pane" id="examples-Transaction-registerTransactionTopic-0-android">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.TransactionApi;
 
-public class ProductApiExample {
+public class TransactionApiExample {
 
     public static void main(String[] args) {
-        ProductApi apiInstance = new ProductApi();
-        String productId = productId_example; // String | 
-        ProductQuery body = ; // ProductQuery | Parameters to get a entries related to productId
+        TransactionApi apiInstance = new TransactionApi();
+        String transactionId = transactionId_example; // String | 
+        TransactionQuery body = ; // TransactionQuery | Parameters to get a entries related to transactionId
         try {
-            apiInstance.registerProductTopic(productId, body);
+            apiInstance.registerTransactionTopic(transactionId, body);
         } catch (ApiException e) {
-            System.err.println("Exception when calling ProductApi#registerProductTopic");
+            System.err.println("Exception when calling TransactionApi#registerTransactionTopic");
             e.printStackTrace();
         }
     }
 }</code></pre>
                           </div>
   <!--
-  <div class="tab-pane" id="examples-Product-registerProductTopic-0-groovy">
+  <div class="tab-pane" id="examples-Transaction-registerTransactionTopic-0-groovy">
   <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
   </div> -->
-                            <div class="tab-pane" id="examples-Product-registerProductTopic-0-objc">
-                              <pre class="prettyprint"><code class="language-cpp">String *productId = productId_example; // 
-ProductQuery *body = ; // Parameters to get a entries related to productId
+                            <div class="tab-pane" id="examples-Transaction-registerTransactionTopic-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">String *transactionId = transactionId_example; // 
+TransactionQuery *body = ; // Parameters to get a entries related to transactionId
 
-ProductApi *apiInstance = [[ProductApi alloc] init];
+TransactionApi *apiInstance = [[TransactionApi alloc] init];
 
-// register productId for which data should be streamed
-[apiInstance registerProductTopicWith:productId
+// register transactionId for which data should be streamed
+[apiInstance registerTransactionTopicWith:transactionId
     body:body
               completionHandler: ^(NSError* error) {
                             if (error) {
@@ -842,14 +842,14 @@ ProductApi *apiInstance = [[ProductApi alloc] init];
 </code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Product-registerProductTopic-0-javascript">
+                            <div class="tab-pane" id="examples-Transaction-registerTransactionTopic-0-javascript">
                               <pre class="prettyprint"><code class="language-js">var DataLakeStreamDataServiceApi = require('data_lake_stream_data_service_api');
 
-var api = new DataLakeStreamDataServiceApi.ProductApi()
+var api = new DataLakeStreamDataServiceApi.TransactionApi()
 
-var productId = productId_example; // {String} 
+var transactionId = transactionId_example; // {String} 
 
-var body = ; // {ProductQuery} Parameters to get a entries related to productId
+var body = ; // {TransactionQuery} Parameters to get a entries related to transactionId
 
 
 var callback = function(error, data, response) {
@@ -859,14 +859,14 @@ var callback = function(error, data, response) {
     console.log('API called successfully.');
   }
 };
-api.registerProductTopic(productId, body, callback);
+api.registerTransactionTopic(transactionId, body, callback);
 </code></pre>
                             </div>
 
-                            <!--<div class="tab-pane" id="examples-Product-registerProductTopic-0-angular">
+                            <!--<div class="tab-pane" id="examples-Transaction-registerTransactionTopic-0-angular">
               <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
             </div>-->
-                            <div class="tab-pane" id="examples-Product-registerProductTopic-0-csharp">
+                            <div class="tab-pane" id="examples-Transaction-registerTransactionTopic-0-csharp">
                               <pre class="prettyprint"><code class="language-cs">using System;
 using System.Diagnostics;
 using IO.Swagger.Api;
@@ -875,23 +875,23 @@ using IO.Swagger.Model;
 
 namespace Example
 {
-    public class registerProductTopicExample
+    public class registerTransactionTopicExample
     {
         public void main()
         {
             
-            var apiInstance = new ProductApi();
-            var productId = productId_example;  // String | 
-            var body = new ProductQuery(); // ProductQuery | Parameters to get a entries related to productId
+            var apiInstance = new TransactionApi();
+            var transactionId = transactionId_example;  // String | 
+            var body = new TransactionQuery(); // TransactionQuery | Parameters to get a entries related to transactionId
 
             try
             {
-                // register productId for which data should be streamed
-                apiInstance.registerProductTopic(productId, body);
+                // register transactionId for which data should be streamed
+                apiInstance.registerTransactionTopic(transactionId, body);
             }
             catch (Exception e)
             {
-                Debug.Print("Exception when calling ProductApi.registerProductTopic: " + e.Message );
+                Debug.Print("Exception when calling TransactionApi.registerTransactionTopic: " + e.Message );
             }
         }
     }
@@ -899,40 +899,40 @@ namespace Example
 </code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Product-registerProductTopic-0-php">
+                            <div class="tab-pane" id="examples-Transaction-registerTransactionTopic-0-php">
                               <pre class="prettyprint"><code class="language-php"><&#63;php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-$api_instance = new Swagger\Client\Api\ProductApi();
-$productId = productId_example; // String | 
-$body = ; // ProductQuery | Parameters to get a entries related to productId
+$api_instance = new Swagger\Client\Api\TransactionApi();
+$transactionId = transactionId_example; // String | 
+$body = ; // TransactionQuery | Parameters to get a entries related to transactionId
 
 try {
-    $api_instance->registerProductTopic($productId, $body);
+    $api_instance->registerTransactionTopic($transactionId, $body);
 } catch (Exception $e) {
-    echo 'Exception when calling ProductApi->registerProductTopic: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling TransactionApi->registerTransactionTopic: ', $e->getMessage(), PHP_EOL;
 }
 ?></code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Product-registerProductTopic-0-perl">
+                            <div class="tab-pane" id="examples-Transaction-registerTransactionTopic-0-perl">
                               <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
 use WWW::SwaggerClient::Configuration;
-use WWW::SwaggerClient::ProductApi;
+use WWW::SwaggerClient::TransactionApi;
 
-my $api_instance = WWW::SwaggerClient::ProductApi->new();
-my $productId = productId_example; # String | 
-my $body = WWW::SwaggerClient::Object::ProductQuery->new(); # ProductQuery | Parameters to get a entries related to productId
+my $api_instance = WWW::SwaggerClient::TransactionApi->new();
+my $transactionId = transactionId_example; # String | 
+my $body = WWW::SwaggerClient::Object::TransactionQuery->new(); # TransactionQuery | Parameters to get a entries related to transactionId
 
 eval { 
-    $api_instance->registerProductTopic(productId => $productId, body => $body);
+    $api_instance->registerTransactionTopic(transactionId => $transactionId, body => $body);
 };
 if ($@) {
-    warn "Exception when calling ProductApi->registerProductTopic: $@\n";
+    warn "Exception when calling TransactionApi->registerTransactionTopic: $@\n";
 }</code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Product-registerProductTopic-0-python">
+                            <div class="tab-pane" id="examples-Transaction-registerTransactionTopic-0-python">
                               <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
 import time
 import swagger_client
@@ -940,15 +940,15 @@ from swagger_client.rest import ApiException
 from pprint import pprint
 
 # create an instance of the API class
-api_instance = swagger_client.ProductApi()
-productId = productId_example # String | 
-body =  # ProductQuery | Parameters to get a entries related to productId
+api_instance = swagger_client.TransactionApi()
+transactionId = transactionId_example # String | 
+body =  # TransactionQuery | Parameters to get a entries related to transactionId
 
 try: 
-    # register productId for which data should be streamed
-    api_instance.register_product_topic(productId, body)
+    # register transactionId for which data should be streamed
+    api_instance.register_transaction_topic(transactionId, body)
 except ApiException as e:
-    print("Exception when calling ProductApi->registerProductTopic: %s\n" % e)</code></pre>
+    print("Exception when calling TransactionApi->registerTransactionTopic: %s\n" % e)</code></pre>
                             </div>
                           </div>
 
@@ -960,11 +960,11 @@ except ApiException as e:
                                   <th width="150px">Name</th>
                                   <th>Description</th>
                                 </tr>
-                                  <tr><td style="width:150px;">productId*</td>
+                                  <tr><td style="width:150px;">transactionId*</td>
 <td>
 
 
-    <div id="d2e199_registerProductTopic_productId">
+    <div id="d2e199_registerTransactionTopic_transactionId">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -998,10 +998,10 @@ $(document).ready(function() {
   var schemaWrapper = {
   "in" : "body",
   "name" : "body",
-  "description" : "Parameters to get a entries related to productId",
+  "description" : "Parameters to get a entries related to transactionId",
   "required" : true,
   "schema" : {
-    "$ref" : "#/definitions/ProductQuery"
+    "$ref" : "#/definitions/TransactionQuery"
   }
 };
   var schema = schemaWrapper.schema;
@@ -1015,12 +1015,12 @@ $(document).ready(function() {
   }
 
   var view = new JSONSchemaView(schema,2,{isBodyParam: true});
-  var result = $('#d2e199_registerProductTopic_body');
+  var result = $('#d2e199_registerTransactionTopic_body');
   result.empty();
   result.append(view.render());
 });
 </script>
-<div id="d2e199_registerProductTopic_body"></div>
+<div id="d2e199_registerTransactionTopic_body"></div>
 </td>
 </tr>
 
@@ -1040,11 +1040,11 @@ $(document).ready(function() {
                         </article>
                       </div>
                       <hr>
-                    <div id="api-Product-unregisterProductTopic">
-                      <article id="api-Product-unregisterProductTopic-0" data-group="User" data-name="unregisterProductTopic" data-version="0">
+                    <div id="api-Transaction-unregisterTransactionTopic">
+                      <article id="api-Transaction-unregisterTransactionTopic-0" data-group="User" data-name="unregisterTransactionTopic" data-version="0">
                         <div class="pull-left">
-                          <h1>unregisterProductTopic</h1>
-                          <p>stop stream data for specified  productId</p>
+                          <h1>unregisterTransactionTopic</h1>
+                          <p>stop stream data for specified  transactionId</p>
                         </div>
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
@@ -1052,84 +1052,84 @@ $(document).ready(function() {
                         <p class="marked"></p>
                         <p></p>
                         <br />
-                        <pre class="prettyprint language-html prettyprinted" data-type="post"><code><span class="pln">/unregister/{productId}</span></code></pre>
+                        <pre class="prettyprint language-html prettyprinted" data-type="post"><code><span class="pln">/unregister/{transactionId}</span></code></pre>
                         <p>
                           <h3>Usage and SDK Samples</h3>
                         </p>
                         <ul class="nav nav-tabs nav-tabs-examples">
-                          <li class="active"><a href="#examples-Product-unregisterProductTopic-0-curl">Curl</a></li>
-                          <li class=""><a href="#examples-Product-unregisterProductTopic-0-java">Java</a></li>
-                          <li class=""><a href="#examples-Product-unregisterProductTopic-0-android">Android</a></li>
-                          <!--<li class=""><a href="#examples-Product-unregisterProductTopic-0-groovy">Groovy</a></li>-->
-                          <li class=""><a href="#examples-Product-unregisterProductTopic-0-objc">Obj-C</a></li>
-                          <li class=""><a href="#examples-Product-unregisterProductTopic-0-javascript">JavaScript</a></li>
-                          <!--<li class=""><a href="#examples-Product-unregisterProductTopic-0-angular">Angular</a></li>-->
-                          <li class=""><a href="#examples-Product-unregisterProductTopic-0-csharp">C#</a></li>
-                          <li class=""><a href="#examples-Product-unregisterProductTopic-0-php">PHP</a></li>
-                          <li class=""><a href="#examples-Product-unregisterProductTopic-0-perl">Perl</a></li>
-                          <li class=""><a href="#examples-Product-unregisterProductTopic-0-python">Python</a></li>
+                          <li class="active"><a href="#examples-Transaction-unregisterTransactionTopic-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Transaction-unregisterTransactionTopic-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Transaction-unregisterTransactionTopic-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Transaction-unregisterTransactionTopic-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Transaction-unregisterTransactionTopic-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Transaction-unregisterTransactionTopic-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Transaction-unregisterTransactionTopic-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Transaction-unregisterTransactionTopic-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Transaction-unregisterTransactionTopic-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Transaction-unregisterTransactionTopic-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Transaction-unregisterTransactionTopic-0-python">Python</a></li>
                         </ul>
 
                         <div class="tab-content">
-                          <div class="tab-pane active" id="examples-Product-unregisterProductTopic-0-curl">
-                            <pre class="prettyprint"><code class="language-bsh">curl -X POST "https://localhost/datalake/v1/stream_data/unregister/{productId}"</code></pre>
+                          <div class="tab-pane active" id="examples-Transaction-unregisterTransactionTopic-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X POST "https://localhost/datalake/v1/stream_data/unregister/{transactionId}"</code></pre>
                           </div>
-                          <div class="tab-pane" id="examples-Product-unregisterProductTopic-0-java">
+                          <div class="tab-pane" id="examples-Transaction-unregisterTransactionTopic-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
 import io.swagger.client.auth.*;
 import io.swagger.client.model.*;
-import io.swagger.client.api.ProductApi;
+import io.swagger.client.api.TransactionApi;
 
 import java.io.File;
 import java.util.*;
 
-public class ProductApiExample {
+public class TransactionApiExample {
 
     public static void main(String[] args) {
         
-        ProductApi apiInstance = new ProductApi();
-        String productId = productId_example; // String | 
-        User body = ; // User | Parameters to unregister streaming for productId
+        TransactionApi apiInstance = new TransactionApi();
+        String transactionId = transactionId_example; // String | 
+        User body = ; // User | Parameters to unregister streaming for transactionId
         try {
-            apiInstance.unregisterProductTopic(productId, body);
+            apiInstance.unregisterTransactionTopic(transactionId, body);
         } catch (ApiException e) {
-            System.err.println("Exception when calling ProductApi#unregisterProductTopic");
+            System.err.println("Exception when calling TransactionApi#unregisterTransactionTopic");
             e.printStackTrace();
         }
     }
 }</code></pre>
                           </div>
 
-                          <div class="tab-pane" id="examples-Product-unregisterProductTopic-0-android">
-                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.ProductApi;
+                          <div class="tab-pane" id="examples-Transaction-unregisterTransactionTopic-0-android">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.TransactionApi;
 
-public class ProductApiExample {
+public class TransactionApiExample {
 
     public static void main(String[] args) {
-        ProductApi apiInstance = new ProductApi();
-        String productId = productId_example; // String | 
-        User body = ; // User | Parameters to unregister streaming for productId
+        TransactionApi apiInstance = new TransactionApi();
+        String transactionId = transactionId_example; // String | 
+        User body = ; // User | Parameters to unregister streaming for transactionId
         try {
-            apiInstance.unregisterProductTopic(productId, body);
+            apiInstance.unregisterTransactionTopic(transactionId, body);
         } catch (ApiException e) {
-            System.err.println("Exception when calling ProductApi#unregisterProductTopic");
+            System.err.println("Exception when calling TransactionApi#unregisterTransactionTopic");
             e.printStackTrace();
         }
     }
 }</code></pre>
                           </div>
   <!--
-  <div class="tab-pane" id="examples-Product-unregisterProductTopic-0-groovy">
+  <div class="tab-pane" id="examples-Transaction-unregisterTransactionTopic-0-groovy">
   <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
   </div> -->
-                            <div class="tab-pane" id="examples-Product-unregisterProductTopic-0-objc">
-                              <pre class="prettyprint"><code class="language-cpp">String *productId = productId_example; // 
-User *body = ; // Parameters to unregister streaming for productId
+                            <div class="tab-pane" id="examples-Transaction-unregisterTransactionTopic-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">String *transactionId = transactionId_example; // 
+User *body = ; // Parameters to unregister streaming for transactionId
 
-ProductApi *apiInstance = [[ProductApi alloc] init];
+TransactionApi *apiInstance = [[TransactionApi alloc] init];
 
-// stop stream data for specified  productId
-[apiInstance unregisterProductTopicWith:productId
+// stop stream data for specified  transactionId
+[apiInstance unregisterTransactionTopicWith:transactionId
     body:body
               completionHandler: ^(NSError* error) {
                             if (error) {
@@ -1139,14 +1139,14 @@ ProductApi *apiInstance = [[ProductApi alloc] init];
 </code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Product-unregisterProductTopic-0-javascript">
+                            <div class="tab-pane" id="examples-Transaction-unregisterTransactionTopic-0-javascript">
                               <pre class="prettyprint"><code class="language-js">var DataLakeStreamDataServiceApi = require('data_lake_stream_data_service_api');
 
-var api = new DataLakeStreamDataServiceApi.ProductApi()
+var api = new DataLakeStreamDataServiceApi.TransactionApi()
 
-var productId = productId_example; // {String} 
+var transactionId = transactionId_example; // {String} 
 
-var body = ; // {User} Parameters to unregister streaming for productId
+var body = ; // {User} Parameters to unregister streaming for transactionId
 
 
 var callback = function(error, data, response) {
@@ -1156,14 +1156,14 @@ var callback = function(error, data, response) {
     console.log('API called successfully.');
   }
 };
-api.unregisterProductTopic(productId, body, callback);
+api.unregisterTransactionTopic(transactionId, body, callback);
 </code></pre>
                             </div>
 
-                            <!--<div class="tab-pane" id="examples-Product-unregisterProductTopic-0-angular">
+                            <!--<div class="tab-pane" id="examples-Transaction-unregisterTransactionTopic-0-angular">
               <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
             </div>-->
-                            <div class="tab-pane" id="examples-Product-unregisterProductTopic-0-csharp">
+                            <div class="tab-pane" id="examples-Transaction-unregisterTransactionTopic-0-csharp">
                               <pre class="prettyprint"><code class="language-cs">using System;
 using System.Diagnostics;
 using IO.Swagger.Api;
@@ -1172,23 +1172,23 @@ using IO.Swagger.Model;
 
 namespace Example
 {
-    public class unregisterProductTopicExample
+    public class unregisterTransactionTopicExample
     {
         public void main()
         {
             
-            var apiInstance = new ProductApi();
-            var productId = productId_example;  // String | 
-            var body = new User(); // User | Parameters to unregister streaming for productId
+            var apiInstance = new TransactionApi();
+            var transactionId = transactionId_example;  // String | 
+            var body = new User(); // User | Parameters to unregister streaming for transactionId
 
             try
             {
-                // stop stream data for specified  productId
-                apiInstance.unregisterProductTopic(productId, body);
+                // stop stream data for specified  transactionId
+                apiInstance.unregisterTransactionTopic(transactionId, body);
             }
             catch (Exception e)
             {
-                Debug.Print("Exception when calling ProductApi.unregisterProductTopic: " + e.Message );
+                Debug.Print("Exception when calling TransactionApi.unregisterTransactionTopic: " + e.Message );
             }
         }
     }
@@ -1196,40 +1196,40 @@ namespace Example
 </code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Product-unregisterProductTopic-0-php">
+                            <div class="tab-pane" id="examples-Transaction-unregisterTransactionTopic-0-php">
                               <pre class="prettyprint"><code class="language-php"><&#63;php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-$api_instance = new Swagger\Client\Api\ProductApi();
-$productId = productId_example; // String | 
-$body = ; // User | Parameters to unregister streaming for productId
+$api_instance = new Swagger\Client\Api\TransactionApi();
+$transactionId = transactionId_example; // String | 
+$body = ; // User | Parameters to unregister streaming for transactionId
 
 try {
-    $api_instance->unregisterProductTopic($productId, $body);
+    $api_instance->unregisterTransactionTopic($transactionId, $body);
 } catch (Exception $e) {
-    echo 'Exception when calling ProductApi->unregisterProductTopic: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling TransactionApi->unregisterTransactionTopic: ', $e->getMessage(), PHP_EOL;
 }
 ?></code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Product-unregisterProductTopic-0-perl">
+                            <div class="tab-pane" id="examples-Transaction-unregisterTransactionTopic-0-perl">
                               <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
 use WWW::SwaggerClient::Configuration;
-use WWW::SwaggerClient::ProductApi;
+use WWW::SwaggerClient::TransactionApi;
 
-my $api_instance = WWW::SwaggerClient::ProductApi->new();
-my $productId = productId_example; # String | 
-my $body = WWW::SwaggerClient::Object::User->new(); # User | Parameters to unregister streaming for productId
+my $api_instance = WWW::SwaggerClient::TransactionApi->new();
+my $transactionId = transactionId_example; # String | 
+my $body = WWW::SwaggerClient::Object::User->new(); # User | Parameters to unregister streaming for transactionId
 
 eval { 
-    $api_instance->unregisterProductTopic(productId => $productId, body => $body);
+    $api_instance->unregisterTransactionTopic(transactionId => $transactionId, body => $body);
 };
 if ($@) {
-    warn "Exception when calling ProductApi->unregisterProductTopic: $@\n";
+    warn "Exception when calling TransactionApi->unregisterTransactionTopic: $@\n";
 }</code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Product-unregisterProductTopic-0-python">
+                            <div class="tab-pane" id="examples-Transaction-unregisterTransactionTopic-0-python">
                               <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
 import time
 import swagger_client
@@ -1237,15 +1237,15 @@ from swagger_client.rest import ApiException
 from pprint import pprint
 
 # create an instance of the API class
-api_instance = swagger_client.ProductApi()
-productId = productId_example # String | 
-body =  # User | Parameters to unregister streaming for productId
+api_instance = swagger_client.TransactionApi()
+transactionId = transactionId_example # String | 
+body =  # User | Parameters to unregister streaming for transactionId
 
 try: 
-    # stop stream data for specified  productId
-    api_instance.unregister_product_topic(productId, body)
+    # stop stream data for specified  transactionId
+    api_instance.unregister_transaction_topic(transactionId, body)
 except ApiException as e:
-    print("Exception when calling ProductApi->unregisterProductTopic: %s\n" % e)</code></pre>
+    print("Exception when calling TransactionApi->unregisterTransactionTopic: %s\n" % e)</code></pre>
                             </div>
                           </div>
 
@@ -1257,11 +1257,11 @@ except ApiException as e:
                                   <th width="150px">Name</th>
                                   <th>Description</th>
                                 </tr>
-                                  <tr><td style="width:150px;">productId*</td>
+                                  <tr><td style="width:150px;">transactionId*</td>
 <td>
 
 
-    <div id="d2e199_unregisterProductTopic_productId">
+    <div id="d2e199_unregisterTransactionTopic_transactionId">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
@@ -1295,7 +1295,7 @@ $(document).ready(function() {
   var schemaWrapper = {
   "in" : "body",
   "name" : "body",
-  "description" : "Parameters to unregister streaming for productId",
+  "description" : "Parameters to unregister streaming for transactionId",
   "required" : true,
   "schema" : {
     "$ref" : "#/definitions/User"
@@ -1312,12 +1312,12 @@ $(document).ready(function() {
   }
 
   var view = new JSONSchemaView(schema,2,{isBodyParam: true});
-  var result = $('#d2e199_unregisterProductTopic_body');
+  var result = $('#d2e199_unregisterTransactionTopic_body');
   result.empty();
   result.append(view.render());
 });
 </script>
-<div id="d2e199_unregisterProductTopic_body"></div>
+<div id="d2e199_unregisterTransactionTopic_body"></div>
 </td>
 </tr>
 

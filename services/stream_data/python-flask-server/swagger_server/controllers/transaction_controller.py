@@ -7,7 +7,7 @@ import threading
 from flask import Response
 from kafka import KafkaConsumer, KafkaProducer
 
-from swagger_server.models.product_query import ProductQuery  # noqa: E501
+from swagger_server.models.transaction_query import TransactionQuery  # noqa: E501
 from swagger_server.models.user import User  # noqa: E501
 from swagger_server import util
 
@@ -45,23 +45,23 @@ def handle_stream_data():
             print("monitoringData field is missing")
             continue
 
-        if 'productID' in monitoring_data:
-            product_id = monitoring_data['productID']
-        elif 'ProductID' in monitoring_data:
-            product_id = monitoring_data['ProductID']
-        elif 'productID' in ingest_params:
-            product_id = ingest_params['ProductID']
-        elif 'ProductID' in ingest_params:
-            product_id = ingest_params['ProductID']
+        if 'transactionID' in monitoring_data:
+            transaction_id = monitoring_data['transactionID']
+        elif 'TransactionID' in monitoring_data:
+            transaction_id = monitoring_data['TransactionID']
+        elif 'transactionID' in ingest_params:
+            transaction_id = ingest_params['TransactionID']
+        elif 'TransactionID' in ingest_params:
+            transaction_id = ingest_params['TransactionID']
         else:
             # expected field is missing; nothing we can do
-            print("productID field is missing")
+            print("transactionID field is missing")
             continue
 
-        if product_id not in mapping_table:
+        if transaction_id not in mapping_table:
             continue
 
-        kafka_topic_out = mapping_table[product_id]
+        kafka_topic_out = mapping_table[transaction_id]
         producer.send(kafka_topic_out, value=data)
         producer.flush()
 
@@ -76,50 +76,50 @@ def init_stream_data():
     t.start()
     return
 
-def register_product_topic(productId, body):  # noqa: E501
-    """register productId for which data should be streamed
+def register_transaction_topic(transactionId, body):  # noqa: E501
+    """register transactionId for which data should be streamed
 
      # noqa: E501
 
-    :param productId: 
-    :type productId: str
-    :param body: Parameters to get entries related to productId
+    :param transactionId: 
+    :type transactionId: str
+    :param body: Parameters to get entries related to transactionId
     :type body: dict | bytes
 
     :rtype: None
     """
-    print("register_product_topic, productId = ", productId)
+    print("register_transaction_topic, transactionId = ", transactionId)
     if connexion.request.is_json:
-        body = ProductQuery.from_dict(connexion.request.get_json())  # noqa: E501
+        body = TransactionQuery.from_dict(connexion.request.get_json())  # noqa: E501
     else:
         raise("content is not json")
-    target_topic = body.product_info.topic
-    mapping_table[productId] = target_topic
+    target_topic = body.transaction_info.topic
+    mapping_table[transactionId] = target_topic
     print("mapping_table = ", mapping_table)
     return
 
 
-def unregister_product_topic(productId, body):  # noqa: E501
-    """stop stream data for specified  productId
+def unregister_transaction_topic(transactionId, body):  # noqa: E501
+    """stop stream data for specified  transactionId
 
      # noqa: E501
 
-    :param productId: 
-    :type productId: str
-    :param body: Parameters to unregister streaming for productId
+    :param transactionId: 
+    :type transactionId: str
+    :param body: Parameters to unregister streaming for transactionId
     :type body: dict | bytes
 
     :rtype: None
     """
-    print("unregister_product_topic, productId = ", productId)
+    print("unregister_transaction_topic, transactionId = ", transactionId)
     if connexion.request.is_json:
         body = User.from_dict(connexion.request.get_json())  # noqa: E501
     else:
         raise("content is not json")
-    if productId in mapping_table:
-        del mapping_table[productId]
+    if transactionId in mapping_table:
+        del mapping_table[transactionId]
     else:
-        msg = 'productId %s not registered ' % productId
+        msg = 'transactionId %s not registered ' % transactionId
         return Response("{'error message':'" + msg + "'\n", status=404, mimetype='application/json')
     print("mapping_table = ", mapping_table)
     return
