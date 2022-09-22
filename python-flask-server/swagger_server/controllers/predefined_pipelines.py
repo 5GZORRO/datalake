@@ -5,6 +5,8 @@ from swagger_server.models.pipeline_info import PipelineInfo
 from swagger_server.controllers import k8s_api
 from swagger_server.controllers.dl_global_services import dl_stream_data_server_topic
 
+image_pull_secrets = os.getenv('IMAGE_PULL_SECRETS', 'datalakeregistrykey')
+image_repository = os.getenv('IMAGE_REPOSITORY', 'docker.pkg.github.com/5gzorro/datalake/')
 
 def create_predefined_pipelines(user_id, s3_available : bool):
     print("entering create_predefined_pipelines")
@@ -24,7 +26,7 @@ def create_predefined_pipelines(user_id, s3_available : bool):
         "spec": {
             "entrypoint": "ingest-and-index",
             "imagePullSecrets": [
-                { "name": "datalakeregistrykey" }
+                { "name": image_pull_secrets }
             ],
             "arguments": {
                 "parameters": [ {
@@ -81,7 +83,7 @@ def create_predefined_pipelines(user_id, s3_available : bool):
                     } ]
                 },
                 "container": {
-                    "image": "docker.pkg.github.com/5gzorro/datalake/copy_to_topic:"+datalake_images_version,
+                    "image": image_repository+"/copy_to_topic:"+datalake_images_version,
                     "env": [
                         { "name": "KAFKA_URL",
                         "value": os.getenv('KAFKA_URL', '127.0.0.1:9092') },
@@ -106,7 +108,7 @@ def create_predefined_pipelines(user_id, s3_available : bool):
                     } ]
                 },
                 "container": {
-                    "image": "docker.pkg.github.com/5gzorro/datalake/ingest:"+datalake_images_version,
+                    "image": image_repository+"/ingest:"+datalake_images_version,
                     "env": [
                         { "name": "S3_URL",
                         "value": os.getenv('S3_URL', '127.0.0.1:9000') },
@@ -133,7 +135,7 @@ def create_predefined_pipelines(user_id, s3_available : bool):
                     } ]
                 },
                 "container": {
-                    "image": "docker.pkg.github.com/5gzorro/datalake/metrics_index:"+datalake_images_version,
+                    "image": image_repository+"/metrics_index:"+datalake_images_version,
                     "env": [
                         { "name": "POSTGRES_HOST",
                         "value": os.getenv("POSTGRES_HOST", "127.0.0.1") },

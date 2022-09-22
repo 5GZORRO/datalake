@@ -7,7 +7,7 @@ from swagger_server.controllers import kafka_api
 
 k8s_proxy_server = None
 
-DATALAKE_NAMESPACE = 'datalake'
+DATALAKE_NAMESPACE = os.getenv('DATALAKE_NAMESPACE', 'datalake')
 
 def set_k8s_proxy(p):
     global k8s_proxy_server
@@ -21,9 +21,9 @@ class K8s_Proxy:
     def __init__(self):
         # set up k8s proxy
         # use load_kube_config when running not inside a pod
-        kubernetes.config.load_kube_config()
+        # kubernetes.config.load_kube_config()
         # use load_incluster_config when running inside a pod
-        #kubernetes.config.load_incluster_config()
+        kubernetes.config.load_incluster_config()
         self.api = kubernetes.client.CustomObjectsApi()
         self.core_api = kubernetes.client.CoreV1Api()
         self.app_api = kubernetes.client.api.apps_v1_api.AppsV1Api()

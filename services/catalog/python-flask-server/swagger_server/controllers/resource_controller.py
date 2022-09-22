@@ -8,10 +8,10 @@ from swagger_server.models.user import User  # noqa: E501
 from swagger_server.models.resource_query import ResourceQuery  # noqa: E501
 from swagger_server import util
 
-DATALAKE_DB = "datalake"
-DATALAKE_DB_TABLE = "datalake_metrics"
-DATALAKE_DB_USER = "datalake_user"
-DATALAKE_DB_USER_PW = "datalake_pw"
+DATALAKE_DB = os.getenv('DATALAKE_DB', 'datalake')
+DATALAKE_DB_TABLE = os.getenv('DATALAKE_DB_TABLE', 'datalake_metrics')
+DATALAKE_DB_USER = os.getenv('DATALAKE_DB_USER', 'datalake_user')
+DATALAKE_DB_USER_PW = os.getenv('DATALAKE_DB_USER_PW', 'datalake_pw')
 
 # postgress python database variables
 db_host = None
