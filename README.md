@@ -71,6 +71,12 @@ In Kubernetes, it is necessary to define the `datalake` namespace.
 kubectl create namespace datalake
 ```
 
+Run script to periodically clean up old datalake argo jobs.
+```
+cd /datalake/experiments
+nohup ./loop_argo_del.sh >/dev/null 2>&1 &
+```
+
 To set up postgres, see instructions at https://www.postgresqltutorial.com/install-postgresql-linux/ and
 https://www.postgresql.org/download/linux/ubuntu/.
 
