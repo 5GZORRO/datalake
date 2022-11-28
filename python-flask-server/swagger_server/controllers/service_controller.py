@@ -13,6 +13,8 @@ from swagger_server.controllers import user_info
 from swagger_server.controllers import k8s_api
 from swagger_server.controllers import kafka_api
 
+image_pull_secrets = os.getenv('IMAGE_PULL_SECRETS', 'datalakeregistrykey')
+
 def prepare_deployment(container_def, service_id):
     deployment_template = {
         "apiVersion": "apps/v1",
@@ -38,7 +40,7 @@ def prepare_deployment(container_def, service_id):
                 },
                 "spec": {
                     "imagePullSecrets": [
-                        { "name": "datalakeregistrykey" }
+                        { "name": image_pull_secrets }
                     ],
                     "containers":  [ container_def ]
                 }

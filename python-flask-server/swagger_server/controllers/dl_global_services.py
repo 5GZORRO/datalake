@@ -11,6 +11,13 @@ dl_catalog_server_name = "dl-catalog-server"
 dl_stream_data_server_name = "dl-stream-data-server"
 dl_stream_data_server_url = None
 dl_stream_data_server_topic = "dl_stream_topic"
+image_pull_secrets = os.getenv('IMAGE_PULL_SECRETS', 'datalakeregistrykey')
+image_repository = os.getenv('IMAGE_REPOSITORY', 'datalakeregistrykey')
+
+DATALAKE_DB = os.getenv('DATALAKE_DB', 'datalake')
+DATALAKE_DB_TABLE = os.getenv('DATALAKE_DB_TABLE', 'datalake_metrics')
+DATALAKE_DB_USER = os.getenv('DATALAKE_DB_USER', 'datalake_user')
+DATALAKE_DB_USER_PW = os.getenv('DATALAKE_DB_USER_PW', 'datalake_pw')
 
 def create_dl_catalog_service():
     print("entering create_dl_catalog_service")
@@ -20,9 +27,9 @@ def create_dl_catalog_service():
     datalake_images_version = os.getenv('DATALAKE_IMAGES_VERSION', 'latest')
     container_def = {
         "name": dl_catalog_server_name,
-        "image": "docker.pkg.github.com/5gzorro/datalake/dl_catalog_server:"+datalake_images_version,
+        "image": image_repository+"/dl_catalog_server:"+datalake_images_version,
         "imagePullSecrets": [
-            { "name": "datalakeregistrykey" }
+            { "name": image_pull_secrets }
         ],
         "ports": [ {
             "name": "web",
@@ -30,7 +37,11 @@ def create_dl_catalog_service():
             "protocol": "TCP",
         } ],
         "env": [
-            { "name": "POSTGRES_HOST", "value": postrges_host }
+            { "name": "POSTGRES_HOST", "value": postrges_host },
+            { "name": "DATALAKE_DB", "value": DATALAKE_DB },
+            { "name": "DATALAKE_DB_TABLE", "value": DATALAKE_DB_TABLE },
+            { "name": "DATALAKE_DB_USER", "value": DATALAKE_DB_USER },
+            { "name": "DATALAKE_DB_USER_PW", "value": DATALAKE_DB_USER_PW }
         ]
     }
     deployment_def = service_controller.prepare_deployment(container_def, dl_catalog_server_name)
@@ -52,9 +63,9 @@ def create_dl_stream_data_service():
     kafka_url = os.getenv('KAFKA_URL', '127.0.0.1:9092')
     container_def = {
         "name": dl_stream_data_server_name,
-        "image": "docker.pkg.github.com/5gzorro/datalake/stream_data:"+datalake_images_version,
+        "image": image_repository+"/stream_data:"+datalake_images_version,
         "imagePullSecrets": [
-            { "name": "datalakeregistrykey" }
+            { "name": image_pull_secrets }
         ],
         "ports": [ {
             "name": "web",
